@@ -6,8 +6,7 @@ i18n
   .init({
     resources: {
       en: {
-        common: {
-          arena: {
+        arena: {
             title: "Math Arena",
             waiting_for_players: "Waiting for Players",
             start_game: "Start Game",
@@ -232,10 +231,8 @@ i18n
               execute_btn: "Execute Reset"
             }
           }
-        }
-      },
-      hi: {
-        common: {
+        },
+        hi: {
           arena: {
             title: "गणित अखाड़ा",
             waiting_for_players: "खिलाड़ियों का इंतज़ार",
@@ -459,8 +456,7 @@ i18n
             }
           }
         }
-      }
-    },
+      },
     lng: "en",
     fallbackLng: "en",
     interpolation: {
