@@ -445,7 +445,7 @@ i18n
               protocol: "सुरक्षा प्रोटोकॉल",
               log_msg: "सभी क्रियाएं एडमिन आईडी और टाइमस्टैम्प के साथ लॉग की जाती हैं।",
               session_msg: "प्रभावित उपयोगकर्ताओं के सक्रिय सत्र तुरंत अमान्य कर दिए जाएंगे।",
-              media_msg: "Media assets associated with deleted records will be queued for cleanup."
+              media_msg: "हटाए गए रिकॉर्ड से जुड़ी मीडिया संपत्तियां सफाई के लिए कतारबद्ध की जाएंगी।"
             },
             modals: {
               security_key: "नई सुरक्षा कुंजी",
