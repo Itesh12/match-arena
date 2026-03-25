@@ -6,7 +6,8 @@ i18n
   .init({
     resources: {
       en: {
-        arena: {
+        translation: {
+          arena: {
             title: "Math Arena",
             waiting_for_players: "Waiting for Players",
             start_game: "Start Game",
@@ -231,8 +232,10 @@ i18n
               execute_btn: "Execute Reset"
             }
           }
-        },
-        hi: {
+        }
+      },
+      hi: {
+        translation: {
           arena: {
             title: "गणित अखाड़ा",
             waiting_for_players: "खिलाड़ियों का इंतज़ार",
@@ -442,7 +445,7 @@ i18n
               protocol: "सुरक्षा प्रोटोकॉल",
               log_msg: "सभी क्रियाएं एडमिन आईडी और टाइमस्टैम्प के साथ लॉग की जाती हैं।",
               session_msg: "प्रभावित उपयोगकर्ताओं के सक्रिय सत्र तुरंत अमान्य कर दिए जाएंगे।",
-              media_msg: "हटाए गए रिकॉर्ड से जुड़ी मीडिया संपत्तियां सफाई के लिए कतारबद्ध की जाएंगी।"
+              media_msg: "Media assets associated with deleted records will be queued for cleanup."
             },
             modals: {
               security_key: "नई सुरक्षा कुंजी",
@@ -456,9 +459,12 @@ i18n
             }
           }
         }
-      },
+      }
+    },
     lng: "en",
     fallbackLng: "en",
+    ns: ['translation'],
+    defaultNS: 'translation',
     interpolation: {
       escapeValue: false
     }
