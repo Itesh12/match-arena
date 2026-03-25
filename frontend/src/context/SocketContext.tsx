@@ -20,7 +20,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Use environment variable for backend connection
-    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || '${process.env.NEXT_PUBLIC_API_URL}');
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_API_URL || '');
     socketRef.current = socket;
 
     socket.on('connect', () => {
