@@ -1,0 +1,56 @@
+const mongoose = require('mongoose');
+
+const RoomSchema = new mongoose.Schema({
+  roomId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  ownerId: {
+    type: String,
+    required: true,
+  },
+  ownerSocketId: {
+    type: String,
+  },
+  mode: {
+    type: String,
+    enum: ['standard', 'sudden_death', 'double_jeopardy', 'team_battle'],
+    default: 'standard',
+  },
+  status: {
+    type: String,
+    enum: ['waiting', 'playing', 'finished'],
+    default: 'waiting',
+  },
+  players: {
+    type: Map,
+    of: {
+      id: String,
+      userId: String,
+      username: String,
+      score: Number,
+      answers: [Boolean],
+      consecutiveTimeouts: Number,
+      isOwner: Boolean,
+      hasLeft: Boolean,
+    }
+  },
+  questions: [{
+    index: Number,
+    question: String,
+    options: [Number],
+    correctAnswer: Number,
+  }],
+  currentQuestionIndex: {
+    type: Number,
+    default: 0,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: 86400, // Auto-delete after 24 hours
+  }
+});
+
+module.exports = mongoose.model('Room', RoomSchema);
