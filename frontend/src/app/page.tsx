@@ -125,10 +125,8 @@ export default function Lobby() {
   };
 
   const handleCreate = (bypassCheck = false) => {
-    console.log('handleCreate called, roomId:', roomId, 'bypass:', bypassCheck);
     if (!user || !socket) return;
     if (roomId && !bypassCheck) {
-      console.log('Showing ConfirmModal for Create');
       setPendingAction({ type: 'create' });
       setShowConfirmModal(true);
       return;
@@ -138,10 +136,8 @@ export default function Lobby() {
   };
 
   const handleJoin = (bypassCheck = false) => {
-    console.log('handleJoin called, room:', room, 'roomId:', roomId, 'bypass:', bypassCheck);
     if (!room) return;
     if (roomId && !bypassCheck) {
-      console.log('Showing ConfirmModal for Join');
       setPendingAction({ type: 'join', roomId: room.toUpperCase() });
       setShowConfirmModal(true);
       return;
@@ -240,7 +236,7 @@ export default function Lobby() {
       <div className="relative z-10 max-w-md w-full glass rounded-[48px] p-10 shadow-2xl border-white/5 animate-float">
         <div className="text-center mb-12">
           <div className="inline-block px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
-            {t('dashboard.math_arena_v1')} <span className="ml-2 opacity-50 text-[8px]">v1.2</span>
+            {t('dashboard.math_arena_v1')}
           </div>
           <h1 className="text-7xl font-black mb-1 tracking-tighter text-white drop-shadow-[0_0_40px_rgba(59,130,246,0.3)]">
             {user.username}
