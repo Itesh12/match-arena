@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle2, XCircle, Info } from 'lucide-react';
+import { CheckCircle2, XCircle, Info, Trophy } from 'lucide-react';
 
 interface ToastProps {
   show: boolean;
   msg: string;
-  type?: 'success' | 'error' | 'info';
+  type?: 'success' | 'error' | 'info' | 'achievement';
   title?: string;
 }
 
@@ -15,6 +15,7 @@ export default function Toast({ show, msg, type = 'info', title }: ToastProps) {
     switch (type) {
       case 'success': return <CheckCircle2 className="w-4 h-4 text-green-400" />;
       case 'error': return <XCircle className="w-4 h-4 text-red-400" />;
+      case 'achievement': return <Trophy className="w-4 h-4 text-yellow-400" />;
       default: return <Info className="w-4 h-4 text-blue-400" />;
     }
   };
@@ -23,6 +24,7 @@ export default function Toast({ show, msg, type = 'info', title }: ToastProps) {
     switch (type) {
       case 'success': return 'border-l-green-500 bg-green-500/10';
       case 'error': return 'border-l-red-500 bg-red-500/10';
+      case 'achievement': return 'border-l-yellow-500 bg-yellow-500/10 shadow-[0_0_30px_rgba(234,179,8,0.2)]';
       default: return 'border-l-blue-500 bg-blue-500/10';
     }
   };

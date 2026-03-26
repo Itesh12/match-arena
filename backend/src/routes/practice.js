@@ -3,6 +3,7 @@ const { generateQuestion } = require('../game/questions');
 const { authMiddleware } = require('./auth');
 const DailyChallenge = require('../models/DailyChallenge');
 const User = require('../models/User');
+const AchievementService = require('../services/AchievementService');
 
 const router = express.Router();
 
@@ -106,8 +107,14 @@ router.post('/daily/submit', authMiddleware, async (req, res) => {
 
     user.coins += coinsGained;
     user.rankPoints += rpGained;
-    user.matchesPlayed += 1;
+    user.totalGames += 1;
     await user.save();
+
+    // Check Achievements
+    const dailyCount = await DailyChallenge.countDocuments({
+      'participants.userId': userId
+    });
+    const unlocked = await AchievementService.checkAndAward(userId, 'daily_challenge', dailyCount + 1);
 
     challenge.participants.push({
       userId,
@@ -120,7 +127,8 @@ router.post('/daily/submit', authMiddleware, async (req, res) => {
     res.json({
       success: true,
       reward: { coins: coinsGained, rp: rpGained },
-      newTotal: { coins: user.coins, rp: user.rankPoints }
+      newTotal: { coins: user.coins, rp: user.rankPoints },
+      unlocked: unlocked || []
     });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Server error' });

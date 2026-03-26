@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { API_URL } from '@/config';
 
-// ... (interfaces remain the same)
 interface Player {
   id: string;
   userId?: string;
@@ -35,6 +34,7 @@ interface UserInfo {
   wins?: number;
   rankPoints?: number;
   coins?: number;
+  currentStreak?: number;
 }
 
 interface GameState {
@@ -55,6 +55,12 @@ interface GameState {
     timePerQuestion: number;
     difficulty: 'easy' | 'medium' | 'hard';
   };
+  toast: {
+    show: boolean;
+    msg: string;
+    type: 'success' | 'error' | 'info' | 'achievement';
+    title?: string;
+  } | null;
 
   setRoomSettings: (settings: { questionsCount: number, timePerQuestion: number, difficulty: 'easy' | 'medium' | 'hard' }) => void;
   setPlayers: (players: Player[]) => void;
@@ -69,6 +75,8 @@ interface GameState {
   setOwnerSocketId: (ownerSocketId: string) => void;
   setFinalQuestions: (questions: Question[]) => void;
   setCountdown: (countdown: number | null) => void;
+  showToast: (msg: string, type?: 'success' | 'error' | 'info' | 'achievement', title?: string) => void;
+  hideToast: () => void;
   reset: () => void;
   logout: () => void;
   fetchStats: () => Promise<void>;
@@ -94,6 +102,7 @@ export const useGameStore = create<GameState>()(
         timePerQuestion: 60,
         difficulty: 'medium'
       },
+      toast: null,
 
       setPlayers: (players) => set({ players }),
       setCurrentQuestion: (q) => set({ currentQuestion: q }),
@@ -108,6 +117,15 @@ export const useGameStore = create<GameState>()(
       setFinalQuestions: (questions) => set({ finalQuestions: questions }),
       setCountdown: (countdown) => set({ countdown }),
       setRoomSettings: (roomSettings) => set({ roomSettings }),
+      
+      showToast: (msg, type = 'info', title) => {
+        set({ toast: { show: true, msg, type, title } });
+        setTimeout(() => {
+          set((state) => (state.toast?.msg === msg ? { toast: null } : state));
+        }, 5000);
+      },
+      hideToast: () => set({ toast: null }),
+
       reset: () => set({
         players: [],
         currentQuestion: null,
@@ -124,11 +142,12 @@ export const useGameStore = create<GameState>()(
           timePerQuestion: 60,
           difficulty: 'medium'
         },
+        toast: null,
       }),
       logout: () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        set({ user: null, token: null, roomId: '', players: [], currentQuestion: null, gameStatus: 'waiting' });
+        set({ user: null, token: null, roomId: '', players: [], currentQuestion: null, gameStatus: 'waiting', toast: null });
       },
       fetchStats: async () => {
         const { token, setUser } = useGameStore.getState();
@@ -150,7 +169,8 @@ export const useGameStore = create<GameState>()(
               totalGames: data.totalGames,
               wins: data.wins,
               rankPoints: data.rankPoints,
-              coins: data.coins
+              coins: data.coins,
+              currentStreak: data.currentStreak
             });
           }
         } catch (err) {

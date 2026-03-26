@@ -11,12 +11,13 @@ import { getRankTier } from '@/utils/ranks';
 import Toast from '@/components/Toast';
 import ConfirmModal from '@/components/ConfirmModal';
 import MobileDrawer from '@/components/MobileDrawer';
+import AchievementsView from '@/components/AchievementsView';
 import { API_URL } from '@/config';
 
 export default function Lobby() {
   const [room, setRoom] = useState('');
   const [isJoining, setIsJoining] = useState(false);
-  const [view, setView] = useState<'lobby' | 'history' | 'social' | 'settings'>('lobby');
+  const [view, setView] = useState<'lobby' | 'history' | 'social' | 'settings' | 'achievements'>('lobby');
   const [matches, setMatches] = useState<any[] | null>(null);
   const [friends, setFriends] = useState<any[] | null>(null);
   const [newFriendUsername, setNewFriendUsername] = useState('');
@@ -28,7 +29,7 @@ export default function Lobby() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   const socket = useSocket();
-  const { user, roomId, setRoomId, logout, fetchStats, token } = useGameStore();
+  const { user, roomId, setRoomId, logout, fetchStats, token, toast: globalToast, hideToast } = useGameStore();
   const { initialized } = useAuth();
   const { t, i18n } = useTranslation();
   const router = useRouter();
@@ -208,7 +209,7 @@ export default function Lobby() {
               <span className="text-xs font-bold">{t('dashboard.admin')}</span>
             </button>
           )}
-          {(['history', 'social', 'settings'] as const).map(v => (
+          {(['history', 'achievements', 'social', 'settings'] as const).map(v => (
             <button key={v} onClick={() => setView(view === v ? 'lobby' : v)}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${view === v ? 'bg-blue-600 text-white border-blue-500' : 'glass glass-hover text-blue-400 border-white/5'}`}>
               {view === v ? t('dashboard.lobby') : v === 'settings' ? t('dashboard.language') : t(`dashboard.${v}`)}
@@ -258,7 +259,14 @@ export default function Lobby() {
             <p className="text-slate-500 font-medium mt-6 sm:mt-8 text-sm sm:text-base">{t('dashboard.ready_for_challenge')}</p>
           </div>
           
-          {view === 'history' ? (
+          {view === 'achievements' ? (
+            <div className="animate-in slide-in-from-right-10 duration-500 space-y-6">
+              <AchievementsView />
+              <button onClick={() => setView('lobby')} className="w-full py-4 text-slate-500 font-bold text-sm uppercase tracking-widest hover:text-white transition-colors">
+                  {t('dashboard.back_to_lobby')}
+               </button>
+            </div>
+          ) : view === 'history' ? (
             <div className="space-y-4 max-h-[50vh] overflow-y-auto text-left animate-in slide-in-from-right-10 duration-500">
                {isLoadingHistory ? (
                  <div className="text-center py-10 text-slate-500 font-bold animate-pulse">{t('dashboard.loading_history')}</div>
@@ -434,6 +442,7 @@ export default function Lobby() {
           { key: 'lobby', icon: Home, label: 'Lobby' },
           { key: 'practice', icon: BrainCircuit, label: 'Practice' },
           { key: 'history', icon: History, label: 'History' },
+          { key: 'achievements', icon: Trophy, label: 'Awards' },
           { key: 'social', icon: Users, label: 'Social' },
           { key: 'settings', icon: Globe, label: 'Lang' },
         ] as const).map((tab) => {
@@ -512,9 +521,10 @@ export default function Lobby() {
       />
 
       <Toast 
-        show={!!notification} 
-        msg={notification?.msg || ''} 
-        type={notification?.type} 
+        show={!!globalToast?.show || !!notification} 
+        msg={globalToast?.msg || notification?.msg || ''} 
+        type={globalToast?.type || notification?.type}
+        title={globalToast?.title}
       />
     </div>
   );

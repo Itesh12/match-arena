@@ -2,6 +2,7 @@ const { generateQuestion } = require('./questions');
 const User = require('../models/User');
 const Room = require('../models/Room');
 const Match = require('../models/Match');
+const AchievementService = require('../services/AchievementService');
 
 class GameEngine {
   constructor(io) {
@@ -422,7 +423,23 @@ class GameEngine {
             const coinReward = Math.floor(player.score * 0.5) + (isWinner ? 50 : 0);
             user.coins = (user.coins || 0) + coinReward;
             
+            // Streak Logic
+            if (isWinner) {
+              user.currentStreak = (user.currentStreak || 0) + 1;
+            } else {
+              user.currentStreak = 0;
+            }
+
             await user.save();
+
+            // Check Achievements
+            const unlockedWins = await AchievementService.checkAndAward(player.userId, 'win_count', user.wins);
+            const unlockedStreaks = await AchievementService.checkAndAward(player.userId, 'streak', user.currentStreak);
+            const allUnlocked = [...unlockedWins, ...unlockedStreaks];
+
+            if (allUnlocked.length > 0) {
+              this.io.to(player.id).emit('achievement_unlocked', allUnlocked);
+            }
           }
         } catch (err) {
           console.error(`Failed to update stats for user ${player.userId}:`, err);

@@ -17,7 +17,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     setGameStatus, 
     setLeaderboard, 
     setWinner,
-    token
+    token,
+    showToast
   } = useGameStore();
 
   useEffect(() => {
@@ -65,6 +66,12 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       setGameStatus('finished');
       setWinner(data.winner);
       setLeaderboard(data.leaderboard);
+    });
+
+    socket.on('achievement_unlocked', (unlocked) => {
+      unlocked.forEach((a: any) => {
+        showToast(a.name, 'achievement', 'New Achievement Unlocked!');
+      });
     });
 
     return () => {

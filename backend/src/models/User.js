@@ -44,6 +44,22 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  achievements: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Achievement'
+  }],
+  level: {
+    type: Number,
+    default: 1
+  },
+  xp: {
+    type: Number,
+    default: 0
+  },
+  currentStreak: {
+    type: Number,
+    default: 0
+  },
   isBanned: {
     type: Boolean,
     default: false

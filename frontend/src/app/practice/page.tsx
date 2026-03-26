@@ -36,7 +36,7 @@ interface Question {
 export default function PracticePage() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { token, user, fetchStats } = useGameStore();
+  const { token, user, fetchStats, showToast } = useGameStore();
 
   // Settings State
   const [gameState, setGameState] = useState<'settings' | 'loading' | 'playing' | 'results'>('settings');
@@ -165,8 +165,12 @@ export default function PracticePage() {
             headers: { Authorization: `Bearer ${token}` }
         });
         if (res.data.success) {
-            setReward(res.data.reward);
             fetchStats();
+            if (res.data.unlocked && res.data.unlocked.length > 0) {
+              res.data.unlocked.forEach((a: any) => {
+                showToast(a.name, 'achievement', 'New Achievement Unlocked!');
+              });
+            }
         }
     } catch (e) {
         console.error('Daily submission failed', e);
@@ -198,7 +202,7 @@ export default function PracticePage() {
           <div className="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
           <BrainCircuit className="absolute inset-0 m-auto w-10 h-10 text-blue-500" />
         </div>
-        <h2 className="text-subtitle text-white uppercase animate-pulse">
+        <h2 className="text-subtitle text-white uppercase animate-pulse tracking-widest">
             {t('practice.loading_questions')}
         </h2>
       </div>
@@ -307,8 +311,8 @@ export default function PracticePage() {
          <main className="flex-1 flex flex-col items-center justify-center p-6 max-w-5xl mx-auto w-full">
             <div className={`glass w-full rounded-[32px] sm:rounded-[48px] p-8 sm:p-12 mb-6 sm:mb-12 text-center border-white/5 relative overflow-hidden ${timeLeft < 5 && selectedOption === null ? 'animate-shake border-red-500/30' : ''}`}>
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-20"></div>
-                <h2 className="text-hero mb-4">{currentQ.question}</h2>
-                <div className="text-micro text-blue-400/40 translate-x-[0.25em]">
+                <h2 className="text-hero mb-4 drop-shadow-[0_0_30px_rgba(59,130,246,0.2)]">{currentQ.question}</h2>
+                <div className="text-micro text-blue-400/40 uppercase tracking-widest font-black">
                     {t('arena.realtime')} • {difficulty.toUpperCase()}
                 </div>
             </div>
@@ -375,7 +379,7 @@ export default function PracticePage() {
                     </button>
                     <button 
                         onClick={() => setMode('daily')}
-                        className={`px-8 py-3 rounded-2xl text-micro border-2 transition-all ${mode === 'daily' ? 'bg-indigo-600 border-indigo-400 text-white' : 'glass border-white/5 text-slate-500'}`}
+                        className={`px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] border-2 transition-all ${mode === 'daily' ? 'bg-indigo-600 border-indigo-400 text-white' : 'glass border-white/5 text-slate-500'}`}
                     >
                         Daily Challenge
                     </button>
