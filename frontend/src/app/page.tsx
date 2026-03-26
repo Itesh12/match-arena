@@ -177,13 +177,13 @@ export default function Lobby() {
           onClick={() => setView(view === 'history' ? 'lobby' : 'history')}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl transition-all border shadow-xl ${view === 'history' ? 'bg-blue-600 text-white border-blue-500' : 'glass glass-hover text-blue-400 border-white/5'}`}
         >
-          <span className="text-sm font-bold">{view === 'history' ? `🏠 ${t('dashboard.lobby')}` : `📜 ${t('dashboard.history')}`}</span>
+          <span className="text-sm font-bold">{view === 'history' ? t('dashboard.lobby') : t('dashboard.history')}</span>
         </button>
         <button
           onClick={() => setView(view === 'social' ? 'lobby' : 'social')}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl transition-all border shadow-xl ${view === 'social' ? 'bg-blue-600 text-white border-blue-500' : 'glass glass-hover text-blue-400 border-white/5'}`}
         >
-          <span className="text-sm font-bold">{view === 'social' ? `🏠 ${t('dashboard.lobby')}` : `👥 ${t('dashboard.social')}`}</span>
+          <span className="text-sm font-bold">{view === 'social' ? t('dashboard.lobby') : t('dashboard.social')}</span>
         </button>
         <div className="flex items-center gap-2 bg-yellow-500/10 text-yellow-500 px-4 py-2.5 rounded-2xl border border-yellow-500/20 shadow-xl">
           <Coins className="w-4 h-4" />
@@ -237,7 +237,7 @@ export default function Lobby() {
                          <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">
                            {new Date(m.completedAt).toLocaleDateString()}
                          </div>
-                         <div className="text-lg font-black tracking-tight">{m.winner?.username === user.username ? `🏆 ${t('dashboard.victory')}` : `💀 ${t('dashboard.defeat')}`}</div>
+                          <div className="text-lg font-black tracking-tight">{m.winner?.username === user.username ? t('dashboard.victory') : t('dashboard.defeat')}</div>
                        </div>
                        <div className="text-right">
                          <div className="text-xl font-black text-white">{m.participants.find((p: any) => p.userId === (user.id || user._id))?.score || 0}</div>
@@ -324,7 +324,7 @@ export default function Lobby() {
                 onClick={() => router.push(`/arena/${roomId}`)}
                 className="w-full bg-green-500/10 hover:bg-green-500/20 text-green-400 font-bold py-4 rounded-[24px] border border-green-500/20 transition-all flex items-center justify-center gap-3 mb-2 animate-pulse"
               >
-                <span>🌐 {t('dashboard.return_to_arena')} (#{roomId})</span>
+                <span>{t('dashboard.return_to_arena')} (#{roomId})</span>
               </button>
             )}
             
@@ -336,7 +336,7 @@ export default function Lobby() {
               className="group relative w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-6 rounded-[24px] shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] transform active:scale-[0.97] transition-all overflow-hidden"
             >
               <div className="relative z-10 flex items-center justify-center gap-3 text-lg">
-                🚀 {t('dashboard.create_game')}
+                {t('dashboard.create_game')}
               </div>
               <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 skew-x-12"></div>
             </button>
@@ -344,7 +344,7 @@ export default function Lobby() {
               onClick={() => setIsJoining(true)}
               className="w-full glass glass-hover text-white font-bold py-6 rounded-[24px] transform active:scale-[0.97] transition-all flex items-center justify-center gap-3 text-lg border-white/10"
             >
-              🎮 {t('dashboard.join_with_code')}
+              {t('dashboard.join_with_code')}
             </button>
           </div>
         ) : (
