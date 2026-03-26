@@ -557,17 +557,6 @@ export default function Arena() {
             </div>
           </section>
         </div>
-
-        {/* Sidebar Footer Branding */}
-        <div className="p-8 border-t border-white/5 flex items-center justify-center gap-3 opacity-20 hover:opacity-100 transition-opacity duration-700 cursor-default">
-          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-lg transform -rotate-12 group">
-            <span className="text-black font-black text-sm group-hover:rotate-12 transition-transform duration-500">M</span>
-          </div>
-          <div>
-            <div className="text-[8px] font-black text-white uppercase tracking-widest leading-none">{t('arena.math_arena')}</div>
-            <div className="text-[6px] font-bold text-white/50 uppercase tracking-tighter mt-1">{t('arena.premium_engine')}</div>
-          </div>
-        </div>
       </div>
 
       {/* Main Game Area */}
@@ -611,23 +600,6 @@ export default function Arena() {
                 </div>
               </div>
 
-              {/* Right: Actions & Language - Matching style */}
-              <div className="flex justify-end items-center gap-4">
-                <div className="flex items-center gap-4 px-6 bg-white/[0.03] rounded-2xl border border-white/10 group/lang hover:border-white/20 transition-all duration-500 h-[76px]">
-                  <Globe className="w-4 h-4 text-blue-400 opacity-60 group-hover:rotate-12 transition-transform" />
-                  <div className="flex flex-col">
-                    <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">{t('dashboard.language')}</span>
-                    <select 
-                      value={i18n.language} 
-                      onChange={(e) => i18n.changeLanguage(e.target.value)}
-                      className="bg-transparent text-[10px] font-black uppercase tracking-[0.2em] text-white/80 focus:outline-none cursor-pointer appearance-none hover:text-white transition-colors"
-                    >
-                      <option value="en" className="bg-[#020617]">English</option>
-                      <option value="hi" className="bg-[#020617]">हिंदी</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
             </header>
 
             {/* Vertically Centered Content Area */}
@@ -695,7 +667,7 @@ export default function Arena() {
 
                         {/* Owner Controls / Waiting Info */}
                         <div className="w-full max-w-sm mx-auto">
-                          {socket?.id === ownerSocketId ? (
+                          {(socket?.id === ownerSocketId || (user?.id && user.id === ownerId) || ((user as any)?._id && (user as any)._id === ownerId)) ? (
                             <div className="space-y-4">
                               <button
                                 disabled={players.length < 2}

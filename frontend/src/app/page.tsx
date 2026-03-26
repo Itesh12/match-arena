@@ -15,7 +15,7 @@ import { API_URL } from '@/config';
 export default function Lobby() {
   const [room, setRoom] = useState('');
   const [isJoining, setIsJoining] = useState(false);
-  const [view, setView] = useState<'lobby' | 'history' | 'social'>('lobby');
+  const [view, setView] = useState<'lobby' | 'history' | 'social' | 'settings'>('lobby');
   const [matches, setMatches] = useState<any[] | null>(null);
   const [friends, setFriends] = useState<any[] | null>(null);
   const [newFriendUsername, setNewFriendUsername] = useState('');
@@ -187,17 +187,6 @@ export default function Lobby() {
 
       {/* Header / Actions */}
       <div className="absolute top-6 right-6 flex items-center gap-4 z-20">
-        <div className="flex items-center gap-2 px-4 py-2.5 bg-white/5 rounded-2xl border border-white/10 glass">
-          <Globe className="w-4 h-4 text-blue-400" />
-          <select 
-            value={i18n.language} 
-            onChange={(e) => i18n.changeLanguage(e.target.value)}
-            className="bg-transparent text-[10px] font-black uppercase tracking-widest text-white/60 focus:outline-none cursor-pointer appearance-none"
-          >
-            <option value="en" className="bg-[#020617]">English</option>
-            <option value="hi" className="bg-[#020617]">हिंदी</option>
-          </select>
-        </div>
         {user.role === 'admin' && (
           <button
             onClick={() => router.push('/admin')}
@@ -212,6 +201,13 @@ export default function Lobby() {
           className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl transition-all border shadow-xl ${view === 'history' ? 'bg-blue-600 text-white border-blue-500' : 'glass glass-hover text-blue-400 border-white/5'}`}
         >
           <span className="text-sm font-bold">{view === 'history' ? t('dashboard.lobby') : t('dashboard.history')}</span>
+        </button>
+        <button
+          onClick={() => setView(view === 'settings' ? 'lobby' : 'settings')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl transition-all border shadow-xl ${view === 'settings' ? 'bg-blue-600 text-white border-blue-500' : 'glass glass-hover text-blue-400 border-white/5'}`}
+        >
+          <Globe className="w-4 h-4" />
+          <span className="text-sm font-bold">{view === 'settings' ? t('dashboard.lobby') : t('dashboard.language')}</span>
         </button>
         <button
           onClick={() => setView(view === 'social' ? 'lobby' : 'social')}
@@ -434,6 +430,33 @@ export default function Lobby() {
           </div>
         </div>
       </div>
+
+      {view === 'settings' && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center p-4 bg-[#020617]/80 backdrop-blur-sm">
+          <div className="glass rounded-[40px] p-10 w-full max-w-md shadow-2xl border border-white/10 animate-in fade-in zoom-in-95 duration-300">
+            <div className="text-center mb-10">
+              <Globe className="w-10 h-10 mx-auto text-blue-400 mb-4 opacity-70" />
+              <h2 className="text-2xl font-black tracking-tight">{t('dashboard.language')}</h2>
+              <p className="text-slate-500 text-xs mt-2 uppercase tracking-widest font-bold">Choose your preferred language</p>
+            </div>
+            <div className="space-y-3">
+              {[{ code: 'en', label: 'English', sub: 'English' }, { code: 'hi', label: 'हिंदी', sub: 'Hindi' }].map(lang => (
+                <button
+                  key={lang.code}
+                  onClick={() => i18n.changeLanguage(lang.code)}
+                  className={`w-full flex items-center justify-between px-6 py-4 rounded-2xl border transition-all duration-300 ${i18n.language === lang.code ? 'bg-blue-600/20 border-blue-500/50 text-white' : 'bg-white/[0.03] border-white/5 text-white/50 hover:border-white/20 hover:text-white'}`}
+                >
+                  <div className="text-left">
+                    <div className="font-black text-base">{lang.label}</div>
+                    <div className="text-[10px] uppercase tracking-widest text-slate-500">{lang.sub}</div>
+                  </div>
+                  {i18n.language === lang.code && <div className="w-2 h-2 bg-blue-400 rounded-full shadow-[0_0_8px_rgba(96,165,250,0.8)]" />}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <ConfirmModal
         show={showConfirmModal}
