@@ -29,7 +29,7 @@ export default function MobileDrawer({
   currentLang,
   onLanguageChange
 }: MobileDrawerProps) {
-  if (!isOpen) return null;
+  if (!isOpen || !user) return null;
 
   return (
     <div className="fixed inset-0 z-[100] md:hidden">

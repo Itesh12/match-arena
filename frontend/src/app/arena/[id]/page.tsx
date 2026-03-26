@@ -8,12 +8,12 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { Trophy, Timer, User, Users, CheckCircle2, XCircle, Play, Shield, LogOut, Skull, ShieldCheck, Zap, Globe, Info, Copy, MousePointer2, MessagesSquare, Send } from 'lucide-react';
 import Toast from '@/components/Toast';
-
 export default function Arena() {
   const { id } = useParams();
   const socket = useSocket();
   const { initialized } = useAuth();
   const { t, i18n } = useTranslation();
+  const router = useRouter();
   const {
     players,
     currentQuestion,
@@ -38,7 +38,7 @@ export default function Arena() {
     setCountdown,
     reset
   } = useGameStore();
-  const router = useRouter();
+
   const [timeLeft, setTimeLeft] = useState(60);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showExitModal, setShowExitModal] = useState(false);
@@ -62,6 +62,14 @@ export default function Arena() {
       router.push('/login');
     }
   }, [initialized, user, router]);
+
+  if (!initialized || !user) {
+    return (
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   // Handle Room Join/Leave
   useEffect(() => {
@@ -221,12 +229,13 @@ export default function Arena() {
   };
 
   const handleStart = () => {
-    const isOwner = socket && (
+    if (!user || !socket) return;
+    const isOwner = (
       ownerSocketId === socket.id || 
       String(ownerId) === String(user.id) || 
       String(ownerId) === String((user as any)._id)
     );
-    if (socket && isOwner) {
+    if (isOwner) {
       socket.emit('start_game', id, selectedMode);
     }
   };
@@ -795,8 +804,8 @@ export default function Arena() {
                         {/* Owner Controls / Room Settings */}
                         <div className="w-full max-w-sm mx-auto space-y-6">
                           {(socket?.id === ownerSocketId || 
-                            (user?.id && String(user.id) === String(ownerId)) || 
-                            ((user as any)?._id && String((user as any)._id) === String(ownerId))) ? (
+                            (user?.id && String(user?.id) === String(ownerId)) || 
+                            ((user as any)?._id && String((user as any)?._id) === String(ownerId))) ? (
                             <>
                               {/* Host Settings */}
                               <div className="grid grid-cols-1 gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
