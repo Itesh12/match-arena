@@ -42,6 +42,7 @@ export default function Arena() {
   const [showExitModal, setShowExitModal] = useState(false);
   const [isTerminated, setIsTerminated] = useState(false);
   const [showCopyMessage, setShowCopyMessage] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [answerResult, setAnswerResult] = useState<{ isCorrect: boolean | null, correctAnswer: number | null }>({ isCorrect: null, correctAnswer: null });
   const [isReviewing, setIsReviewing] = useState(false);
   const [selectedMode, setSelectedMode] = useState<'standard' | 'sudden_death' | 'double_jeopardy' | 'team_battle'>('standard');
@@ -425,7 +426,11 @@ export default function Arena() {
       <div className="absolute top-[30%] left-[40%] w-[20%] h-[20%] bg-indigo-600/5 rounded-full blur-[80px] animate-pulse-slow" style={{ animationDelay: '1.5s' }}></div>
 
       {/* Sidebar: Players & Progress */}
-      <div className="relative z-20 w-full lg:w-[320px] bg-slate-950/60 backdrop-blur-3xl border-r border-white/10 flex flex-col h-full lg:min-h-screen shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
+      <div className={`relative z-20 bg-slate-950/60 backdrop-blur-3xl border-r border-white/10 flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.5)]
+        /* Mobile: fixed drawer overlay, Desktop: static sidebar */
+        fixed inset-y-0 left-0 w-[300px] transition-transform duration-300 lg:static lg:w-[320px] lg:h-auto lg:min-h-screen
+        ${showMobileSidebar ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
         {/* Sidebar Header */}
         <div className="p-6 border-b border-white/5">
           <button
@@ -558,13 +563,28 @@ export default function Arena() {
           </section>
         </div>
       </div>
+      {/* Mobile sidebar overlay backdrop */}
+      {showMobileSidebar && (
+        <div className="fixed inset-0 z-10 bg-black/50 backdrop-blur-sm lg:hidden" onClick={() => setShowMobileSidebar(false)} />
+      )}
 
       {/* Main Game Area */}
       <div className="relative z-10 flex-1 flex flex-col h-full lg:min-h-screen">
+        {/* Mobile top bar */}
+        <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl sticky top-0 z-20">
+          <button onClick={() => setShowMobileSidebar(true)} className="flex items-center gap-2 glass px-3 py-2 rounded-xl border border-white/10">
+            <Users className="w-4 h-4 text-blue-400" />
+            <span className="text-xs font-black text-white/70">{players.length} Players</span>
+          </button>
+          <span className="text-sm font-black text-white uppercase tracking-widest">Math Arena</span>
+          <button onClick={() => setShowExitModal(true)} className="text-red-400 glass px-3 py-2 rounded-xl border border-red-500/20 text-xs font-black">
+            Quit
+          </button>
+        </div>
         {gameStatus === 'waiting' ? (
           <div className="flex-1 flex flex-col h-full overflow-y-auto">
-            {/* 3-Section Premium Top Bar - perfectly aligned with sidebar's p-6 header */}
-            <header className="grid grid-cols-3 items-center w-full mx-auto p-6">
+            {/* 3-Section Premium Top Bar - perfectly aligned with sidebar's p-6 header - desktop only */}
+            <header className="hidden lg:grid grid-cols-3 items-center w-full mx-auto p-6">
               {/* Left: Players Info - Compact and matching sidebar style */}
               <div className="flex justify-start">
                 <div className="flex items-center gap-4 px-6 py-4 bg-white/[0.03] rounded-2xl border border-white/10 group hover:border-blue-500/30 transition-all duration-500 h-[76px]">
@@ -707,7 +727,7 @@ export default function Arena() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 sm:gap-6">
                   {/* Slots for up to 8 players, centered in their grid */}
                   {Array.from({ length: 8 }).map((_, i) => {
                     const p = players[i];
