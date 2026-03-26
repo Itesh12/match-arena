@@ -21,9 +21,10 @@ const corsOptions = {
       process.env.CORS_ORIGIN,
       'https://match-arena-bmdh.vercel.app',
       'http://localhost:3000',
-      'http://127.0.0.1:3000'
+      'http://127.0.0.1:3000',
+      'https://match-arena.vercel.app'
     ].filter(Boolean);
-    
+
     if (!origin || allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
       callback(null, true);
     } else {
@@ -52,8 +53,8 @@ const gameEngine = new GameEngine(io);
 
 // Health Check for Deployment
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'online', 
+  res.json({
+    status: 'online',
     mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
     timestamp: new Date()
   });
