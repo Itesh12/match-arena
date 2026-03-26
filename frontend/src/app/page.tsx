@@ -9,6 +9,7 @@ import { LogOut, LayoutDashboard, Shield, Coins, Globe, Trophy, CheckCircle2, XC
 import { useTranslation } from 'react-i18next';
 import { getRankTier } from '@/utils/ranks';
 import Toast from '@/components/Toast';
+import ConfirmModal from '@/components/ConfirmModal';
 import { API_URL } from '@/config';
 
 export default function Lobby() {
@@ -21,6 +22,9 @@ export default function Lobby() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [isLoadingFriends, setIsLoadingFriends] = useState(false);
   const [notification, setNotification] = useState<{ msg: string, type: 'success' | 'error' } | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingAction, setPendingAction] = useState<{ type: 'create' | 'join', roomId?: string } | null>(null);
+  
   const socket = useSocket();
   const { user, roomId, setRoomId, logout, fetchStats, token } = useGameStore();
   const { initialized } = useAuth();
@@ -120,15 +124,45 @@ export default function Lobby() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
   };
 
-  const handleCreate = () => {
+  const handleCreate = (bypassCheck = false) => {
     if (!user || !socket) return;
+    if (roomId && !bypassCheck) {
+      setPendingAction({ type: 'create' });
+      setShowConfirmModal(true);
+      return;
+    }
     const newRoom = generateRoomCode();
     joinRoom(newRoom);
   };
 
-  const handleJoin = () => {
+  const handleJoin = (bypassCheck = false) => {
     if (!room) return;
+    if (roomId && !bypassCheck) {
+      setPendingAction({ type: 'join', roomId: room.toUpperCase() });
+      setShowConfirmModal(true);
+      return;
+    }
     joinRoom(room.toUpperCase());
+  };
+
+  const handleConfirmModal = () => {
+    if (!pendingAction) return;
+    if (pendingAction.type === 'create') {
+      handleCreate(true);
+    } else {
+      const roomToJoin = pendingAction.roomId || room.toUpperCase();
+      joinRoom(roomToJoin);
+    }
+    setShowConfirmModal(false);
+    setPendingAction(null);
+  };
+
+  const handleRejoin = () => {
+    if (roomId) {
+      router.push(`/arena/${roomId}`);
+    }
+    setShowConfirmModal(false);
+    setPendingAction(null);
   };
 
   const joinRoom = (roomId: string) => {
@@ -158,7 +192,7 @@ export default function Lobby() {
           <select 
             value={i18n.language} 
             onChange={(e) => i18n.changeLanguage(e.target.value)}
-            className="bg-transparent text-[10px] font-black uppercase tracking-widest text-white/60 focus:outline-none cursor-pointer"
+            className="bg-transparent text-[10px] font-black uppercase tracking-widest text-white/60 focus:outline-none cursor-pointer appearance-none"
           >
             <option value="en" className="bg-[#020617]">English</option>
             <option value="hi" className="bg-[#020617]">हिंदी</option>
@@ -204,7 +238,7 @@ export default function Lobby() {
           <div className="inline-block px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
             {t('dashboard.math_arena_v1')}
           </div>
-          <h1 className="text-7xl font-black mb-1 tracking-tighter text-white drop-shadow-[0_0_40px_rgba(59,130,246,0.3)] animate-pulse-slow">
+          <h1 className="text-7xl font-black mb-1 tracking-tighter text-white drop-shadow-[0_0_40px_rgba(59,130,246,0.3)]">
             {user.username}
           </h1>
           <div className="mt-6 flex flex-col items-center gap-3">
@@ -225,7 +259,6 @@ export default function Lobby() {
         </div>
         
         {view === 'history' ? (
-          // ... history view ...
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar text-left animate-in slide-in-from-right-10 duration-500">
              {isLoadingHistory ? (
                <div className="text-center py-10 text-slate-500 font-bold animate-pulse">{t('dashboard.loading_history')}</div>
@@ -329,10 +362,7 @@ export default function Lobby() {
             )}
             
             <button
-              onClick={() => {
-                if (roomId && !confirm(t('dashboard.rejoin_confirm'))) return;
-                handleCreate();
-              }}
+              onClick={() => handleCreate()}
               className="group relative w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-6 rounded-[24px] shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] transform active:scale-[0.97] transition-all overflow-hidden"
             >
               <div className="relative z-10 flex items-center justify-center gap-3 text-lg">
@@ -370,10 +400,7 @@ export default function Lobby() {
                 {t('dashboard.cancel')}
               </button>
               <button
-                onClick={() => {
-                  if (roomId && !confirm(t('dashboard.rejoin_confirm'))) return;
-                  handleJoin();
-                }}
+                onClick={() => handleJoin()}
                 className="flex-[2] bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-500/20 transition-all active:scale-95"
               >
                 {t('dashboard.join_game')}
@@ -407,6 +434,16 @@ export default function Lobby() {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        show={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirmModal}
+        onRejoin={handleRejoin}
+        title={t('dashboard.rejoin_title')}
+        message={t('dashboard.rejoin_confirm')}
+        roomId={roomId}
+      />
 
       <Toast 
         show={!!notification} 
