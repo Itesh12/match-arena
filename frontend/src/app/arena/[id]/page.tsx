@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
-import { Trophy, Timer, User, Users, CheckCircle2, XCircle, Play, Shield, LogOut, Skull, ShieldCheck, Zap, Globe, Info } from 'lucide-react';
+import { Trophy, Timer, User, Users, CheckCircle2, XCircle, Play, Shield, LogOut, Skull, ShieldCheck, Zap, Globe, Info, Copy, MousePointer2 } from 'lucide-react';
 import Toast from '@/components/Toast';
 
 export default function Arena() {
