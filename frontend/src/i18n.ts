@@ -77,7 +77,11 @@ i18n
             powerup_granted: "Power-up Granted: {{type}}!",
             power_up_granted: "Power-up Granted",
             powerup_used: "{{username}} used {{type}}!",
-            used: "used"
+            used: "used",
+            lobby_protocol: "Lobby Protocol v1.4",
+            copy_success: "Room code copied to clipboard",
+            room_code: "Room Code",
+            active: "Active"
           },
           dashboard: {
             welcome: "Welcome back",
@@ -135,9 +139,6 @@ i18n
             powerups: "Power-ups",
             you: "YOU",
             ready: "READY",
-            copy_success: "Room code copied to clipboard",
-            used: "used",
-            lobby_protocol: "Lobby Protocol v1.4",
             question_short: "Q"
           },
           auth: {
@@ -343,9 +344,10 @@ i18n
             powerups: "पावर-अप",
             you: "आप",
             ready: "तैयार",
-            copy_success: "रूम कोड क्लिपबोर्ड पर कॉपी किया गया",
-            used: "उपयोग किया गया",
             lobby_protocol: "लॉबी प्रोटोकॉल v1.4",
+            copy_success: "रूम कोड क्लिपबोर्ड पर कॉपी किया गया",
+            room_code: "कमरा कोड",
+            active: "सक्रिय",
             question_short: "प्र"
           },
           dashboard: {

@@ -570,225 +570,202 @@ export default function Arena() {
       {/* Main Game Area */}
       <div className="relative z-10 flex-1 p-6 lg:p-12 flex flex-col h-full lg:min-h-screen">
         {gameStatus === 'waiting' ? (
-          <div className="flex-1 flex flex-col animate-in fade-in zoom-in duration-700 h-full">
-            {/* 3-Section Premium Top Bar */}
-            <header className="grid grid-cols-3 items-center w-full max-w-7xl mx-auto pt-4 pb-8 px-6">
-              {/* Left: Players Info */}
+          <div className="flex-1 flex flex-col h-full overflow-y-auto">
+            {/* 3-Section Premium Top Bar - Centered Content */}
+            <header className="grid grid-cols-3 items-center w-full max-w-7xl mx-auto pt-6 pb-12 px-6">
+              {/* Left: Players Info - Compact and matching sidebar style */}
               <div className="flex justify-start">
-                <div className="flex items-center gap-6 px-6 py-3 bg-white/[0.03] rounded-3xl border border-white/10 shadow-2xl backdrop-blur-xl group hover:border-blue-500/30 transition-all duration-500">
+                <div className="flex items-center gap-4 px-5 py-2.5 bg-white/[0.03] rounded-2xl border border-white/10 group hover:border-blue-500/30 transition-all duration-500">
                   <div className="relative">
-                    <div className="absolute -inset-2 bg-blue-500/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <Users className="w-6 h-6 text-blue-400 animate-pulse relative z-10" />
+                    <Users className="w-5 h-5 text-blue-400 opacity-60 group-hover:opacity-100 transition-opacity" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black tracking-tight text-white flex items-center gap-2.5">
-                      {t('arena.players')}
-                      <span className="px-3 py-0.5 bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[10px] font-black rounded-full shadow-lg shadow-blue-500/10">
-                        {players.length}
-                      </span>
-                    </h3>
-                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] leading-none mt-1.5 flex items-center gap-2">
+                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] leading-none flex items-center gap-2">
+                       {t('arena.players')}
+                       <span className="text-white ml-1">{players.length}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-1.5">
                        <span className="w-1 h-1 bg-green-500 rounded-full animate-ping"></span>
-                       {t('arena.waiting_for_players')}
-                    </p>
+                       <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest">{t('arena.active')}</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Center: Branding Logo */}
+              {/* Center: Branding Logo - Refined */}
               <div className="flex justify-center">
                 <div className="relative group cursor-default">
-                  <div className="absolute -inset-4 bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-purple-600/20 rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
-                  <div className="relative flex items-center gap-4 px-8 py-3 glass rounded-[40px] border border-white/10 shadow-2xl overflow-hidden group-hover:border-white/20 transition-all duration-700">
-                    <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center border border-white/10 shadow-xl transform rotate-3 group-hover:rotate-12 transition-transform">
-                      <Zap className="w-5 h-5 text-blue-400" />
+                  <div className="absolute -inset-4 bg-blue-600/10 rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
+                  <div className="relative flex items-center gap-4 px-8 py-3 glass rounded-full border border-white/5 shadow-2xl overflow-hidden group-hover:border-white/10 transition-all duration-700">
+                    <div className="w-8 h-8 bg-slate-950 rounded-lg flex items-center justify-center border border-white/5 transform rotate-3 group-hover:rotate-12 transition-transform">
+                      <Zap className="w-4 h-4 text-blue-400" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-lg font-black tracking-tighter text-white uppercase leading-none">{t('arena.math_arena')}</span>
-                      <span className="text-[8px] font-bold text-blue-400/60 uppercase tracking-[0.3em] mt-1.5">{t('arena.premium_engine')}</span>
+                      <span className="text-sm font-black tracking-widest text-white uppercase leading-none">{t('arena.math_arena')}</span>
+                      <span className="text-[7px] font-black text-blue-400/40 uppercase tracking-[0.4em] mt-1.5 text-center">{t('arena.premium_engine')}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Right: Actions & Language */}
+              {/* Right: Actions & Language - Matching style */}
               <div className="flex justify-end items-center gap-4">
-                <div className="flex items-center gap-3 px-6 py-3 bg-white/[0.03] rounded-3xl border border-white/10 shadow-2xl backdrop-blur-xl group/lang hover:border-white/20 transition-all duration-500">
-                  <Globe className="w-5 h-5 text-blue-400 group-hover:rotate-12 transition-transform" />
-                  <select 
-                    value={i18n.language} 
-                    onChange={(e) => i18n.changeLanguage(e.target.value)}
-                    className="bg-transparent text-[11px] font-black uppercase tracking-widest text-white/80 focus:outline-none cursor-pointer appearance-none hover:text-white transition-colors"
-                  >
-                    <option value="en" className="bg-[#020617]">English</option>
-                    <option value="hi" className="bg-[#020617]">हिंदी</option>
-                  </select>
+                <div className="flex items-center gap-3 px-5 py-2.5 bg-white/[0.03] rounded-2xl border border-white/10 group/lang hover:border-white/20 transition-all duration-500">
+                  <Globe className="w-4 h-4 text-blue-400 opacity-60 group-hover:rotate-12 transition-transform" />
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">{t('dashboard.language')}</span>
+                    <select 
+                      value={i18n.language} 
+                      onChange={(e) => i18n.changeLanguage(e.target.value)}
+                      className="bg-transparent text-[10px] font-black uppercase tracking-[0.2em] text-white/80 focus:outline-none cursor-pointer appearance-none hover:text-white transition-colors"
+                    >
+                      <option value="en" className="bg-[#020617]">English</option>
+                      <option value="hi" className="bg-[#020617]">हिंदी</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </header>
 
-            {/* Vertically Centered Content Area */}
-            <div className="flex-1 flex items-center justify-center p-4">
-              <div className="w-full max-w-6xl mx-auto">
-                <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 items-center">
-                  {/* Left Column: Game Status & Modes */}
-                  <div className="xl:col-span-4 space-y-6">
-                    <div className="relative group/main">
-                      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-[40px] blur-2xl opacity-50 group-hover/main:opacity-100 transition-opacity duration-1000"></div>
-                      <div className="relative glass rounded-[40px] p-10 border border-white/10 shadow-2xl overflow-hidden">
-                        <div className="absolute top-0 right-0 p-8 opacity-5">
-                          <div className="text-9xl italic font-serif leading-none">∑</div>
+            {/* Vertically Centered Content Area - Changed to Centered Stack */}
+            <div className="flex-1 flex flex-col items-center justify-start p-4 space-y-12 pb-20">
+              {/* Main Math Arena Card - Perfectly Centered */}
+              <div className="w-full max-w-xl mx-auto">
+                <div className="relative group/main">
+                  <div className="absolute -inset-10 bg-blue-600/10 rounded-full blur-[100px] opacity-0 group-hover/main:opacity-100 transition-opacity duration-1000"></div>
+                  <div className="relative glass rounded-[48px] p-12 border border-white/10 shadow-3xl text-center overflow-hidden">
+                    {/* Background ∑ Decoration */}
+                    <div className="absolute top-0 right-0 p-12 opacity-[0.03]">
+                      <div className="text-[200px] italic font-serif leading-none">∑</div>
+                    </div>
+
+                    {countdown !== null ? (
+                      <div className="py-10">
+                        <div className="relative w-40 h-40 mx-auto mb-10">
+                          <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping opacity-25"></div>
+                          <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full shadow-[0_0_80px_rgba(37,99,235,0.4)] flex items-center justify-center border-4 border-white/10">
+                            <span className="text-8xl font-black italic text-white animate-in zoom-in duration-500">{countdown}</span>
+                          </div>
+                        </div>
+                        <h2 className="text-[10px] font-black tracking-[0.8em] text-blue-400 animate-pulse uppercase translate-x-[0.4em]">
+                          {t('arena.get_ready')}
+                        </h2>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="mb-12">
+                          <div className="inline-block px-4 py-1.5 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-[9px] font-black uppercase tracking-[0.4em] mb-8">
+                            {t('arena.lobby_protocol')}
+                          </div>
+                          <h2 className="text-7xl font-black mb-6 tracking-tighter text-white leading-[0.8]">
+                            {t('arena.math_arena')}
+                          </h2>
+                          <p className="text-slate-400 font-medium text-lg max-w-sm mx-auto leading-relaxed">
+                            {t('arena.share_code_message')}
+                          </p>
                         </div>
 
-                        {countdown !== null ? (
-                          <div className="text-center py-10">
-                             <div className="relative w-32 h-32 mx-auto mb-6">
-                                <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping opacity-25"></div>
-                                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full shadow-[0_0_50px_rgba(37,99,235,0.4)] flex items-center justify-center border-4 border-white/10">
-                                  <span className="text-6xl font-black italic">{countdown}</span>
-                                </div>
-                             </div>
-                             <h2 className="text-3xl font-black tracking-tighter text-blue-400 animate-pulse uppercase leading-none">{t('arena.get_ready')}</h2>
+                        {/* Secret Code Centered Widget */}
+                        <div className="mb-12 relative group/code inline-block mx-auto min-w-[280px]">
+                          <div className="absolute -inset-4 bg-blue-500/10 blur-xl opacity-0 group-hover/code:opacity-100 transition-opacity"></div>
+                          <div 
+                            className="relative bg-white/[0.03] border border-white/10 rounded-[32px] p-8 cursor-pointer active:scale-[0.98] transition-all hover:bg-white/[0.05] duration-500 shadow-2xl"
+                            onClick={() => {
+                              navigator.clipboard.writeText(id as string);
+                              setShowCopyMessage(true);
+                              setTimeout(() => setShowCopyMessage(false), 2000);
+                            }}
+                          >
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-[8px] font-black uppercase tracking-widest text-white shadow-lg">
+                              {t('arena.room_code')}
+                            </div>
+                            <div className="text-5xl font-black font-mono tracking-[0.3em] text-white flex items-center justify-center py-4 pl-4">
+                              {id}
+                              <Copy className="ml-4 w-5 h-5 text-blue-400/40 group-hover/code:text-blue-400 transition-colors" />
+                            </div>
+                            <div className="flex items-center justify-center gap-2 text-slate-600 group-hover/code:text-slate-400 transition-colors mt-4">
+                              <MousePointer2 className="w-3 h-3" />
+                              <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('arena.click_to_copy')}</span>
+                            </div>
                           </div>
-                        ) : (
-                          <>
-                            <div className="mb-10 lg:text-left text-center">
-                              <span className="inline-block px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
-                                {t('arena.lobby_protocol')}
-                              </span>
-                              <h2 className="text-5xl font-black mb-4 tracking-tighter text-white leading-[0.9]">{t('arena.math_arena')}</h2>
-                              <p className="text-slate-400 font-medium text-sm leading-relaxed">{t('arena.share_code_message')}</p>
-                            </div>
+                        </div>
 
-                            {socket?.id === ownerSocketId && (
-                              <div className="space-y-4 mb-10 text-left">
-                                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 inline-flex items-center gap-2">
-                                  <Zap className="w-3 h-3" />
-                                  {t('arena.select_gameplay_mode')}
-                                </h3>
-                                <div className="grid grid-cols-1 gap-3">
-                                  {[
-                                    { id: 'standard', name: t('arena.mode_standard'), desc: t('arena.mode_standard_desc') },
-                                    { id: 'sudden_death', name: t('arena.mode_sudden_death'), desc: t('arena.mode_sudden_death_desc') },
-                                    { id: 'double_jeopardy', name: t('arena.mode_double_jeopardy'), desc: t('arena.mode_double_jeopardy_desc') },
-                                    { id: 'team_battle', name: t('arena.mode_team_battle'), desc: t('arena.mode_team_battle_desc') }
-                                  ].map((m) => (
-                                    <button
-                                      key={m.id}
-                                      onClick={() => setSelectedMode(m.id as any)}
-                                      className={`p-4 rounded-2xl border transition-all duration-300 group/mode text-left ${selectedMode === m.id ? 'bg-blue-600 border-blue-500 shadow-xl shadow-blue-600/20' : 'bg-white/[0.03] border-white/10 hover:border-white/20'}`}
-                                    >
-                                      <div className="flex items-center justify-between mb-1">
-                                        <span className={`font-black text-xs uppercase tracking-wider ${selectedMode === m.id ? 'text-white' : 'text-slate-300 group-hover/mode:text-white'}`}>{m.name}</span>
-                                        {selectedMode === m.id && <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>}
-                                      </div>
-                                      <p className={`text-[10px] font-medium leading-tight ${selectedMode === m.id ? 'text-blue-100' : 'text-slate-500'}`}>{m.desc}</p>
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
+                        {/* Owner Controls / Waiting Info */}
+                        <div className="w-full max-w-sm mx-auto">
+                          {socket?.id === ownerSocketId ? (
                             <div className="space-y-4">
-                              {socket?.id === ownerSocketId ? (
-                                <>
-                                  <button
-                                    disabled={players.length < 2}
-                                    onClick={handleStart}
-                                    className={`group relative w-full h-[72px] font-black rounded-3xl shadow-2xl transition-all duration-500 flex items-center justify-center gap-4 overflow-hidden
-                                      ${players.length < 2
-                                        ? 'bg-slate-800 text-slate-500 cursor-not-allowed border-white/5 opacity-50'
-                                        : 'bg-white text-black hover:scale-[1.02] active:scale-[0.98]'}`}
-                                  >
-                                    {players.length >= 2 && <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-600/10 to-blue-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>}
-                                    <Play className={`w-5 h-5 ${players.length < 2 ? 'opacity-20 text-slate-400' : 'fill-current text-black'}`} />
-                                    <span className="relative z-10 text-lg tracking-tight uppercase">
-                                      {players.length < 2 ? t('arena.need_players') : t('arena.start_game')}
-                                    </span>
-                                  </button>
-                                  {players.length < 2 && (
-                                    <p className="text-[10px] font-black text-amber-500/60 uppercase tracking-widest animate-pulse text-center">
-                                      {t('arena.min_players_required')}
-                                    </p>
-                                  )}
-                                </>
-                              ) : (
-                                <div className="h-[72px] flex items-center justify-center rounded-3xl bg-blue-500/10 border border-blue-500/20 text-blue-400 font-extrabold tracking-widest animate-pulse uppercase text-sm px-6 text-center leading-tight">
-                                  {t('arena.waiting_for_owner')}
-                                </div>
-                              )}
+                              <button
+                                disabled={players.length < 2}
+                                onClick={handleStart}
+                                className={`group relative w-full h-16 font-black rounded-[2rem] shadow-2xl transition-all duration-500 flex items-center justify-center gap-4 overflow-hidden
+                                  ${players.length < 2
+                                    ? 'bg-white/5 text-slate-600 cursor-not-allowed border border-white/5'
+                                    : 'bg-white text-black hover:scale-[1.02] active:scale-[0.98]'}`}
+                              >
+                                <Play className={`w-5 h-5 ${players.length < 2 ? 'opacity-20' : 'fill-current'}`} />
+                                <span className="relative z-10 text-lg tracking-tight uppercase">
+                                  {players.length < 2 ? t('arena.need_players') : t('arena.start_game')}
+                                </span>
+                              </button>
                             </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Secret Code Card */}
-                    <div className="bg-slate-900 border border-white/10 rounded-[32px] p-6 relative group/code cursor-pointer active:scale-[0.98] transition-all hover:bg-slate-800 duration-500 shadow-2xl mt-6"
-                      onClick={() => {
-                        navigator.clipboard.writeText(id as string);
-                        setShowCopyMessage(true);
-                        setTimeout(() => setShowCopyMessage(false), 2000);
-                      }}>
-                      <div className="absolute top-4 right-6 flex items-center gap-2">
-                        <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest leading-none">{t('arena.secret_code')}</span>
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-                      </div>
-                      <div className="text-4xl font-black font-mono tracking-[0.25em] text-white flex items-center justify-center py-4 bg-black/20 rounded-2xl border border-white/5 my-4">
-                        {id}
-                      </div>
-                      <div className="flex items-center justify-center gap-2 text-slate-500 group-hover/code:text-white transition-colors">
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('arena.click_to_copy')}</span>
-                      </div>
-                    </div>
+                          ) : (
+                            <div className="h-16 flex items-center justify-center rounded-[2rem] bg-blue-500/5 border border-blue-500/10 text-blue-400 font-extrabold tracking-[0.2em] animate-pulse uppercase text-xs px-10 text-center leading-tight">
+                              {t('arena.waiting_for_owner')}
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </div>
+                </div>
+              </div>
 
-                  {/* Right Column: Player Grid */}
-                  <div className="xl:col-span-8">
-                    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
-                      {players.map((p, idx) => (
-                        <div key={p.id} className="animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${idx * 100}ms` }}>
-                          <div className={`relative group/p aspect-square rounded-[32px] border transition-all duration-500 flex flex-col items-center justify-center p-6 gap-4 ${
-                            p.username === user?.username 
-                              ? 'bg-blue-600/10 border-blue-500/40 shadow-xl shadow-blue-500/5' 
-                              : 'bg-white/[0.03] border-white/10 hover:border-white/20'
-                          }`}>
+              {/* Player Grid - Now Centered Below Math Arena Card */}
+              <div className="w-full max-w-5xl mx-auto space-y-8 animate-in slide-in-from-bottom-5 duration-700 delay-300">
+                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                  <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-2">
+                    <Users className="w-3 h-3" />
+                    {t('arena.participants')}
+                  </h3>
+                  <div className="px-3 py-1 rounded-full bg-white/5 text-[10px] font-black text-white/50 tracking-widest uppercase">
+                    {players.length} / 8
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-6">
+                  {/* Slots for up to 8 players, centered in their grid */}
+                  {Array.from({ length: 8 }).map((_, i) => {
+                    const p = players[i];
+                    return (
+                      <div key={i} className={`aspect-square rounded-[2rem] border transition-all duration-500 flex flex-col items-center justify-center p-4 gap-3 ${
+                        p 
+                          ? p.username === user?.username 
+                            ? 'glass border-blue-500/40 shadow-xl shadow-blue-500/10' 
+                            : 'bg-white/[0.03] border-white/10 hover:border-white/20'
+                          : 'bg-white/[0.01] border-white/5 opacity-20'
+                      }`}>
+                        {p ? (
+                          <>
                             <div className="relative">
-                               <div className={`w-16 h-16 rounded-3xl flex items-center justify-center text-2xl font-black transition-all duration-500 ${
-                                 p.username === user?.username ? 'bg-blue-600 text-white rotate-3 group-hover/p:-rotate-3' : 'bg-slate-800 text-slate-400 group-hover/p:bg-slate-700'
+                               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black transition-all duration-500 ${
+                                 p.username === user?.username ? 'bg-blue-600 text-white' : 'bg-slate-900 border border-white/5 text-slate-500'
                                }`}>
                                  {p.username[0].toUpperCase()}
                                </div>
-                               {p.id === ownerSocketId && (
-                                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center border-4 border-[#020617] shadow-xl">
-                                    <Trophy className="w-4 h-4 text-[#020617]" />
-                                  </div>
-                               )}
+                               <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#020617] shadow-lg" />
                             </div>
-                            <div className="text-center">
-                              <span className="block text-sm font-black text-white mb-1 tracking-tight truncate max-w-[120px]">{p.username}</span>
-                              <div className="flex items-center justify-center gap-1.5">
-                                <span className={`w-1.5 h-1.5 rounded-full ${p.username === user?.username ? 'bg-blue-400 animate-pulse' : 'bg-green-500'}`}></span>
-                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
-                                  {p.username === user?.username ? t('arena.you') : t('arena.ready')}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                      
-                      {/* Empty Slots */}
-                      {Array.from({ length: Math.max(0, 8 - players.length) }).map((_, i) => (
-                        <div key={`empty-${i}`} className="aspect-square rounded-[32px] border border-dashed border-white/5 flex flex-col items-center justify-center opacity-30">
-                           <div className="w-12 h-12 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-3">
-                              <Users className="w-5 h-5 text-white/20" />
+                            <span className="block text-[10px] font-black text-white/80 uppercase tracking-tight truncate w-full text-center px-2">
+                              {p.username}
+                            </span>
+                          </>
+                        ) : (
+                           <div className="w-10 h-10 rounded-xl border-2 border-dashed border-white/5 flex items-center justify-center">
+                              <Users className="w-4 h-4 text-white/5" />
                            </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
