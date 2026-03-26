@@ -136,7 +136,9 @@ i18n
             you: "YOU",
             ready: "READY",
             copy_success: "Room code copied to clipboard",
-            used: "used"
+            used: "used",
+            lobby_protocol: "Lobby Protocol v1.4",
+            question_short: "Q"
           },
           auth: {
             welcome_back: "Welcome Back",
@@ -342,7 +344,9 @@ i18n
             you: "आप",
             ready: "तैयार",
             copy_success: "रूम कोड क्लिपबोर्ड पर कॉपी किया गया",
-            used: "उपयोग किया गया"
+            used: "उपयोग किया गया",
+            lobby_protocol: "लॉबी प्रोटोकॉल v1.4",
+            question_short: "प्र"
           },
           dashboard: {
             welcome: "वापसी पर स्वागत है",
