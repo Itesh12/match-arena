@@ -299,7 +299,7 @@ export default function AdminDashboard() {
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all mb-2 ${activeTab === 'system' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
           >
             <Database className="w-5 h-5" />
-            <span className="font-bold text-sm">System Reset</span>
+            <span className="font-bold text-sm">{t('admin.headers.system')}</span>
             {activeTab === 'system' && <ChevronRight className="ml-auto w-4 h-4" />}
           </button>
         </nav>
@@ -565,9 +565,9 @@ export default function AdminDashboard() {
                   <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 font-mono">{t('admin.security_protocol')}</h3>
                   <ul className="space-y-4">
                     {[
-                      'All actions are logged with Admin ID and Timestamp.',
-                      'Active sessions for affected users will be instantly invalidated.',
-                      'Media assets associated with deleted records will be queued for cleanup.'
+                      t('admin.system.protocol'),
+                      t('admin.system.session_msg'),
+                      t('admin.system.media_msg')
                     ].map((text, i) => (
                       <li key={i} className="flex items-center gap-3 text-[10px] font-black text-slate-500 uppercase tracking-widest">
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
@@ -615,7 +615,7 @@ export default function AdminDashboard() {
                   {copied ? (
                     <>
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-[10px] font-black text-green-500 uppercase tracking-widest">Copied</span>
+                      <span className="text-[10px] font-black text-green-500 uppercase tracking-widest">{t('admin.modals.copied')}</span>
                     </>
                   ) : (
                     <>
@@ -658,7 +658,7 @@ export default function AdminDashboard() {
                 onClick={confirmConfig.onConfirm}
                 className={`flex-1 px-6 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-white transition-all shadow-lg active:scale-95 ${confirmConfig.variant === 'danger' ? 'bg-red-600 hover:bg-red-500 shadow-red-500/20' : confirmConfig.variant === 'warning' ? 'bg-amber-600 hover:bg-amber-500 shadow-amber-500/20' : 'bg-blue-600 hover:bg-blue-500 shadow-blue-500/20'}`}
               >
-                {confirmConfig.actionLabel || 'Confirm'}
+                {confirmConfig.actionLabel || t('common.confirm')}
               </button>
             </div>
           </div>

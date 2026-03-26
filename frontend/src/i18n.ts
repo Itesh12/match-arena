@@ -124,7 +124,19 @@ i18n
             gold: "Gold Tier",
             platinum: "Platinum Tier",
             diamond: "Diamond Tier",
-            master: "Master Tier"
+            master: "Master Tier",
+            rematch_requested: "Rematch Requested!",
+            wants_to_play_again: "wants to play again!",
+            accepted: "Accepted",
+            rejected: "Rejected",
+            accept: "Accept",
+            reject: "Reject",
+            waiting_others: "Waiting for others...",
+            powerups: "Power-ups",
+            you: "YOU",
+            ready: "READY",
+            copy_success: "Room code copied to clipboard",
+            used: "used"
           },
           auth: {
             welcome_back: "Welcome Back",
@@ -152,7 +164,11 @@ i18n
             email_placeholder: "your@email.com",
             reset_success: "Password reset instructions sent!",
             reset_failed: "Failed to send reset instructions",
-            password_mismatch: "Passwords do not match"
+            password_mismatch: "Passwords do not match",
+            backend_status: "Backend",
+            online: "Online",
+            checking: "Checking...",
+            offline: "Offline"
           },
           admin: {
             title: "Admin Center",
@@ -160,7 +176,7 @@ i18n
               monitor: "Arena Monitor",
               users: "User Management",
               system: "System Reset",
-              root: "Root Admin",
+              root_admin: "Root Admin",
               back: "Back to Application"
             },
             headers: {
@@ -217,7 +233,7 @@ i18n
               terminate_arenas: "Terminate Arenas",
               terminate_arenas_desc: "Close all active game clusters",
               execute: "Execute Platform-Wide Reset",
-              protocol: "Security Protocol",
+              protocol: "All actions are logged with Admin ID and Timestamp.",
               log_msg: "All actions are logged with Admin ID and Timestamp.",
               session_msg: "Active sessions for affected users will be instantly invalidated.",
               media_msg: "Media assets associated with deleted records will be queued for cleanup."
@@ -232,6 +248,18 @@ i18n
               critical_msg: "You are about to PERMANENTLY delete data for: {{options}}. This action is destructive.",
               execute_btn: "Execute Reset"
             }
+          },
+          common: {
+            cancel: "Cancel",
+            confirm: "Confirm",
+            yes_leave: "Yes, Leave",
+            save: "Save",
+            delete: "Delete",
+            close: "Close",
+            loading: "Loading...",
+            error: "An error occurred",
+            success: "Success",
+            back: "Back"
           }
         }
       },
@@ -303,7 +331,18 @@ i18n
             quit_session: "सत्र छोड़ें",
             abandon_arena: "अखाड़ा त्यागें",
             powerup_granted: "पावर-अप मिला: {{type}}!",
-            powerup_used: "{{username}} ने {{type}} का उपयोग किया!"
+            powerup_used: "{{username}} ने {{type}} का उपयोग किया!",
+            rematch_requested: "रीमैच का अनुरोध किया गया!",
+            wants_to_play_again: "फिर से खेलना चाहता है!",
+            accepted: "स्वीकृत",
+            rejected: "अस्वीकृत",
+            accept: "स्वीकार करें",
+            reject: "अस्वीकार करें",
+            powerups: "पावर-अप",
+            you: "आप",
+            ready: "तैयार",
+            copy_success: "रूम कोड क्लिपबोर्ड पर कॉपी किया गया",
+            used: "उपयोग किया गया"
           },
           dashboard: {
             welcome: "वापसी पर स्वागत है",
@@ -378,7 +417,11 @@ i18n
             email_placeholder: "your@email.com",
             reset_success: "पासवर्ड रीसेट निर्देश भेजे गए!",
             reset_failed: "रीसेट निर्देश भेजने में विफल",
-            password_mismatch: "पासवर्ड मेल नहीं खाते"
+            password_mismatch: "पासवर्ड मेल नहीं खाते",
+            backend_status: "बैकएंड",
+            online: "ऑनलाइन",
+            checking: "जाँच हो रही है...",
+            offline: "ऑफलाइन"
           },
           admin: {
             title: "प्रशासन केंद्र",
@@ -386,7 +429,7 @@ i18n
               monitor: "अखाड़ा मॉनिटर",
               users: "उपयोगकर्ता प्रबंधन",
               system: "सिस्टम रीसेट",
-              root: "मुख्य एडमिन",
+              root_admin: "रूट एडमिन",
               back: "एप्लिकेशन पर वापस"
             },
             headers: {
@@ -458,6 +501,18 @@ i18n
               critical_msg: "आप इनके लिए स्थायी रूप से डेटा हटाने वाले हैं: {{options}}। यह क्रिया विनाशकारी है।",
               execute_btn: "रीसेट निष्पादित करें"
             }
+          },
+          common: {
+            cancel: "रद्द करें",
+            confirm: "पुष्टि करें",
+            yes_leave: "हाँ, छोड़ें",
+            save: "सहेजें",
+            delete: "हटाएं",
+            close: "बंद करें",
+            loading: "लोड हो रहा है...",
+            error: "एक त्रुटि हुई",
+            success: "सफलता",
+            back: "वापस"
           }
         }
       }

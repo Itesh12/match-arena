@@ -76,7 +76,7 @@ export default function Login() {
           <div className="flex items-center justify-center gap-2 mt-2">
             <div className={`w-2 h-2 rounded-full ${backendStatus === 'online' ? 'bg-green-500 animate-pulse' : backendStatus === 'checking' ? 'bg-slate-500' : 'bg-red-500'}`}></div>
             <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
-              Backend {backendStatus === 'online' ? 'Online' : backendStatus === 'checking' ? 'Checking...' : 'Offline'}
+              {t('auth.backend_status')} {backendStatus === 'online' ? t('auth.online') : backendStatus === 'checking' ? t('auth.checking') : t('auth.offline')}
             </span>
           </div>
           <p className="text-slate-500 font-medium text-sm mt-3">{t('auth.login_subtitle')}</p>

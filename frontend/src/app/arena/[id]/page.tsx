@@ -253,7 +253,7 @@ export default function Arena() {
           </div>
           <div className="flex flex-col gap-3">
             <button onClick={onConfirm} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-2xl transition-all active:scale-[0.98]">
-              {isConfirmation ? t('common.yes_leave') : t('common.ok')}
+              {isConfirmation ? t('common.yes_leave') : t('common.confirm')}
             </button>
             {isConfirmation && (
               <button onClick={() => setShowExitModal(false)} className="w-full bg-white/5 hover:bg-white/10 text-white font-bold py-5 rounded-2xl transition-all active:scale-[0.98]">
@@ -571,25 +571,34 @@ export default function Arena() {
       <div className="relative z-10 flex-1 p-6 lg:p-12 flex flex-col h-full lg:min-h-screen">
         {gameStatus === 'waiting' ? (
           <div className="flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in duration-700">
-            <header className="flex items-center justify-between mb-10">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.4)]">
-                  <Users className="w-6 h-6 text-white" />
+            <header className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-6">
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                  <div className="relative w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center border border-white/10 shadow-2xl">
+                    <Users className="w-7 h-7 text-blue-400 animate-pulse" />
+                  </div>
                 </div>
                 <div>
-                  <h3 className="text-xl font-black tracking-tight text-white">{t('arena.players')}</h3>
-                  <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none mt-1">
+                  <h3 className="text-2xl font-black tracking-tight text-white flex items-center gap-3">
+                    {t('arena.players')}
+                    <span className="px-2.5 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black rounded-full">
+                      {players.length}
+                    </span>
+                  </h3>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] leading-none mt-1.5 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
                     {t('arena.waiting_for_players')}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-2xl border border-white/10">
+                <div className="flex items-center gap-3 px-5 py-2.5 bg-white/[0.03] rounded-2xl border border-white/10 shadow-xl backdrop-blur-md">
                   <Globe className="w-4 h-4 text-blue-400" />
                   <select 
                     value={i18n.language} 
                     onChange={(e) => i18n.changeLanguage(e.target.value)}
-                    className="bg-transparent text-[10px] font-black uppercase tracking-widest text-white/60 focus:outline-none cursor-pointer"
+                    className="bg-transparent text-[10px] font-black uppercase tracking-widest text-white/80 focus:outline-none cursor-pointer appearance-none hover:text-white transition-colors"
                   >
                     <option value="en" className="bg-[#020617]">English</option>
                     <option value="hi" className="bg-[#020617]">हिंदी</option>
@@ -597,136 +606,166 @@ export default function Arena() {
                 </div>
                 <button
                   onClick={() => setShowExitModal(true)}
-                  className="glass p-3 rounded-2xl border-white/5 hover:border-red-500/20 hover:bg-red-500/5 text-slate-400 hover:text-red-500 transition-all active:scale-[0.9]"
+                  className="group w-12 h-12 flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-red-500/10 hover:border-red-500/30 text-slate-400 hover:text-red-500 transition-all duration-300 active:scale-[0.9]"
                 >
-                  <LogOut className="w-5 h-5" />
+                  <LogOut className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" />
                 </button>
               </div>
             </header>
 
-            <div className="p-8 pb-4">
-              <div className="flex items-center justify-between mb-8">
-                <h1 className="text-3xl font-black italic tracking-tighter text-white">
-                  {t('arena.title').split(' ')[0]} <span className="text-blue-500">{t('arena.title').split(' ')[1]}</span>
-                </h1>
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-4">
-                    {players.slice(0, 3).map((p, i) => (
-                      <div key={p.id} className="w-10 h-10 rounded-full border-4 border-[#020617] bg-blue-600 flex items-center justify-center text-xs font-black shadow-2xl relative" style={{ zIndex: 10 - i }}>
-                        {p.username[0].toUpperCase()}
-                      </div>
-                    ))}
-                    {players.length > 3 && (
-                      <div className="w-10 h-10 rounded-full border-4 border-[#020617] bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400 relative" style={{ zIndex: 0 }}>
-                        +{players.length - 3}
-                      </div>
-                    )}
-                  </div>
-                  <div className="glass px-4 py-1.5 rounded-full border-white/5 text-[10px] font-black text-white/40 uppercase tracking-widest">
-                    {players.length} {t('arena.players')}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="relative z-10 max-w-2xl w-full">
-              {/* Central Hub Card */}
-              <div className="glass rounded-[56px] p-16 text-center shadow-2xl border-white/5 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
-
-                <div className="relative mb-12">
-                  {countdown !== null ? (
-                    <div className="relative mb-8">
-                      <div className="w-20 h-20 bg-blue-500/5 border border-blue-500/10 rounded-3xl flex items-center justify-center mx-auto mb-4 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-transparent animate-pulse"></div>
-                        <span className="text-4xl font-black text-blue-400 relative z-10">{countdown}</span>
-                      </div>
-                      <h2 className="text-2xl font-black tracking-tighter text-blue-400 animate-bounce uppercase">{t('arena.get_ready')}</h2>
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+              {/* Left Column: Game Status & Modes */}
+              <div className="xl:col-span-4 space-y-6">
+                <div className="relative group/main">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-[40px] blur-2xl opacity-50 group-hover/main:opacity-100 transition-opacity duration-1000"></div>
+                  <div className="relative glass rounded-[40px] p-10 border border-white/10 shadow-2xl overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 opacity-5">
+                      <div className="text-9xl italic font-serif leading-none">∑</div>
                     </div>
-                  ) : (
-                    <div className="w-20 h-20 bg-white/5 border border-white/5 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
-                      <div className="text-3xl text-blue-500 opacity-50 font-serif italic text-center leading-none">∑</div>
-                    </div>
-                  )}
 
-                  {countdown === null && (
-                    <>
-                      <h2 className="text-5xl font-black mb-4 tracking-tighter text-white">{t('arena.math_arena')}</h2>
-                      <p className="text-slate-400 font-medium max-w-sm mx-auto mb-8">{t('arena.share_code_message')}</p>
-
-                      {socket?.id === ownerSocketId && (
-                        <div className="w-full max-w-sm mx-auto mb-10 space-y-4 text-left">
-                          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">{t('arena.select_gameplay_mode')}</h3>
-                          <div className="grid grid-cols-1 gap-3">
-                            {[
-                              { id: 'standard', name: t('arena.mode_standard'), desc: t('arena.mode_standard_desc') },
-                      { id: 'sudden_death', name: t('arena.mode_sudden_death'), desc: t('arena.mode_sudden_death_desc') },
-                      { id: 'double_jeopardy', name: t('arena.mode_double_jeopardy'), desc: t('arena.mode_double_jeopardy_desc') },
-                      { id: 'team_battle', name: t('arena.mode_team_battle'), desc: t('arena.mode_team_battle_desc') }
-                    ].map((m) => (
-                              <button
-                                key={m.id}
-                                onClick={() => setSelectedMode(m.id as any)}
-                                className={`p-4 rounded-2xl border transition-all group ${selectedMode === m.id ? 'bg-blue-600 border-blue-500 shadow-xl shadow-blue-600/20' : 'bg-white/5 border-white/10 hover:border-white/20'}`}
-                              >
-                                <div className="flex items-center justify-between mb-1">
-                                  <span className={`font-black text-sm uppercase tracking-wider ${selectedMode === m.id ? 'text-white' : 'text-slate-300'}`}>{m.name}</span>
-                                  {selectedMode === m.id && <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>}
-                                </div>
-                                <p className={`text-[10px] font-medium ${selectedMode === m.id ? 'text-blue-100' : 'text-slate-500'}`}>{m.desc}</p>
-                              </button>
-                            ))}
-                          </div>
+                    {countdown !== null ? (
+                      <div className="text-center py-10">
+                         <div className="relative w-32 h-32 mx-auto mb-6">
+                            <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping opacity-25"></div>
+                            <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full shadow-[0_0_50px_rgba(37,99,235,0.4)] flex items-center justify-center border-4 border-white/10">
+                              <span className="text-6xl font-black italic">{countdown}</span>
+                            </div>
+                         </div>
+                         <h2 className="text-3xl font-black tracking-tighter text-blue-400 animate-pulse uppercase leading-none">{t('arena.get_ready')}</h2>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="mb-10 lg:text-left text-center">
+                          <span className="inline-block px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+                            Lobby Protocol v1.4
+                          </span>
+                          <h2 className="text-5xl font-black mb-4 tracking-tighter text-white leading-[0.9]">{t('arena.math_arena')}</h2>
+                          <p className="text-slate-400 font-medium text-sm leading-relaxed">{t('arena.share_code_message')}</p>
                         </div>
-                      )}
 
-                      {socket?.id === ownerSocketId ? (
-                        <div className="space-y-4 w-full">
-                          <button
-                            disabled={players.length < 2}
-                            onClick={handleStart}
-                            className={`group relative w-full font-black py-4 rounded-[20px] shadow-2xl transition-all flex items-center justify-center gap-4 mb-2
-                              ${players.length < 2
-                                ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-white/5 opacity-50'
-                                : 'bg-blue-600 hover:bg-blue-500 text-white active:scale-[0.98]'}`}
-                          >
-                            <Play className={`w-5 h-5 ${players.length < 2 ? 'opacity-20' : 'fill-current'}`} />
-                            <span className="relative z-10 transition-colors uppercase">
-                              {players.length < 2 ? t('arena.need_players') : t('arena.start_game')}
-                            </span>
-                            {players.length >= 2 && <div className="absolute inset-0 bg-white/10 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full"></div>}
-                          </button>
-                          {players.length < 2 && (
-                            <p className="text-[10px] font-black text-amber-500/60 uppercase tracking-widest animate-pulse">
-                              {t('arena.min_players_required')}
-                            </p>
+                        {socket?.id === ownerSocketId && (
+                          <div className="space-y-4 mb-10 text-left">
+                            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 inline-flex items-center gap-2">
+                              <Zap className="w-3 h-3" />
+                              {t('arena.select_gameplay_mode')}
+                            </h3>
+                            <div className="grid grid-cols-1 gap-3">
+                              {[
+                                { id: 'standard', name: t('arena.mode_standard'), desc: t('arena.mode_standard_desc') },
+                                { id: 'sudden_death', name: t('arena.mode_sudden_death'), desc: t('arena.mode_sudden_death_desc') },
+                                { id: 'double_jeopardy', name: t('arena.mode_double_jeopardy'), desc: t('arena.mode_double_jeopardy_desc') },
+                                { id: 'team_battle', name: t('arena.mode_team_battle'), desc: t('arena.mode_team_battle_desc') }
+                              ].map((m) => (
+                                <button
+                                  key={m.id}
+                                  onClick={() => setSelectedMode(m.id as any)}
+                                  className={`p-4 rounded-2xl border transition-all duration-300 group/mode text-left ${selectedMode === m.id ? 'bg-blue-600 border-blue-500 shadow-xl shadow-blue-600/20' : 'bg-white/[0.03] border-white/10 hover:border-white/20'}`}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className={`font-black text-xs uppercase tracking-wider ${selectedMode === m.id ? 'text-white' : 'text-slate-300 group-hover/mode:text-white'}`}>{m.name}</span>
+                                    {selectedMode === m.id && <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>}
+                                  </div>
+                                  <p className={`text-[10px] font-medium leading-tight ${selectedMode === m.id ? 'text-blue-100' : 'text-slate-500'}`}>{m.desc}</p>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="space-y-4">
+                          {socket?.id === ownerSocketId ? (
+                            <>
+                              <button
+                                disabled={players.length < 2}
+                                onClick={handleStart}
+                                className={`group relative w-full h-[72px] font-black rounded-3xl shadow-2xl transition-all duration-500 flex items-center justify-center gap-4 overflow-hidden
+                                  ${players.length < 2
+                                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed border-white/5 opacity-50'
+                                    : 'bg-white text-black hover:scale-[1.02] active:scale-[0.98]'}`}
+                              >
+                                {players.length >= 2 && <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-600/10 to-blue-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>}
+                                <Play className={`w-5 h-5 ${players.length < 2 ? 'opacity-20 text-slate-400' : 'fill-current text-black'}`} />
+                                <span className="relative z-10 text-lg tracking-tight uppercase">
+                                  {players.length < 2 ? t('arena.need_players') : t('arena.start_game')}
+                                </span>
+                              </button>
+                              {players.length < 2 && (
+                                <p className="text-[10px] font-black text-amber-500/60 uppercase tracking-widest animate-pulse text-center">
+                                  {t('arena.min_players_required')}
+                                </p>
+                              )}
+                            </>
+                          ) : (
+                            <div className="h-[72px] flex items-center justify-center rounded-3xl bg-blue-500/10 border border-blue-500/20 text-blue-400 font-extrabold tracking-widest animate-pulse uppercase text-sm px-6 text-center leading-tight">
+                              {t('arena.waiting_for_owner')}
+                            </div>
                           )}
                         </div>
-                      ) : (
-                        <div className="glass px-6 py-4 rounded-[24px] border-blue-500/20 text-blue-400 font-black tracking-widest animate-pulse uppercase mb-4 text-sm">
-                          {t('arena.waiting_for_owner')}
-                        </div>
-                      )}
-                    </>
-                  )}
+                      </>
+                    )}
+                  </div>
                 </div>
 
-                <div className="bg-[#0f172a] rounded-[24px] p-6 border border-white/5 relative group/code cursor-pointer active:scale-[0.98] transition-all"
+                <div className="bg-slate-900 border border-white/10 rounded-[32px] p-6 relative group/code cursor-pointer active:scale-[0.98] transition-all hover:bg-slate-800 duration-500 shadow-2xl"
                   onClick={() => {
                     navigator.clipboard.writeText(id as string);
                     setShowCopyMessage(true);
                     setTimeout(() => setShowCopyMessage(false), 2000);
                   }}>
-                  <div className="absolute top-3 right-6 flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="absolute top-4 right-6 flex items-center gap-2">
                     <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest leading-none">{t('arena.secret_code')}</span>
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
                   </div>
-                  <div className="text-4xl font-black font-mono tracking-[0.2em] text-white flex items-center justify-center gap-4">
+                  <div className="text-4xl font-black font-mono tracking-[0.25em] text-white flex items-center justify-center py-4 bg-black/20 rounded-2xl border border-white/5 my-4">
                     {id}
                   </div>
-                  <div className="mt-2 flex items-center justify-center gap-2 text-slate-600 group-hover/code:text-blue-400 transition-colors">
-                    <CheckCircle2 className="w-3 h-3" />
-                    <span className="text-[8px] font-black uppercase tracking-widest leading-none">{t('arena.click_to_copy')}</span>
+                  <div className="flex items-center justify-center gap-2 text-slate-500 group-hover/code:text-white transition-colors">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('arena.click_to_copy')}</span>
                   </div>
+                </div>
+              </div>
+
+              {/* Right Column: Player Grid */}
+              <div className="xl:col-span-8">
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {players.map((p, idx) => (
+                    <div key={p.id} className="animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${idx * 100}ms` }}>
+                      <div className={`relative group/p aspect-square rounded-[32px] border transition-all duration-500 flex flex-col items-center justify-center p-6 gap-4 ${
+                        p.username === user?.username 
+                          ? 'bg-blue-600/10 border-blue-500/40 shadow-xl shadow-blue-500/5' 
+                          : 'bg-white/[0.03] border-white/10 hover:border-white/20'
+                      }`}>
+                        <div className="relative">
+                           <div className={`w-16 h-16 rounded-3xl flex items-center justify-center text-2xl font-black transition-all duration-500 ${
+                             p.username === user?.username ? 'bg-blue-600 text-white rotate-3 group-hover/p:-rotate-3' : 'bg-slate-800 text-slate-400 group-hover/p:bg-slate-700'
+                           }`}>
+                             {p.username[0].toUpperCase()}
+                           </div>
+                           <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-xl border-4 border-slate-900 flex items-center justify-center ${
+                             p.id === ownerSocketId ? 'bg-yellow-400' : 'bg-green-500'
+                           }`}>
+                             {p.id === ownerSocketId ? <Shield className="w-3 h-3 text-black" /> : <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                           </div>
+                        </div>
+                        <div className="text-center">
+                          <h4 className="font-black text-sm tracking-tight text-white/90 mb-1">{p.username}</h4>
+                          <span className={`text-[8px] font-black uppercase tracking-widest ${p.id === ownerSocketId ? 'text-yellow-500' : 'text-blue-400'}`}>
+                            {p.id === ownerSocketId ? t('arena.host') : (p.username === user?.username ? t('arena.you') : t('arena.ready'))}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Empty Slots */}
+                  {Array.from({ length: Math.max(0, 8 - players.length) }).map((_, i) => (
+                    <div key={`empty-${i}`} className="aspect-square rounded-[32px] border border-dashed border-white/5 flex flex-col items-center justify-center opacity-30">
+                       <div className="w-12 h-12 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-3">
+                          <Users className="w-5 h-5 text-white/20" />
+                       </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -856,7 +895,7 @@ export default function Arena() {
                   {/* Power-Ups Inventory */}
                   {players.find(p => p.id === socket?.id)?.powerUps && (players.find(p => p.id === socket?.id)?.powerUps?.length ?? 0) > 0 && (
                     <div className="mt-8 flex items-center justify-center gap-4 animate-in slide-in-from-bottom-4 duration-500">
-                      <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mr-2">Power-ups</span>
+                      <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mr-2">{t('arena.powerups')}</span>
                       {players.find(p => p.id === socket?.id)?.powerUps?.map((pu, idx) => (
                         <button
                           key={idx}
@@ -904,9 +943,9 @@ export default function Arena() {
               <Play className="w-16 h-16 text-blue-400 mx-auto relative z-10 animate-bounce" />
             </div>
 
-            <h2 className="text-3xl font-black mb-2 tracking-tighter">Rematch Requested!</h2>
+            <h2 className="text-3xl font-black mb-2 tracking-tighter">{t('arena.rematch_requested')}</h2>
             <p className="text-slate-400 font-medium mb-8">
-              <span className="text-white font-black">{rematchRequest.ownerUsername}</span> wants to play again!
+              <span className="text-white font-black">{rematchRequest.ownerUsername}</span> {t('arena.wants_to_play_again')}
             </p>
 
             {/* Countdown Circle */}
@@ -935,12 +974,12 @@ export default function Arena() {
               <div className="flex items-center justify-center gap-6 mb-8">
                 <div className="text-center">
                   <div className="text-2xl font-black text-green-400">{rematchStatus.acceptedCount}</div>
-                  <div className="text-[10px] font-black uppercase text-white/40 tracking-widest">Accepted</div>
+                  <div className="text-[10px] font-black uppercase text-white/40 tracking-widest">{t('arena.accepted')}</div>
                 </div>
                 <div className="w-px h-8 bg-white/10"></div>
                 <div className="text-center">
                   <div className="text-2xl font-black text-red-400">{rematchStatus.rejectedCount}</div>
-                  <div className="text-[10px] font-black uppercase text-white/40 tracking-widest">Rejected</div>
+                  <div className="text-[10px] font-black uppercase text-white/40 tracking-widest">{t('arena.rejected')}</div>
                 </div>
               </div>
             )}
@@ -951,19 +990,19 @@ export default function Arena() {
                   onClick={handleAcceptRematch}
                   className="bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-3xl shadow-xl shadow-blue-600/20 transition-all active:scale-[0.95]"
                 >
-                  ACCEPT
+                  {t('arena.accept')}
                 </button>
                 <button
                   onClick={handleRejectRematch}
                   className="bg-white/5 hover:bg-white/10 text-white font-black py-5 rounded-3xl border border-white/10 transition-all active:scale-[0.95]"
                 >
-                  REJECT
+                  {t('arena.reject')}
                 </button>
               </div>
             ) : (
               <div className="py-5 px-8 rounded-3xl bg-blue-500/10 border border-blue-500/20 text-blue-400 font-black flex items-center justify-center gap-3">
                 <div className="w-5 h-5 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>
-                Waiting for others...
+                {t('arena.waiting_others')}
               </div>
             )}
           </div>
