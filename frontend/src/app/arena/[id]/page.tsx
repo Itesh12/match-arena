@@ -97,7 +97,9 @@ export default function Arena() {
     });
 
     socket.on('room_info', (data) => {
-      setSelectedMode(data.mode);
+      if (data.mode) setSelectedMode(data.mode);
+      if (data.players) setPlayers(data.players);
+      if (data.status) setGameStatus(data.status);
     });
 
     socket.on('power_up_granted', ({ type }) => {
