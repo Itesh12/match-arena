@@ -578,7 +578,7 @@ export default function Arena() {
             <header className="grid grid-cols-3 items-center w-full max-w-7xl mx-auto pt-6 pb-12 px-6">
               {/* Left: Players Info - Compact and matching sidebar style */}
               <div className="flex justify-start">
-                <div className="flex items-center gap-4 px-5 py-2.5 bg-white/[0.03] rounded-2xl border border-white/10 group hover:border-blue-500/30 transition-all duration-500">
+                <div className="flex items-center gap-4 px-5 py-4 bg-white/[0.03] rounded-2xl border border-white/10 group hover:border-blue-500/30 transition-all duration-500">
                   <div className="relative">
                     <Users className="w-5 h-5 text-blue-400 opacity-60 group-hover:opacity-100 transition-opacity" />
                   </div>
@@ -599,7 +599,7 @@ export default function Arena() {
               <div className="flex justify-center">
                 <div className="relative group cursor-default">
                   <div className="absolute -inset-4 bg-blue-600/10 rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
-                  <div className="relative flex items-center gap-4 px-8 py-3 glass rounded-full border border-white/5 shadow-2xl overflow-hidden group-hover:border-white/10 transition-all duration-700">
+                  <div className="relative flex items-center gap-4 px-8 py-4.5 glass rounded-full border border-white/5 shadow-2xl overflow-hidden group-hover:border-white/10 transition-all duration-700">
                     <div className="w-8 h-8 bg-slate-950 rounded-lg flex items-center justify-center border border-white/5 transform rotate-3 group-hover:rotate-12 transition-transform">
                       <Zap className="w-4 h-4 text-blue-400" />
                     </div>
@@ -613,7 +613,7 @@ export default function Arena() {
 
               {/* Right: Actions & Language - Matching style */}
               <div className="flex justify-end items-center gap-4">
-                <div className="flex items-center gap-3 px-5 py-2.5 bg-white/[0.03] rounded-2xl border border-white/10 group/lang hover:border-white/20 transition-all duration-500">
+                <div className="flex items-center gap-3 px-5 py-4 bg-white/[0.03] rounded-2xl border border-white/10 group/lang hover:border-white/20 transition-all duration-500">
                   <Globe className="w-4 h-4 text-blue-400 opacity-60 group-hover:rotate-12 transition-transform" />
                   <div className="flex flex-col">
                     <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">{t('dashboard.language')}</span>
