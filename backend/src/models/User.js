@@ -60,6 +60,9 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  inventory: [{
+    type: String
+  }],
   isBanned: {
     type: Boolean,
     default: false

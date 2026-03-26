@@ -146,7 +146,16 @@ i18n
             powerups: "Power-ups",
             you: "YOU",
             ready: "READY",
-            question_short: "Q"
+            question_short: "Q",
+            market: "🛍️ Shop",
+            achievements: "🏆 Awards"
+          },
+          shop: {
+            title: "Arena Marketplace",
+            insufficient_coins: "Insufficient Coins",
+            purchase_success: "Purchase Successful!",
+            purchase_failed: "Purchase Failed",
+            server_error: "Server Error"
           },
           practice: {
             title: "Practice Mode",
@@ -445,7 +454,16 @@ i18n
             gold: "स्वर्ण स्तर",
             platinum: "प्लैटिनम स्तर",
             diamond: "हीरा स्तर",
-            master: "मास्टर स्तर"
+            master: "मास्टर स्तर",
+            market: "🛍️ बाज़ार",
+            achievements: "🏆 पुरस्कार"
+          },
+          shop: {
+            title: "अखाड़ा बाज़ार",
+            insufficient_coins: "अपर्याप्त सिक्के",
+            purchase_success: "खरीद सफल!",
+            purchase_failed: "खरीद विफल",
+            server_error: "सर्वर त्रुटि"
           },
           auth: {
             welcome_back: "वापसी पर स्वागत है",

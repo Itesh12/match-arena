@@ -5,19 +5,20 @@ import { useSocket } from '@/context/SocketContext';
 import { useGameStore } from '@/store/useGameStore';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { LogOut, LayoutDashboard, Shield, Coins, Globe, Trophy, CheckCircle2, XCircle, BrainCircuit, Menu, Users, History, Home } from 'lucide-react';
+import { LogOut, LayoutDashboard, Shield, Coins, Globe, Trophy, CheckCircle2, XCircle, BrainCircuit, Menu, Users, History, Home, ShoppingBag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getRankTier } from '@/utils/ranks';
 import Toast from '@/components/Toast';
 import ConfirmModal from '@/components/ConfirmModal';
 import MobileDrawer from '@/components/MobileDrawer';
 import AchievementsView from '@/components/AchievementsView';
+import ShopView from '@/components/ShopView';
 import { API_URL } from '@/config';
 
 export default function Lobby() {
   const [room, setRoom] = useState('');
   const [isJoining, setIsJoining] = useState(false);
-  const [view, setView] = useState<'lobby' | 'history' | 'social' | 'settings' | 'achievements'>('lobby');
+  const [view, setView] = useState<'lobby' | 'history' | 'social' | 'settings' | 'achievements' | 'market'>('lobby');
   const [matches, setMatches] = useState<any[] | null>(null);
   const [friends, setFriends] = useState<any[] | null>(null);
   const [newFriendUsername, setNewFriendUsername] = useState('');
@@ -209,7 +210,7 @@ export default function Lobby() {
               <span className="text-xs font-bold">{t('dashboard.admin')}</span>
             </button>
           )}
-          {(['history', 'achievements', 'social', 'settings'] as const).map(v => (
+          {(['history', 'achievements', 'market', 'social', 'settings'] as const).map(v => (
             <button key={v} onClick={() => setView(view === v ? 'lobby' : v)}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${view === v ? 'bg-blue-600 text-white border-blue-500' : 'glass glass-hover text-blue-400 border-white/5'}`}>
               {view === v ? t('dashboard.lobby') : v === 'settings' ? t('dashboard.language') : t(`dashboard.${v}`)}
@@ -259,7 +260,14 @@ export default function Lobby() {
             <p className="text-slate-500 font-medium mt-6 sm:mt-8 text-sm sm:text-base">{t('dashboard.ready_for_challenge')}</p>
           </div>
           
-          {view === 'achievements' ? (
+          {view === 'market' ? (
+            <div className="animate-in slide-in-from-right-10 duration-500 space-y-6">
+              <ShopView />
+              <button onClick={() => setView('lobby')} className="w-full py-4 text-slate-500 font-bold text-sm uppercase tracking-widest hover:text-white transition-colors">
+                  {t('dashboard.back_to_lobby')}
+               </button>
+            </div>
+          ) : view === 'achievements' ? (
             <div className="animate-in slide-in-from-right-10 duration-500 space-y-6">
               <AchievementsView />
               <button onClick={() => setView('lobby')} className="w-full py-4 text-slate-500 font-bold text-sm uppercase tracking-widest hover:text-white transition-colors">
@@ -441,7 +449,7 @@ export default function Lobby() {
         {([
           { key: 'lobby', icon: Home, label: 'Lobby' },
           { key: 'practice', icon: BrainCircuit, label: 'Practice' },
-          { key: 'history', icon: History, label: 'History' },
+          { key: 'market', icon: ShoppingBag, label: 'Shop' },
           { key: 'achievements', icon: Trophy, label: 'Awards' },
           { key: 'social', icon: Users, label: 'Social' },
           { key: 'settings', icon: Globe, label: 'Lang' },

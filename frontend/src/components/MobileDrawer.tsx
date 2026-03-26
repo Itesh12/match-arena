@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, User, Shield, Coins, Globe, Users, History, LogOut, ChevronRight } from 'lucide-react';
+import { X, User, Shield, Coins, Globe, Users, History, LogOut, ChevronRight, Home, ShoppingBag, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface MobileDrawerProps {
@@ -69,8 +69,30 @@ export default function MobileDrawer({
                 className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${currentView === 'lobby' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-white/5'}`}
             >
                 <div className="flex items-center gap-3">
-                    <History className="w-5 h-5" />
-                    <span className="font-bold">Lobby</span>
+                    <Home className="w-5 h-5" />
+                    <span className="font-bold">Home</span>
+                </div>
+                <ChevronRight className="w-4 h-4 opacity-50" />
+            </button>
+
+            <button 
+                onClick={() => { onChangeView('achievements'); onClose(); }}
+                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${currentView === 'achievements' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+            >
+                <div className="flex items-center gap-3">
+                    <Trophy className="w-5 h-5" />
+                    <span className="font-bold">Achievements</span>
+                </div>
+                <ChevronRight className="w-4 h-4 opacity-50" />
+            </button>
+
+            <button 
+                onClick={() => { onChangeView('market'); onClose(); }}
+                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${currentView === 'market' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+            >
+                <div className="flex items-center gap-3">
+                    <ShoppingBag className="w-5 h-5" />
+                    <span className="font-bold">Marketplace</span>
                 </div>
                 <ChevronRight className="w-4 h-4 opacity-50" />
             </button>

@@ -11,6 +11,7 @@ const matchesRouter = require('./routes/matches');
 const socialRoutes = require('./routes/SocialRoutes');
 const practiceRouter = require('./routes/practice');
 const achievementsRouter = require('./routes/achievements');
+const shopRouter = require('./routes/shop');
 const { onlineUsers } = require('./controllers/SocialController');
 
 dotenv.config();
@@ -68,6 +69,7 @@ app.use('/matches', matchesRouter);
 app.use('/social', socialRoutes);
 app.use('/practice', practiceRouter);
 app.use('/achievements', achievementsRouter);
+app.use('/shop', shopRouter);
 app.use('/admin', adminRouter(gameEngine));
 
 io.on('connection', (socket) => {

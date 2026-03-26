@@ -35,6 +35,7 @@ interface UserInfo {
   rankPoints?: number;
   coins?: number;
   currentStreak?: number;
+  inventory?: string[];
 }
 
 interface GameState {
@@ -170,7 +171,8 @@ export const useGameStore = create<GameState>()(
               wins: data.wins,
               rankPoints: data.rankPoints,
               coins: data.coins,
-              currentStreak: data.currentStreak
+              currentStreak: data.currentStreak,
+              inventory: data.inventory
             });
           }
         } catch (err) {
