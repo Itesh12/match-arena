@@ -444,58 +444,60 @@ export default function Arena() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-10 custom-scrollbar">
-          <section>
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                  <Users className="w-3 h-3 text-blue-400" />
+          {gameStatus !== 'waiting' && (
+            <section>
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                    <Users className="w-3 h-3 text-blue-400" />
+                  </div>
+                  <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">{t('arena.participants')}</h3>
                 </div>
-                <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">{t('arena.participants')}</h3>
+                <div className="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-[10px] font-black rounded-full border border-blue-500/20 shadow-lg shadow-blue-500/5">
+                  {players.length}
+                </div>
               </div>
-              <div className="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-[10px] font-black rounded-full border border-blue-500/20 shadow-lg shadow-blue-500/5">
-                {players.length}
-              </div>
-            </div>
-            <div className="space-y-3">
-              {players.map((p) => (
-                <div key={p.id} className={`group relative transition-all duration-300 ${p.hasLeft ? 'opacity-30' : 'hover:scale-[1.02]'}`}>
-                  <div className={`absolute -inset-[1px] bg-gradient-to-r ${p.username === user?.username ? 'from-blue-600/20 to-indigo-600/20' : 'from-white/5 to-white/0'} rounded-[17px] opacity-0 group-hover:opacity-100 transition-opacity blur-[2px]`}></div>
-                  <div className={`relative flex items-center justify-between p-4 rounded-2xl border transition-all duration-500 ${p.username === user?.username ? 'bg-blue-600/10 border-blue-500/30 shadow-lg shadow-blue-500/10' : 'bg-white/[0.03] border-white/5 hover:border-white/10'}`}>
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <div className={`w-2 h-2 rounded-full ${p.isEliminated ? 'bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]' : p.hasLeft ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : p.username === user?.username ? 'bg-blue-400 animate-pulse shadow-[0_0_8px_rgba(96,165,250,0.5)]' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]'}`}></div>
-                        {!p.hasLeft && !p.isEliminated && <div className={`absolute -inset-1 rounded-full animate-ping opacity-20 ${p.username === user?.username ? 'bg-blue-400' : 'bg-green-400'}`}></div>}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className={`text-sm font-black tracking-tight transition-colors ${p.username === user?.username ? 'text-white' : 'text-white/60 group-hover:text-white/90'}`}>
-                          {p.username}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          {p.isEliminated && <span className="text-[7px] font-black text-orange-500 uppercase tracking-widest leading-none">{t('arena.eliminated')}</span>}
-                          {p.hasShield && <ShieldCheck className="w-3 h-3 text-yellow-400" />}
-                          {p.isFrozen && <div className="w-3 h-3 border border-blue-400 rounded-full flex items-center justify-center animate-pulse"><div className="w-1 h-1 bg-blue-400 rounded-full"></div></div>}
-                          {p.team && (
-                            <span className={`text-[7px] font-black uppercase tracking-widest leading-none ${p.team === 'red' ? 'text-red-500' : 'text-blue-500'}`}>
-                              {t('arena.team')} {p.team}
-                            </span>
-                          )}
+              <div className="space-y-3">
+                {players.map((p) => (
+                  <div key={p.id} className={`group relative transition-all duration-300 ${p.hasLeft ? 'opacity-30' : 'hover:scale-[1.02]'}`}>
+                    <div className={`absolute -inset-[1px] bg-gradient-to-r ${p.username === user?.username ? 'from-blue-600/20 to-indigo-600/20' : 'from-white/5 to-white/0'} rounded-[17px] opacity-0 group-hover:opacity-100 transition-opacity blur-[2px]`}></div>
+                    <div className={`relative flex items-center justify-between p-4 rounded-2xl border transition-all duration-500 ${p.username === user?.username ? 'bg-blue-600/10 border-blue-500/30 shadow-lg shadow-blue-500/10' : 'bg-white/[0.03] border-white/5 hover:border-white/10'}`}>
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <div className={`w-2 h-2 rounded-full ${p.isEliminated ? 'bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]' : p.hasLeft ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : p.username === user?.username ? 'bg-blue-400 animate-pulse shadow-[0_0_8px_rgba(96,165,250,0.5)]' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]'}`}></div>
+                          {!p.hasLeft && !p.isEliminated && <div className={`absolute -inset-1 rounded-full animate-ping opacity-20 ${p.username === user?.username ? 'bg-blue-400' : 'bg-green-400'}`}></div>}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className={`text-sm font-black tracking-tight transition-colors ${p.username === user?.username ? 'text-white' : 'text-white/60 group-hover:text-white/90'}`}>
+                            {p.username}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            {p.isEliminated && <span className="text-[7px] font-black text-orange-500 uppercase tracking-widest leading-none">{t('arena.eliminated')}</span>}
+                            {p.hasShield && <ShieldCheck className="w-3 h-3 text-yellow-400" />}
+                            {p.isFrozen && <div className="w-3 h-3 border border-blue-400 rounded-full flex items-center justify-center animate-pulse"><div className="w-1 h-1 bg-blue-400 rounded-full"></div></div>}
+                            {p.team && (
+                              <span className={`text-[7px] font-black uppercase tracking-widest leading-none ${p.team === 'red' ? 'text-red-500' : 'text-blue-500'}`}>
+                                {t('arena.team')} {p.team}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {p.id === ownerSocketId && (
-                        <div className="px-2 py-0.5 bg-yellow-400/10 border border-yellow-400/30 rounded-full flex items-center gap-1">
-                          <Shield className="w-2.5 h-2.5 text-yellow-400" />
-                          <span className="text-[7px] font-black text-yellow-500 uppercase tracking-tighter">{t('arena.host')}</span>
-                        </div>
-                      )}
+  
+                      <div className="flex items-center gap-2">
+                        {p.id === ownerSocketId && (
+                          <div className="px-2 py-0.5 bg-yellow-400/10 border border-yellow-400/30 rounded-full flex items-center gap-1">
+                            <Shield className="w-2.5 h-2.5 text-yellow-400" />
+                            <span className="text-[7px] font-black text-yellow-500 uppercase tracking-tighter">{t('arena.host')}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          )}
 
           <section>
             <div className="flex items-center gap-2.5 mb-5">
