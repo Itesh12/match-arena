@@ -5,11 +5,12 @@ import { useSocket } from '@/context/SocketContext';
 import { useGameStore } from '@/store/useGameStore';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { LogOut, LayoutDashboard, Shield, Coins, Globe, Trophy, CheckCircle2, XCircle, BrainCircuit } from 'lucide-react';
+import { LogOut, LayoutDashboard, Shield, Coins, Globe, Trophy, CheckCircle2, XCircle, BrainCircuit, Menu, Users, History, Home } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getRankTier } from '@/utils/ranks';
 import Toast from '@/components/Toast';
 import ConfirmModal from '@/components/ConfirmModal';
+import MobileDrawer from '@/components/MobileDrawer';
 import { API_URL } from '@/config';
 
 export default function Lobby() {
@@ -24,6 +25,7 @@ export default function Lobby() {
   const [notification, setNotification] = useState<{ msg: string, type: 'success' | 'error' } | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingAction, setPendingAction] = useState<{ type: 'create' | 'join', roomId?: string } | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   const socket = useSocket();
   const { user, roomId, setRoomId, logout, fetchStats, token } = useGameStore();
@@ -187,11 +189,14 @@ export default function Lobby() {
 
       {/* Top Bar - Responsive */}
       <header className="relative z-20 flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl sticky top-0">
-        {/* Left: Brand */}
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg">
-            <span className="text-white font-black text-sm">M</span>
-          </div>
+        {/* Left: Brand / Menu Toggle */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button 
+            onClick={() => setIsDrawerOpen(true)}
+            className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all md:pointer-events-none"
+          >
+            <span className="text-white font-black text-base">{user.username[0].toUpperCase()}</span>
+          </button>
           <span className="text-sm font-black text-white/70 uppercase tracking-widest hidden sm:block">Math Arena</span>
         </div>
 
@@ -211,15 +216,15 @@ export default function Lobby() {
           ))}
         </nav>
 
-        {/* Right: Coins + Logout */}
+        {/* Right: Coins + Logout (Logout hidden on smallest mobile) */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="flex items-center gap-1.5 bg-yellow-500/10 text-yellow-500 px-3 py-1.5 rounded-xl border border-yellow-500/20">
+          <div className="flex items-center gap-1.5 bg-yellow-500/10 text-yellow-500 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-yellow-500/20">
             <Coins className="w-3.5 h-3.5" />
-            <span className="text-xs font-black">{user.coins || 0}</span>
+            <span className="text-xs sm:text-sm font-black">{user.coins || 0}</span>
           </div>
-          <button onClick={logout} className="flex items-center gap-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl transition-all border border-red-500/20">
+          <button onClick={logout} className="hidden sm:flex items-center gap-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-xl transition-all border border-red-500/20">
             <LogOut className="w-3.5 h-3.5" />
-            <span className="text-xs font-bold hidden sm:block">{t('dashboard.logout')}</span>
+            <span className="text-xs font-bold">{t('dashboard.logout')}</span>
           </button>
         </div>
       </header>
@@ -230,10 +235,10 @@ export default function Lobby() {
         {/* Main Card */}
         <div className="w-full max-w-md glass rounded-[32px] sm:rounded-[48px] p-6 sm:p-10 shadow-2xl border-white/5">
           <div className="text-center mb-8 sm:mb-12">
-            <div className="inline-block px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+            <div className="text-micro text-blue-400 mb-4 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 inline-block">
               {t('dashboard.math_arena_v1')}
             </div>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black mb-1 tracking-tighter text-white drop-shadow-[0_0_40px_rgba(59,130,246,0.3)] break-all">
+            <h1 className="text-title mb-1 text-white drop-shadow-[0_0_40px_rgba(59,130,246,0.3)] break-all px-4">
               {user.username}
             </h1>
             <div className="mt-4 sm:mt-6 flex flex-col items-center gap-3">
@@ -242,13 +247,13 @@ export default function Lobby() {
                 return (
                   <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
                     <Shield className="w-3 h-3 text-blue-400" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">
+                    <span className="text-micro text-blue-400">
                       {t(`dashboard.${rank.name.toLowerCase()}`)}
                     </span>
                   </div>
                 );
               })()}
-              <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">{user.rankPoints || 0} {t('dashboard.rp')}</div>
+              <div className="text-micro text-slate-500 tracking-[0.4em] mb-2">{user.rankPoints || 0} {t('dashboard.rp')}</div>
             </div>
             <p className="text-slate-500 font-medium mt-6 sm:mt-8 text-sm sm:text-base">{t('dashboard.ready_for_challenge')}</p>
           </div>
@@ -262,14 +267,14 @@ export default function Lobby() {
                    <div key={m._id} className="glass p-4 sm:p-5 rounded-3xl border-white/5 space-y-3 relative overflow-hidden group hover:border-blue-500/30 transition-all">
                       <div className="flex justify-between items-start">
                          <div>
-                           <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">
+                           <div className="text-micro text-blue-400 mb-1">
                              {new Date(m.completedAt).toLocaleDateString()}
                            </div>
                             <div className="text-base sm:text-lg font-black tracking-tight">{m.winner?.username === user.username ? t('dashboard.victory') : t('dashboard.defeat')}</div>
                          </div>
                          <div className="text-right">
                            <div className="text-xl font-black text-white">{m.participants.find((p: any) => p.userId === (user.id || user._id))?.score || 0}</div>
-                           <div className="text-[8px] font-black text-slate-500 uppercase">{t('dashboard.points')}</div>
+                           <div className="text-nano text-slate-500">{t('dashboard.points')}</div>
                          </div>
                       </div>
                    </div>
@@ -315,7 +320,7 @@ export default function Lobby() {
                         </div>
                         <div>
                           <div className="font-black text-sm">{f.username}</div>
-                          <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest">
+                          <div className="text-nano text-slate-500 mb-1">
                             {f.isOnline ? t('dashboard.online') : t('dashboard.offline')} • {f.rankPoints} {t('dashboard.rp')}
                           </div>
                         </div>
@@ -359,10 +364,10 @@ export default function Lobby() {
 
               <button
                 onClick={() => router.push('/practice')}
-                className="group relative w-full h-16 sm:h-20 bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black rounded-3xl flex items-center justify-center gap-4 overflow-hidden transition-all hover:bg-blue-600/20 active:scale-[0.98] shadow-lg"
+                className="group relative w-full h-14 sm:h-20 bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black rounded-2xl sm:rounded-3xl flex items-center justify-center gap-4 overflow-hidden transition-all hover:bg-blue-600/20 active:scale-[0.98] shadow-lg"
               >
                 <BrainCircuit className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
-                <span className="text-base sm:text-xl tracking-tight uppercase">
+                <span className="text-sm sm:text-xl tracking-tight uppercase">
                   {t('practice.title')}
                 </span>
               </button>
@@ -376,7 +381,7 @@ export default function Lobby() {
           ) : (
             <div className="space-y-6 sm:space-y-8 animate-in fade-in zoom-in duration-300">
               <div className="space-y-3">
-                <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">{t('dashboard.room_code')}</label>
+                <label className="text-micro text-slate-500 ml-1">{t('dashboard.room_code')}</label>
                 <input
                   type="text"
                   autoFocus
@@ -399,54 +404,75 @@ export default function Lobby() {
             </div>
           )}
 
-          <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/5 grid grid-cols-4 gap-2 sm:gap-8 text-slate-500">
-            <div className="text-center">
+          <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/5 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 text-slate-500">
+            <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
               <div className="text-lg sm:text-xl font-black text-white">{user.role === 'admin' ? '∞' : (user.totalGames || 0)}</div>
-              <div className="text-[9px] sm:text-[10px] uppercase tracking-widest font-bold">{t('dashboard.games')}</div>
+              <div className="text-micro text-slate-500">{t('dashboard.games')}</div>
             </div>
-            <div className="text-center">
+            <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
               <div className="text-lg sm:text-xl font-black text-white">{user.wins || 0}</div>
-              <div className="text-[9px] sm:text-[10px] uppercase tracking-widest font-bold">{t('dashboard.wins')}</div>
+              <div className="text-[8px] sm:text-[10px] uppercase tracking-widest font-bold text-slate-500">{t('dashboard.wins')}</div>
             </div>
-            <div className="text-center">
+            <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
               <div className="text-lg sm:text-xl font-black text-white">{user.score || 0}</div>
-              <div className="text-[9px] sm:text-[10px] uppercase tracking-widest font-bold">{t('dashboard.score')}</div>
+              <div className="text-[8px] sm:text-[10px] uppercase tracking-widest font-bold text-slate-500">{t('dashboard.score')}</div>
             </div>
-            <div className="text-center">
+            <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
               <div className="text-lg sm:text-xl font-black text-yellow-500 flex items-center gap-1 justify-center">
                 <Coins className="w-3.5 h-3.5" />
                 {user.coins || 0}
               </div>
-              <div className="text-[9px] sm:text-[10px] uppercase tracking-widest font-bold text-yellow-500/60">{t('dashboard.coins')}</div>
+              <div className="text-[8px] sm:text-[10px] uppercase tracking-widest font-bold text-yellow-500/60">{t('dashboard.coins')}</div>
             </div>
           </div>
         </div>
       </main>
 
       {/* Mobile Bottom Tab Bar (visible on < md screens) */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-slate-950/90 backdrop-blur-2xl border-t border-white/10 flex items-center">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-slate-950/80 backdrop-blur-2xl border-t border-white/5 flex items-stretch h-20 mb-safe px-2">
         {([
-          { key: 'lobby', icon: '🏠', label: 'Lobby' },
-          { key: 'practice', icon: '🧠', label: 'Practice' },
-          { key: 'history', icon: '📜', label: 'History' },
-          { key: 'social', icon: '👥', label: 'Social' },
-          { key: 'settings', icon: '🌐', label: t('dashboard.language') },
-          ...(user.role === 'admin' ? [{ key: 'admin', icon: '🛡️', label: 'Admin' }] : []),
-        ] as const).map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => {
-              if (tab.key === 'admin') { router.push('/admin'); return; }
-              if (tab.key === 'practice') { router.push('/practice'); return; }
-              setView(view === tab.key ? 'lobby' : tab.key as any);
-            }}
-            className={`flex-1 flex flex-col items-center justify-center py-3 gap-0.5 transition-colors ${view === tab.key ? 'text-blue-400' : 'text-slate-600'}`}
-          >
-            <span className="text-lg leading-none">{tab.icon}</span>
-            <span className="text-[9px] font-black uppercase tracking-widest">{tab.label}</span>
-          </button>
-        ))}
+          { key: 'lobby', icon: Home, label: 'Lobby' },
+          { key: 'practice', icon: BrainCircuit, label: 'Practice' },
+          { key: 'history', icon: History, label: 'History' },
+          { key: 'social', icon: Users, label: 'Social' },
+          { key: 'settings', icon: Globe, label: 'Lang' },
+        ] as const).map((tab) => {
+          const Icon = tab.icon;
+          const isActive = view === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => {
+                if (tab.key === 'practice') { router.push('/practice'); return; }
+                setView(view === tab.key ? 'lobby' : tab.key as any);
+              }}
+              className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all relative ${isActive ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
+            >
+              <div className={`p-2 rounded-xl transition-all ${isActive ? 'bg-blue-600/10 text-blue-400' : ''}`}>
+                <Icon className={`w-5 h-5 ${isActive ? 'animate-in zoom-in-75' : ''}`} />
+              </div>
+              <span className={`text-nano ${isActive ? 'opacity-100' : 'opacity-60'}`}>{tab.label}</span>
+              {isActive && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-500 rounded-full blur-[2px]" />
+              )}
+            </button>
+          );
+        })}
       </nav>
+
+      {/* Mobile Drawer */}
+      <MobileDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        user={user}
+        onLogout={logout}
+        onChangeView={setView}
+        currentView={view}
+        rank={getRankTier(user.rankPoints)}
+        languages={[{ code: 'en', label: 'English' }, { code: 'hi', label: 'हिंदी' }]}
+        currentLang={i18n.language}
+        onLanguageChange={(code) => { i18n.changeLanguage(code); setIsDrawerOpen(false); }}
+      />
 
       {view === 'settings' && (
         <div className="absolute inset-0 z-10 flex items-center justify-center p-4 bg-[#020617]/80 backdrop-blur-sm">

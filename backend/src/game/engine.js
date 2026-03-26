@@ -253,7 +253,7 @@ class GameEngine {
     const question = room.questions[room.currentQuestionIndex];
     room.questionStartTime = Date.now();
     
-    // We don't send the correctAnswer to the client
+    // We don't send the answer to the client
     const clientQuestion = {
       index: room.currentQuestionIndex,
       question: question.question,
@@ -278,7 +278,7 @@ class GameEngine {
     if (!player || player.answers.length > room.currentQuestionIndex || player.isEliminated) return;
 
     const question = room.questions[room.currentQuestionIndex];
-    const isCorrect = answer === question.correctAnswer;
+    const isCorrect = answer === question.answer;
     const timeTaken = (Date.now() - room.questionStartTime) / 1000;
 
     let points = 0;
@@ -323,7 +323,7 @@ class GameEngine {
     // Emit result back to the player immediately
     this.io.to(socketId).emit('answer_result', {
       isCorrect,
-      correctAnswer: question.correctAnswer
+      answer: question.answer
     });
 
     // Check if all active players answered
@@ -453,7 +453,7 @@ class GameEngine {
         })),
         questions: room.questions.map(q => ({
           question: q.question,
-          correctAnswer: q.correctAnswer,
+          answer: q.answer,
           options: q.options
         })),
         completedAt: new Date()

@@ -45,7 +45,7 @@ const RoomSchema = new mongoose.Schema({
     index: Number,
     question: String,
     options: [Number],
-    correctAnswer: Number,
+    answer: Number,
   }],
   currentQuestionIndex: {
     type: Number,

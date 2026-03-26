@@ -198,7 +198,7 @@ export default function PracticePage() {
           <div className="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
           <BrainCircuit className="absolute inset-0 m-auto w-10 h-10 text-blue-500" />
         </div>
-        <h2 className="text-xl font-black text-white uppercase tracking-widest animate-pulse">
+        <h2 className="text-subtitle text-white uppercase animate-pulse">
             {t('practice.loading_questions')}
         </h2>
       </div>
@@ -217,8 +217,8 @@ export default function PracticePage() {
              <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl"></div>
 
              <Trophy className="w-24 h-24 text-yellow-500 mx-auto mb-8 animate-bounce" />
-             <h2 className="text-5xl font-black text-white tracking-tighter mb-2 uppercase">{mode === 'daily' ? 'Daily Challenge' : t('practice.session_complete')}</h2>
-             <p className="text-slate-400 font-medium mb-12">{t('practice.subtitle')}</p>
+             <h2 className="text-title mb-2 uppercase text-white">{mode === 'daily' ? 'Daily Challenge' : t('practice.session_complete')}</h2>
+             <p className="text-slate-400 text-base-content mb-12">{t('practice.subtitle')}</p>
 
              {reward && (
                 <div className="flex gap-4 justify-center mb-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -240,14 +240,14 @@ export default function PracticePage() {
                 </div>
                 <div className="glass p-8 rounded-3xl border-white/5 bg-white/[0.02]">
                     <div className="text-4xl font-black text-blue-400 mb-2">{accuracy}%</div>
-                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t('practice.accuracy')}</div>
+                    <div className="text-micro text-slate-500">{t('practice.accuracy')}</div>
                 </div>
                 <div className="glass p-8 rounded-3xl border-white/5 bg-white/[0.02] col-span-2">
                     <div className="flex items-center justify-center gap-4">
                         <Clock className="w-8 h-8 text-indigo-400" />
                         <div className="text-4xl font-black text-white">{formatTime(timeSpent)}</div>
                     </div>
-                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-2">{t('practice.time_spent')}</div>
+                    <div className="text-micro text-slate-500 mt-2">{t('practice.time_spent')}</div>
                 </div>
              </div>
 
@@ -287,7 +287,7 @@ export default function PracticePage() {
                     <span className={`text-3xl font-black tabular-nums ${timeLeft < 5 ? 'text-red-500' : 'text-white'}`}>{timeLeft}s</span>
                 </div>
                 <div>
-                   <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{t('arena.total_progress')}</div>
+                   <div className="text-micro text-slate-500 mb-1">{t('arena.total_progress')}</div>
                    <div className="flex gap-1.5">
                         {questions.map((_, i) => (
                             <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === currentIndex ? 'w-6 bg-blue-500' : i < currentIndex ? 'w-2 bg-blue-500/40' : 'w-2 bg-white/5'}`}></div>
@@ -299,16 +299,16 @@ export default function PracticePage() {
                 <div className="text-3xl font-black text-white">
                     <span className="text-blue-500">Q</span>{currentIndex + 1} <span className="text-slate-400 text-lg">/ {questions.length}</span>
                 </div>
-                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t('practice.title')}</div>
+                <div className="text-micro text-slate-500">{t('practice.title')}</div>
             </div>
          </header>
 
          {/* Question Area */}
          <main className="flex-1 flex flex-col items-center justify-center p-6 max-w-5xl mx-auto w-full">
-            <div className={`glass w-full rounded-[48px] p-12 mb-12 text-center border-white/5 relative overflow-hidden ${timeLeft < 5 && selectedOption === null ? 'animate-shake border-red-500/30' : ''}`}>
+            <div className={`glass w-full rounded-[32px] sm:rounded-[48px] p-8 sm:p-12 mb-6 sm:mb-12 text-center border-white/5 relative overflow-hidden ${timeLeft < 5 && selectedOption === null ? 'animate-shake border-red-500/30' : ''}`}>
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-20"></div>
-                <h2 className="text-7xl md:text-8xl font-black text-white tracking-tighter mb-4">{currentQ.question}</h2>
-                <div className="text-[10px] font-black text-blue-400/40 uppercase tracking-[0.5em] translate-x-[0.25em]">
+                <h2 className="text-hero mb-4">{currentQ.question}</h2>
+                <div className="text-micro text-blue-400/40 translate-x-[0.25em]">
                     {t('arena.realtime')} • {difficulty.toUpperCase()}
                 </div>
             </div>
@@ -334,11 +334,11 @@ export default function PracticePage() {
                             key={option}
                             disabled={selectedOption !== null}
                             onClick={() => handleAnswer(option)}
-                            className={`h-28 rounded-[2rem] border-2 text-4xl font-black transition-all flex items-center justify-center relative overflow-hidden ${style}`}
+                            className={`h-20 sm:h-28 rounded-2xl sm:rounded-[2rem] border-2 text-subtitle flex items-center justify-center relative overflow-hidden ${style}`}
                         >
                             <span className="relative z-10">{option}</span>
-                            {isSelected && results.isCorrect === true && <CheckCircle2 className="absolute right-8 w-10 h-10 text-white animate-in zoom-in" />}
-                            {isSelected && results.isCorrect === false && <XCircle className="absolute right-8 w-10 h-10 text-white animate-in zoom-in" />}
+                            {isSelected && results.isCorrect === true && <CheckCircle2 className="absolute right-4 sm:right-8 w-6 h-6 sm:w-10 sm:h-10 text-white animate-in zoom-in" />}
+                            {isSelected && results.isCorrect === false && <XCircle className="absolute right-4 sm:right-8 w-6 h-6 sm:w-10 sm:h-10 text-white animate-in zoom-in" />}
                         </button>
                     );
                 })}
@@ -352,14 +352,13 @@ export default function PracticePage() {
   return (
     <div className="min-h-screen bg-[#020617] p-6 lg:p-12 flex flex-col items-center justify-center">
       <div className="w-full max-w-4xl relative">
-        {/* Background Decorations */}
-        <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none">
+        <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none hidden sm:block">
             <div className="text-[200px] italic font-serif leading-none">?</div>
         </div>
 
         <button 
           onClick={() => router.push('/')}
-          className="absolute -top-16 left-0 text-slate-500 hover:text-white transition-colors flex items-center gap-2 font-black text-xs uppercase tracking-widest group"
+          className="absolute -top-16 left-0 text-slate-500 hover:text-white transition-colors flex items-center gap-2 text-caption uppercase group"
         >
             <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             {t('common.back')}
@@ -376,20 +375,20 @@ export default function PracticePage() {
                     </button>
                     <button 
                         onClick={() => setMode('daily')}
-                        className={`px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] border-2 transition-all ${mode === 'daily' ? 'bg-indigo-600 border-indigo-400 text-white' : 'glass border-white/5 text-slate-500'}`}
+                        className={`px-8 py-3 rounded-2xl text-micro border-2 transition-all ${mode === 'daily' ? 'bg-indigo-600 border-indigo-400 text-white' : 'glass border-white/5 text-slate-500'}`}
                     >
                         Daily Challenge
                     </button>
                 </div>
 
-                <h2 className="text-7xl font-black mb-6 tracking-tighter text-white leading-[0.8] uppercase">
+                <h2 className="text-title mb-6 text-white uppercase">
                     {mode === 'daily' ? 'Daily Challenge' : t('practice.title')}
                 </h2>
-                <p className="text-slate-400 font-medium text-lg max-w-sm mx-auto">
-                    {mode === 'daily' ? 'Complete today\'s challenge for bonus rewards!' : t('practice.subtitle')}
+                <p className="text-slate-400 text-base-content max-w-sm mx-auto">
+                    {mode === 'daily' ? 'Complete today\' challenge for bonus rewards!' : t('practice.subtitle')}
                 </p>
                 {mode === 'daily' && dailyStatus?.hasParticipated && (
-                    <div className="mt-4 text-green-400 font-black text-xs uppercase tracking-widest bg-green-500/10 border border-green-500/20 py-2 px-4 rounded-full inline-block">
+                    <div className="mt-4 text-micro text-green-400 bg-green-500/10 border border-green-500/20 py-2 px-4 rounded-full inline-block">
                         Completed Today
                     </div>
                 )}
@@ -401,20 +400,20 @@ export default function PracticePage() {
                     <div className="space-y-4">
                         <div className="flex items-center gap-3 text-slate-500 mb-2">
                             <Target className="w-4 h-4" />
-                            <span className="text-[10px] font-black uppercase tracking-widest">{t('practice.difficulty_select')}</span>
+                            <span className="text-micro text-slate-500">{t('practice.difficulty_select')}</span>
                         </div>
                         <div className="flex flex-col gap-3">
                             {(['easy', 'medium', 'hard'] as Difficulty[]).map(d => (
                                 <button
                                     key={d}
                                     onClick={() => setDifficulty(d)}
-                                    className={`h-16 px-8 rounded-3xl border-2 font-black uppercase tracking-tight flex items-center justify-between transition-all ${
+                                    className={`h-14 sm:h-16 px-6 sm:px-8 rounded-2xl sm:rounded-3xl border-2 font-black uppercase tracking-tight flex items-center justify-between transition-all ${
                                         difficulty === d 
                                         ? 'bg-blue-600 border-blue-400 text-white shadow-xl shadow-blue-500/20 scale-[1.02]' 
                                         : 'glass border-white/5 text-slate-400 hover:border-white/10'
                                     }`}
                                 >
-                                    <span className="text-lg">{t(`practice.difficulty_${d}`)}</span>
+                                    <span className="text-base sm:text-lg">{t(`practice.difficulty_${d}`)}</span>
                                     {difficulty === d && <Zap className="w-5 h-5 fill-current" />}
                                 </button>
                             ))}
@@ -425,14 +424,14 @@ export default function PracticePage() {
                     <div className="space-y-4">
                         <div className="flex items-center gap-3 text-slate-500 mb-2">
                             <Settings2 className="w-4 h-4" />
-                            <span className="text-[10px] font-black uppercase tracking-widest">{t('practice.questions_select')}</span>
+                            <span className="text-micro text-slate-500">{t('practice.questions_select')}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                             {[5, 10, 15, 20].map(count => (
                                 <button
                                     key={count}
                                     onClick={() => setQuestionCount(count)}
-                                    className={`h-16 rounded-3xl border-2 font-black text-2xl transition-all ${
+                                    className={`h-12 sm:h-16 rounded-2xl sm:rounded-3xl border-2 font-black text-xl sm:text-2xl transition-all ${
                                         questionCount === count 
                                         ? 'bg-white border-white text-black scale-[1.05] shadow-2xl' 
                                         : 'glass border-white/5 text-slate-500 hover:border-white/10'
@@ -464,7 +463,7 @@ export default function PracticePage() {
                     </div>
                     <div className="glass p-8 rounded-3xl border-white/5">
                         <div className="text-3xl font-black text-indigo-400 mb-1">{dailyStatus?.participantCount || 0}</div>
-                        <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Participants</div>
+                        <div className="text-nano text-slate-500 uppercase">{t('practice.participants')}</div>
                     </div>
                     {dailyStatus?.hasParticipated ? (
                         <div className="col-span-3 p-12 glass border-green-500/20 bg-green-500/5 rounded-[40px] text-center">
@@ -476,7 +475,7 @@ export default function PracticePage() {
                         <div className="col-span-3 p-8 glass border-blue-500/20 bg-blue-600/5 rounded-[40px] flex items-center justify-between">
                             <div className="text-left">
                                 <div className="text-2xl font-black text-white uppercase mb-1">Ready to start?</div>
-                                <div className="text-slate-400 text-xs">Complete 10 questions to earn 50 Coins + RP</div>
+                                <div className="text-nano text-slate-400">{t('practice.daily_reward_desc')}</div>
                             </div>
                             <BrainCircuit className="w-12 h-12 text-blue-500 opacity-20" />
                         </div>

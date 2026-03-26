@@ -18,7 +18,7 @@ const MatchSchema = new mongoose.Schema({
   }],
   questions: [{
     question: String,
-    correctAnswer: Number,
+    answer: Number,
     options: [Number],
   }],
   duration: Number,

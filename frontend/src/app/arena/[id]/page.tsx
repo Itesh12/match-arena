@@ -221,7 +221,12 @@ export default function Arena() {
   };
 
   const handleStart = () => {
-    if (socket && (ownerSocketId === socket.id)) {
+    const isOwner = socket && (
+      ownerSocketId === socket.id || 
+      String(ownerId) === String(user.id) || 
+      String(ownerId) === String((user as any)._id)
+    );
+    if (socket && isOwner) {
       socket.emit('start_game', id, selectedMode);
     }
   };
@@ -504,8 +509,8 @@ export default function Arena() {
               <LogOut className="w-5 h-5 text-slate-400 group-hover:text-red-500 transition-colors" />
             </div>
             <div className="text-left relative z-10">
-              <h2 className="font-black text-sm text-white/90 group-hover:text-red-500 transition-colors tracking-tight">{t('arena.quit_session')}</h2>
-              <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none mt-1">{t('arena.abandon_subtitle')}</p>
+              <h2 className="text-sm sm:text-base font-black text-white/90 group-hover:text-red-500 transition-colors tracking-tight">{t('arena.quit_session')}</h2>
+              <p className="text-nano text-slate-500 mt-1">{t('arena.abandon_subtitle')}</p>
             </div>
           </button>
         </div>
@@ -518,9 +523,9 @@ export default function Arena() {
                   <div className="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
                     <Users className="w-3 h-3 text-blue-400" />
                   </div>
-                  <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">{t('arena.participants')}</h3>
+                  <h3 className="text-micro text-white/40">{t('arena.participants')}</h3>
                 </div>
-                <div className="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-[10px] font-black rounded-full border border-blue-500/20 shadow-lg shadow-blue-500/5">
+                <div className="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-micro rounded-full border border-blue-500/20 shadow-lg shadow-blue-500/5">
                   {players.length}
                 </div>
               </div>
@@ -535,11 +540,11 @@ export default function Arena() {
                           {!p.hasLeft && !p.isEliminated && <div className={`absolute -inset-1 rounded-full animate-ping opacity-20 ${p.username === user?.username ? 'bg-blue-400' : 'bg-green-400'}`}></div>}
                         </div>
                         <div className="flex flex-col">
-                          <span className={`text-sm font-black tracking-tight transition-colors ${p.username === user?.username ? 'text-white' : 'text-white/60 group-hover:text-white/90'}`}>
+                          <span className={`text-caption transition-colors ${p.username === user?.username ? 'text-white' : 'text-white/60 group-hover:text-white/90'}`}>
                             {p.username}
                           </span>
                           <div className="flex items-center gap-2">
-                            {p.isEliminated && <span className="text-[7px] font-black text-orange-500 uppercase tracking-widest leading-none">{t('arena.eliminated')}</span>}
+                            {p.isEliminated && <span className="text-nano text-orange-500">{t('arena.eliminated')}</span>}
                             {p.hasShield && <ShieldCheck className="w-3 h-3 text-yellow-400" />}
                             {p.isFrozen && <div className="w-3 h-3 border border-blue-400 rounded-full flex items-center justify-center animate-pulse"><div className="w-1 h-1 bg-blue-400 rounded-full"></div></div>}
                             {p.team && (
@@ -578,7 +583,7 @@ export default function Arena() {
               {leaderboard.length > 0 ? leaderboard.map((p, i) => (
                 <div key={p.id} className={`flex items-center justify-between relative z-10 group/item ${p.hasLeft ? 'opacity-30' : ''}`}>
                   <div className="flex items-center gap-4">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-black border transition-all duration-500 ${
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-nano border transition-all duration-500 ${
                       i === 0 ? 'bg-yellow-400 text-black border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)] rotate-3' : 
                       i === 1 ? 'bg-slate-300 text-black border-slate-300 shadow-[0_0_15px_rgba(203,213,225,0.2)]' :
                       i === 2 ? 'bg-amber-700 text-white border-amber-700 shadow-[0_0_15px_rgba(180,83,9,0.2)]' :
@@ -632,21 +637,35 @@ export default function Arena() {
 
       {/* Main Game Area */}
       <div className="relative z-10 flex-1 flex flex-col h-full lg:min-h-screen">
-        {/* Mobile top bar */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl sticky top-0 z-20">
-          <button onClick={() => setShowMobileSidebar(true)} className="flex items-center gap-2 glass px-3 py-2 rounded-xl border border-white/10">
-            <Users className="w-4 h-4 text-blue-400" />
-            <span className="text-xs font-black text-white/70">{players.length} Players</span>
-          </button>
-          <span className="text-sm font-black text-white uppercase tracking-widest">Math Arena</span>
+        {/* Mobile top bar - Simplified and Minimalist */}
+        <div className="lg:hidden flex items-center justify-between px-4 py-2 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl sticky top-0 z-20 h-14">
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setShowMobileSidebar(true)} 
+              className="flex items-center gap-1.5 glass px-2.5 py-1.5 rounded-lg border border-white/10 active:scale-95 transition-all"
+            >
+              <Users className="w-3.5 h-3.5 text-blue-400" />
+              <span className="text-[10px] font-black text-white/70">{players.length}</span>
+            </button>
+            <button 
+              onClick={() => setShowChat(!showChat)} 
+              className={`p-1.5 rounded-lg border transition-all relative ${showChat ? 'bg-blue-600 border-blue-400' : 'glass border-white/10'}`}
+            >
+              <MessagesSquare className={`w-3.5 h-3.5 ${showChat ? 'text-white' : 'text-blue-400'}`} />
+              {messages.length > 0 && !showChat && (
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-[#020617]"></span>
+              )}
+            </button>
+          </div>
+          
+          <span className="text-[10px] font-black text-white uppercase tracking-[0.3em] opacity-40">Math Arena</span>
+          
           <button 
-            onClick={() => setShowChat(!showChat)} 
-            className={`p-3 rounded-xl border transition-all lg:hidden mr-2 ${showChat ? 'bg-blue-600 border-blue-400' : 'glass border-white/10'}`}
+            onClick={() => setShowExitModal(true)} 
+            className="flex items-center gap-1.5 text-red-500 bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-[10px] font-black active:scale-95 transition-all"
           >
-            <MessagesSquare className={`w-4 h-4 ${showChat ? 'text-white' : 'text-blue-400'}`} />
-          </button>
-          <button onClick={() => setShowExitModal(true)} className="text-red-400 glass px-3 py-2 rounded-xl border border-red-500/20 text-xs font-black">
-            Quit
+            <LogOut className="w-3 h-3" />
+            <span>QUIT</span>
           </button>
         </div>
         {gameStatus === 'waiting' ? (
@@ -681,8 +700,8 @@ export default function Arena() {
                       <Zap className="w-4 h-4 text-blue-400" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-sm font-black tracking-widest text-white uppercase leading-none">{t('arena.math_arena')}</span>
-                      <span className="text-[7px] font-black text-blue-400/40 uppercase tracking-[0.4em] mt-1.5 text-center">{t('arena.premium_engine')}</span>
+                      <span className="text-subtitle text-white leading-none">{t('arena.math_arena')}</span>
+                      <span className="text-nano text-blue-400/40 mt-1.5 text-center">{t('arena.premium_engine')}</span>
                     </div>
                   </div>
                 </div>
@@ -702,8 +721,8 @@ export default function Arena() {
                   </button>
                   <div className="flex items-center gap-6 px-10 glass rounded-full border border-white/5 shadow-xl h-[76px]">
                     <div className="flex flex-col text-right">
-                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] leading-none mb-1.5">{t('arena.room_id')}</span>
-                      <span className="text-xl font-black text-white tracking-widest uppercase">{(id as string).toUpperCase()}</span>
+                      <span className="text-micro text-slate-500 mb-1.5">{t('arena.room_id')}</span>
+                      <span className="text-subtitle text-white tracking-widest uppercase">{(id as string).toUpperCase()}</span>
                     </div>
                   </div>
                 </div>
@@ -737,13 +756,13 @@ export default function Arena() {
                     ) : (
                       <>
                         <div className="mb-12">
-                          <div className="inline-block px-4 py-1.5 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-400 text-[9px] font-black uppercase tracking-[0.4em] mb-8">
+                          <div className="text-nano text-blue-400 mb-8 px-4 py-1.5 rounded-full bg-blue-600/10 border border-blue-500/20 inline-block">
                             {t('arena.lobby_protocol')}
                           </div>
-                          <h2 className="text-7xl font-black mb-6 tracking-tighter text-white leading-[0.8]">
+                          <h2 className="text-title mb-6 text-white">
                             {t('arena.math_arena')}
                           </h2>
-                          <p className="text-slate-400 font-medium text-lg max-w-sm mx-auto leading-relaxed">
+                          <p className="max-w-sm mx-auto text-base-content text-slate-400">
                             {t('arena.share_code_message')}
                           </p>
                         </div>
@@ -752,23 +771,23 @@ export default function Arena() {
                         <div className="mb-12 relative group/code inline-block mx-auto min-w-[280px]">
                           <div className="absolute -inset-4 bg-blue-500/10 blur-xl opacity-0 group-hover/code:opacity-100 transition-opacity"></div>
                           <div 
-                            className="relative bg-white/[0.03] border border-white/10 rounded-[32px] p-8 cursor-pointer active:scale-[0.98] transition-all hover:bg-white/[0.05] duration-500 shadow-2xl"
+                            className="relative bg-white/[0.03] border border-white/10 rounded-[28px] sm:rounded-[32px] p-6 sm:p-8 cursor-pointer active:scale-[0.98] transition-all hover:bg-white/[0.05] duration-500 shadow-2xl"
                             onClick={() => {
                               navigator.clipboard.writeText(id as string);
                               setShowCopyMessage(true);
                               setTimeout(() => setShowCopyMessage(false), 2000);
                             }}
                           >
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-[8px] font-black uppercase tracking-widest text-white shadow-lg">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-nano text-white shadow-lg">
                               {t('arena.room_code')}
                             </div>
-                            <div className="text-5xl font-black font-mono tracking-[0.3em] text-white flex items-center justify-center py-4 pl-4">
+                            <div className="text-title font-mono tracking-[0.3em] text-white flex items-center justify-center py-2 sm:py-4 pl-4">
                               {id}
-                              <Copy className="ml-4 w-5 h-5 text-blue-400/40 group-hover/code:text-blue-400 transition-colors" />
+                              <Copy className="ml-3 sm:ml-4 w-4 h-4 sm:w-5 sm:h-5 text-blue-400/40 group-hover/code:text-blue-400 transition-colors" />
                             </div>
-                            <div className="flex items-center justify-center gap-2 text-slate-600 group-hover/code:text-slate-400 transition-colors mt-4">
+                            <div className="flex items-center justify-center gap-2 text-slate-600 group-hover/code:text-slate-400 transition-colors mt-3 sm:mt-4">
                               <MousePointer2 className="w-3 h-3" />
-                              <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('arena.click_to_copy')}</span>
+                              <span className="text-nano leading-none">{t('arena.click_to_copy')}</span>
                             </div>
                           </div>
                         </div>
@@ -781,7 +800,7 @@ export default function Arena() {
                             <>
                               {/* Host Settings */}
                               <div className="grid grid-cols-1 gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                                <div className="glass p-4 rounded-2xl border border-white/5 flex items-center justify-between gap-4">
+                                <div className="glass p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 flex items-center justify-between gap-4">
                                   <div className="flex flex-col text-left">
                                     <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('arena.questions')}</span>
                                     <span className="text-xs font-black text-white">{roomSettings.questionsCount}</span>
@@ -789,7 +808,7 @@ export default function Arena() {
                                   <select 
                                     value={roomSettings.questionsCount}
                                     onChange={(e) => socket?.emit('update_room_settings', { roomId: id, settings: { questionsCount: parseInt(e.target.value) }})}
-                                    className="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-[10px] font-black text-blue-400 outline-none cursor-pointer"
+                                    className="bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-black text-blue-400 outline-none cursor-pointer"
                                   >
                                     {[5, 10, 15, 20].map(n => <option key={n} value={n} className="bg-slate-900">{n} Questions</option>)}
                                   </select>

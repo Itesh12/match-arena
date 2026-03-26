@@ -90,7 +90,31 @@ body {
   animation: pulse-red 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Hide scrollbars globally */
+/* Typography System */
+@layer components {
+  .text-hero {
+    @apply text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter leading-[0.8];
+  }
+  .text-title {
+    @apply text-3xl sm:text-5xl font-black tracking-tighter leading-none;
+  }
+  .text-subtitle {
+    @apply text-xl sm:text-2xl font-black tracking-tight;
+  }
+  .text-base-content {
+    @apply text-sm sm:text-base font-medium leading-relaxed;
+  }
+  .text-caption {
+    @apply text-xs sm:text-sm font-bold;
+  }
+  .text-micro {
+    @apply text-[10px] font-black uppercase tracking-[0.2em] leading-none;
+  }
+  .text-nano {
+    @apply text-[8px] font-black uppercase tracking-widest leading-none;
+  }
+}
+
 * {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */

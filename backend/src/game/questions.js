@@ -61,7 +61,7 @@ function generateQuestion(difficulty = 'medium') {
   return {
     question: questionText,
     options: Array.from(options).sort(() => Math.random() - 0.5),
-    correctAnswer
+    answer: correctAnswer
   };
 }
 
