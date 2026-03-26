@@ -33,6 +33,15 @@ const io = new Server(server, {
 
 const gameEngine = new GameEngine(io);
 
+// Health Check for Deployment
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'online', 
+    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    timestamp: new Date()
+  });
+});
+
 // Routes
 app.use('/auth', authRouter);
 app.use('/matches', matchesRouter);

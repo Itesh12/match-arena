@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGameStore } from '@/store/useGameStore';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -14,9 +14,25 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const { setUser, setToken } = useGameStore();
   const router = useRouter();
   const { t } = useTranslation();
+  
+  useEffect(() => {
+    const checkBackend = async () => {
+      try {
+        const res = await fetch(`${API_URL}/health`);
+        if (res.ok) setBackendStatus('online');
+        else setBackendStatus('offline');
+      } catch (e) {
+        setBackendStatus('offline');
+      }
+    };
+    checkBackend();
+    const interval = setInterval(checkBackend, 10000); // Check every 10s
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +73,13 @@ export default function Login() {
             {t('auth.welcome_back')}
           </div>
           <h1 className="text-4xl font-black mb-2 tracking-tight">{t('auth.login_title')}</h1>
-          <p className="text-slate-500 font-medium text-sm">{t('auth.login_subtitle')}</p>
+          <div className="flex items-center justify-center gap-2 mt-2">
+            <div className={`w-2 h-2 rounded-full ${backendStatus === 'online' ? 'bg-green-500 animate-pulse' : backendStatus === 'checking' ? 'bg-slate-500' : 'bg-red-500'}`}></div>
+            <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+              Backend {backendStatus === 'online' ? 'Online' : backendStatus === 'checking' ? 'Checking...' : 'Offline'}
+            </span>
+          </div>
+          <p className="text-slate-500 font-medium text-sm mt-3">{t('auth.login_subtitle')}</p>
         </div>
 
         {error && (
