@@ -16,12 +16,25 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     setCurrentQuestion, 
     setGameStatus, 
     setLeaderboard, 
-    setWinner 
+    setWinner,
+    token
   } = useGameStore();
 
   useEffect(() => {
+    if (!token) {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+      return;
+    }
+
     // Use centralized configuration
-    const socket = io(SOCKET_URL);
+    const socket = io(SOCKET_URL, {
+      transports: ['websocket', 'polling'], // Fallback for some environments
+      reconnection: true,
+      reconnectionAttempts: 5
+    });
     socketRef.current = socket;
     
     socket.on('connect_error', (err) => {
@@ -56,8 +69,9 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => {
       socket.disconnect();
+      socketRef.current = null;
     };
-  }, [setPlayers, setCurrentQuestion, setGameStatus, setLeaderboard, setWinner]);
+  }, [setPlayers, setCurrentQuestion, setGameStatus, setLeaderboard, setWinner, token]);
 
   return (
     <SocketContext.Provider value={socketRef.current}>
