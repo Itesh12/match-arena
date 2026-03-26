@@ -423,27 +423,29 @@ export default function Lobby() {
             </div>
           )}
 
-          <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/5 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 text-slate-500">
-            <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
-              <div className="text-lg sm:text-xl font-black text-white">{user.role === 'admin' ? '∞' : (user.totalGames || 0)}</div>
-              <div className="text-micro text-slate-500">{t('dashboard.games')}</div>
-            </div>
-            <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
-              <div className="text-lg sm:text-xl font-black text-white">{user.wins || 0}</div>
-              <div className="text-[8px] sm:text-[10px] uppercase tracking-widest font-bold text-slate-500">{t('dashboard.wins')}</div>
-            </div>
-            <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
-              <div className="text-lg sm:text-xl font-black text-white">{user.score || 0}</div>
-              <div className="text-[8px] sm:text-[10px] uppercase tracking-widest font-bold text-slate-500">{t('dashboard.score')}</div>
-            </div>
-            <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
-              <div className="text-lg sm:text-xl font-black text-yellow-500 flex items-center gap-1 justify-center">
-                <Coins className="w-3.5 h-3.5" />
-                {user.coins || 0}
+          {view === 'lobby' && (
+            <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/5 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 text-slate-500">
+              <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
+                <div className="text-lg sm:text-xl font-black text-white">{user.role === 'admin' ? '∞' : (user.totalGames || 0)}</div>
+                <div className="text-micro text-slate-500">{t('dashboard.games')}</div>
               </div>
-              <div className="text-[8px] sm:text-[10px] uppercase tracking-widest font-bold text-yellow-500/60">{t('dashboard.coins')}</div>
+              <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
+                <div className="text-lg sm:text-xl font-black text-white">{user.wins || 0}</div>
+                <div className="text-[8px] sm:text-[10px] uppercase tracking-widest font-bold text-slate-500">{t('dashboard.wins')}</div>
+              </div>
+              <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
+                <div className="text-lg sm:text-xl font-black text-white">{user.score || 0}</div>
+                <div className="text-[8px] sm:text-[10px] uppercase tracking-widest font-bold text-slate-500">{t('dashboard.score')}</div>
+              </div>
+              <div className="flex flex-col items-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 sm:bg-transparent sm:border-0">
+                <div className="text-lg sm:text-xl font-black text-yellow-500 flex items-center gap-1 justify-center">
+                  <Coins className="w-3.5 h-3.5" />
+                  {user.coins || 0}
+                </div>
+                <div className="text-[8px] sm:text-[10px] uppercase tracking-widest font-bold text-yellow-500/60">{t('dashboard.coins')}</div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
 
