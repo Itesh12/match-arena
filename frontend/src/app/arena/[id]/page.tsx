@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
-import { Trophy, Timer, User, Users, CheckCircle2, XCircle, Play, Shield, LogOut, Skull, ShieldCheck, Zap, Globe, Info, Copy, MousePointer2 } from 'lucide-react';
+import { Trophy, Timer, User, Users, CheckCircle2, XCircle, Play, Shield, LogOut, Skull, ShieldCheck, Zap, Globe, Info, Copy, MousePointer2, MessagesSquare, Send } from 'lucide-react';
 import Toast from '@/components/Toast';
 
 export default function Arena() {
@@ -26,6 +26,8 @@ export default function Arena() {
     finalQuestions,
     setFinalQuestions,
     countdown,
+    roomSettings,
+    setRoomSettings,
     setPlayers,
     setGameStatus,
     setCurrentQuestion,
@@ -52,6 +54,9 @@ export default function Arena() {
   const [rematchStatus, setRematchStatus] = useState<{ acceptedCount: number; rejectedCount: number; totalPlayers: number } | null>(null);
   const [hasRespondedToRematch, setHasRespondedToRematch] = useState(false);
   const [rematchReason, setRematchReason] = useState<string | null>(null);
+  const [messages, setMessages] = useState<{ id: number; sender: string; text: string; timestamp: Date }[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [showChat, setShowChat] = useState(false);
   useEffect(() => {
     if (initialized && !user) {
       router.push('/login');
@@ -87,9 +92,12 @@ export default function Arena() {
       if (data.ownerSocketId) setOwnerSocketId(data.ownerSocketId);
     });
     socket.on('countdown_update', (count) => setCountdown(count));
+    socket.on('settings_updated', (settings) => setRoomSettings(settings));
     socket.on('game_start', (data) => {
       setGameStatus('playing');
       setCountdown(null);
+      if (data.settings) setRoomSettings(data.settings);
+      setTimeLeft(data.settings?.timePerQuestion || 60);
     });
     socket.on('new_question', (q) => {
       setCurrentQuestion(q);
@@ -155,17 +163,27 @@ export default function Arena() {
       setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 3000);
     });
 
+    socket.on('error', (err: any) => {
+      setNotifications(prev => [...prev, { id: Math.random().toString(), msg: err.message }]);
+    });
+
+    socket.on('message_received', (msg) => {
+      setMessages(prev => [...prev, msg].slice(-50)); // Keep last 50
+    });
+
     return () => {
       socket.off('player_joined');
       socket.off('room_update');
       socket.off('countdown_update');
+      socket.off('settings_updated');
       socket.off('game_start');
       socket.off('new_question');
+      socket.off('answer_result');
       socket.off('leaderboard_update');
       socket.off('game_end');
+      socket.off('error');
       socket.off('player_left_game');
       socket.off('arena_terminated');
-      socket.off('answer_result');
       socket.off('rematch_requested');
       socket.off('rematch_status_update');
       socket.off('rematch_started');
@@ -173,8 +191,9 @@ export default function Arena() {
       socket.off('room_info');
       socket.off('power_up_granted');
       socket.off('power_up_used');
+      socket.off('message_received');
     };
-  }, [socket, id, t]);
+  }, [socket, id, user?.id, user?._id, players, t, setPlayers, setOwnerId, setOwnerSocketId, setCountdown, setGameStatus, setCurrentQuestion, setAnswerResult, setLeaderboard, setWinner, setFinalQuestions, setRoomSettings, setRematchRequest, setRematchStatus]);
 
   useEffect(() => {
     if (!rematchRequest || rematchTimeLeft <= 0) return;
@@ -186,14 +205,14 @@ export default function Arena() {
 
   useEffect(() => {
     if (gameStatus === 'playing') {
-      setTimeLeft(60);
+      setTimeLeft(roomSettings.timePerQuestion || 60);
       setSelectedOption(null);
       const timer = setInterval(() => {
         setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [gameStatus, currentQuestion]);
+  }, [gameStatus, currentQuestion, roomSettings.timePerQuestion]);
 
   const handleSelect = (option: number) => {
     if (selectedOption !== null || !socket) return;
@@ -239,6 +258,17 @@ export default function Arena() {
     }
     reset();
     router.push('/');
+  };
+
+  const handleSendChat = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!socket || !newMessage.trim() || !user) return;
+    socket.emit('send_message', { 
+        roomId: id, 
+        message: newMessage.trim(), 
+        username: user.username 
+    });
+    setNewMessage('');
   };
 
   const InfoModal = ({ title, message, onConfirm, show, isConfirmation }: { title: string, message: string, onConfirm: () => void, show: boolean, isConfirmation?: boolean }) => {
@@ -391,6 +421,38 @@ export default function Arena() {
             </>
           )}
         </div>
+
+        {/* Persistent Chat for Finished State */}
+        <div className={`fixed top-0 right-0 w-full sm:w-[400px] h-full bg-[#020617]/95 backdrop-blur-3xl z-[100] border-l border-white/10 transition-transform duration-500 shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col ${showChat ? 'translate-x-0' : 'translate-x-full'}`}>
+           <div className="p-6 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center border border-blue-500/20">
+                      <MessagesSquare className="w-4 h-4 text-blue-400" />
+                  </div>
+                  <h3 className="text-base font-black text-white uppercase tracking-widest">Lobby Chat</h3>
+              </div>
+              <button onClick={() => setShowChat(false)} className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-white">
+                  <XCircle className="w-5 h-5" />
+              </button>
+           </div>
+           <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-hide">
+              {messages.map((msg) => (
+                  <div key={msg.id} className={`flex flex-col ${msg.sender === user?.username ? 'items-end' : 'items-start'}`}>
+                      <span className="text-[8px] font-black text-slate-500 uppercase mb-1">{msg.sender}</span>
+                      <div className={`px-4 py-2.5 rounded-2xl text-sm max-w-[85%] ${msg.sender === user?.username ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white/5 text-slate-200 rounded-tl-none'}`}>
+                          {msg.text}
+                      </div>
+                  </div>
+              ))}
+           </div>
+           <form onSubmit={handleSendChat} className="p-6 border-t border-white/10">
+              <div className="relative group">
+                  <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type a message..." className="w-full h-14 pl-6 pr-14 bg-white/[0.03] border border-white/5 rounded-2xl text-white focus:outline-none focus:border-blue-500/50" />
+                  <button type="submit" disabled={!newMessage.trim()} className="absolute right-2 top-2 w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white"><Send className="w-4 h-4" /></button>
+              </div>
+           </form>
+        </div>
+        <Toast show={!!notifications.length} msg={notifications[notifications.length - 1]?.msg || ''} type="success" />
       </div>
     );
   }
@@ -577,6 +639,12 @@ export default function Arena() {
             <span className="text-xs font-black text-white/70">{players.length} Players</span>
           </button>
           <span className="text-sm font-black text-white uppercase tracking-widest">Math Arena</span>
+          <button 
+            onClick={() => setShowChat(!showChat)} 
+            className={`p-3 rounded-xl border transition-all lg:hidden mr-2 ${showChat ? 'bg-blue-600 border-blue-400' : 'glass border-white/10'}`}
+          >
+            <MessagesSquare className={`w-4 h-4 ${showChat ? 'text-white' : 'text-blue-400'}`} />
+          </button>
           <button onClick={() => setShowExitModal(true)} className="text-red-400 glass px-3 py-2 rounded-xl border border-red-500/20 text-xs font-black">
             Quit
           </button>
@@ -620,6 +688,26 @@ export default function Arena() {
                 </div>
               </div>
 
+              {/* Right: Room ID - Bold & Modern */}
+              <div className="flex justify-end pr-6">
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => setShowChat(!showChat)}
+                    className={`p-4 rounded-full border transition-all duration-300 relative group h-[76px] w-[76px] flex items-center justify-center ${showChat ? 'bg-blue-600 border-blue-400 shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'glass border-white/5 hover:border-white/20'}`}
+                  >
+                    <MessagesSquare className={`w-6 h-6 ${showChat ? 'text-white' : 'text-blue-400/60 group-hover:text-blue-400'}`} />
+                    {messages.length > 0 && !showChat && (
+                      <span className="absolute top-3 right-3 w-3 h-3 bg-red-500 rounded-full border-2 border-[#020617] animate-pulse"></span>
+                    )}
+                  </button>
+                  <div className="flex items-center gap-6 px-10 glass rounded-full border border-white/5 shadow-xl h-[76px]">
+                    <div className="flex flex-col text-right">
+                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] leading-none mb-1.5">{t('arena.room_id')}</span>
+                      <span className="text-xl font-black text-white tracking-widest uppercase">{(id as string).toUpperCase()}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </header>
 
             {/* Vertically Centered Content Area */}
@@ -685,10 +773,57 @@ export default function Arena() {
                           </div>
                         </div>
 
-                        {/* Owner Controls / Waiting Info */}
-                        <div className="w-full max-w-sm mx-auto">
-                          {(socket?.id === ownerSocketId || (user?.id && user.id === ownerId) || ((user as any)?._id && (user as any)._id === ownerId)) ? (
-                            <div className="space-y-4">
+                        {/* Owner Controls / Room Settings */}
+                        <div className="w-full max-w-sm mx-auto space-y-6">
+                          {(socket?.id === ownerSocketId || 
+                            (user?.id && String(user.id) === String(ownerId)) || 
+                            ((user as any)?._id && String((user as any)._id) === String(ownerId))) ? (
+                            <>
+                              {/* Host Settings */}
+                              <div className="grid grid-cols-1 gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                <div className="glass p-4 rounded-2xl border border-white/5 flex items-center justify-between gap-4">
+                                  <div className="flex flex-col text-left">
+                                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('arena.questions')}</span>
+                                    <span className="text-xs font-black text-white">{roomSettings.questionsCount}</span>
+                                  </div>
+                                  <select 
+                                    value={roomSettings.questionsCount}
+                                    onChange={(e) => socket?.emit('update_room_settings', { roomId: id, settings: { questionsCount: parseInt(e.target.value) }})}
+                                    className="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-[10px] font-black text-blue-400 outline-none cursor-pointer"
+                                  >
+                                    {[5, 10, 15, 20].map(n => <option key={n} value={n} className="bg-slate-900">{n} Questions</option>)}
+                                  </select>
+                                </div>
+
+                                <div className="glass p-4 rounded-2xl border border-white/5 flex items-center justify-between gap-4">
+                                  <div className="flex flex-col text-left">
+                                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('arena.time_limit')}</span>
+                                    <span className="text-xs font-black text-white">{roomSettings.timePerQuestion}s</span>
+                                  </div>
+                                  <select 
+                                    value={roomSettings.timePerQuestion}
+                                    onChange={(e) => socket?.emit('update_room_settings', { roomId: id, settings: { timePerQuestion: parseInt(e.target.value) }})}
+                                    className="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-[10px] font-black text-blue-400 outline-none cursor-pointer"
+                                  >
+                                    {[15, 30, 45, 60].map(s => <option key={s} value={s} className="bg-slate-900">{s} Seconds</option>)}
+                                  </select>
+                                </div>
+
+                                <div className="glass p-4 rounded-2xl border border-white/5 flex items-center justify-between gap-4">
+                                  <div className="flex flex-col text-left">
+                                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('arena.difficulty')}</span>
+                                    <span className="text-xs font-black text-white uppercase">{roomSettings.difficulty}</span>
+                                  </div>
+                                  <select 
+                                    value={roomSettings.difficulty}
+                                    onChange={(e) => socket?.emit('update_room_settings', { roomId: id, settings: { difficulty: e.target.value }})}
+                                    className="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-[10px] font-black text-blue-400 outline-none cursor-pointer uppercase"
+                                  >
+                                    {['easy', 'medium', 'hard'].map(d => <option key={d} value={d} className="bg-slate-900">{d}</option>)}
+                                  </select>
+                                </div>
+                              </div>
+
                               <button
                                 disabled={players.length < 2}
                                 onClick={handleStart}
@@ -702,7 +837,7 @@ export default function Arena() {
                                   {players.length < 2 ? t('arena.need_players') : t('arena.start_game')}
                                 </span>
                               </button>
-                            </div>
+                            </>
                           ) : (
                             <div className="h-16 flex items-center justify-center rounded-[2rem] bg-blue-500/5 border border-blue-500/10 text-blue-400 font-extrabold tracking-[0.2em] animate-pulse uppercase text-xs px-10 text-center leading-tight">
                               {t('arena.waiting_for_owner')}
@@ -770,14 +905,14 @@ export default function Arena() {
             <header className="flex items-center justify-between mb-12">
               <div className="flex items-center gap-8">
                 <div className={`glass px-6 py-3 rounded-2xl flex items-center gap-4 shadow-2xl transition-all duration-300 ${timeLeft < 10 ? 'border-red-500/50 bg-red-500/5 animate-pulse-red' : 'border-white/5'}`}>
-                  <div className={`absolute bottom-0 left-0 h-1 transition-all duration-1000 ${timeLeft < 10 ? 'bg-red-500' : 'bg-blue-500'}`} style={{ width: `${(timeLeft / 60) * 100}%` }}></div>
+                  <div className={`absolute bottom-0 left-0 h-1 transition-all duration-1000 ${timeLeft < 10 ? 'bg-red-500' : 'bg-blue-500'}`} style={{ width: `${(timeLeft / (roomSettings.timePerQuestion || 60)) * 100}%` }}></div>
                   <Timer className={`w-6 h-6 transition-colors ${timeLeft < 10 ? 'text-red-500 animate-shake' : 'text-blue-400'}`} />
                   <span className={`font-mono text-3xl font-black tracking-tighter tabular-nums transition-colors ${timeLeft < 10 ? 'text-red-500' : 'text-white'}`}>{timeLeft}<span className={`text-lg ml-1 ${timeLeft < 10 ? 'text-red-500/50' : 'text-slate-400'}`}>s</span></span>
                 </div>
                 <div>
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">{t('arena.total_progress')}</div>
                   <div className="flex gap-1.5">
-                    {Array.from({ length: 10 }).map((_, i) => (
+                    {Array.from({ length: roomSettings.questionsCount || 10 }).map((_, i) => (
                       <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === (currentQuestion?.index ?? 0) ? 'w-6 bg-blue-500' : i < (currentQuestion?.index ?? 0) ? 'w-2 bg-blue-500/40' : 'w-2 bg-white/5'}`}></div>
                     ))}
                   </div>
@@ -785,7 +920,7 @@ export default function Arena() {
               </div>
               <div className="text-right">
                 <div className="text-3xl font-black tracking-tighter text-white">
-                  <span className="text-blue-500">{t('arena.question_short')}</span>{(currentQuestion?.index ?? 0) + 1} <span className="text-slate-400 text-lg">/ 10</span>
+                  <span className="text-blue-500">{t('arena.question_short')}</span>{(currentQuestion?.index ?? 0) + 1} <span className="text-slate-400 text-lg">/ {roomSettings.questionsCount || 10}</span>
                 </div>
                 <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none">{t('arena.current_question')}</div>
               </div>
@@ -1002,6 +1137,55 @@ export default function Arena() {
           </div>
         </div>
       )}
+
+      <div className={`fixed top-0 right-0 w-full sm:w-[400px] h-full bg-[#020617]/95 backdrop-blur-3xl z-[100] border-l border-white/10 transition-transform duration-500 shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col ${showChat ? 'translate-x-0' : 'translate-x-full'}`}>
+         <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+            <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center border border-blue-500/20">
+                    <MessagesSquare className="w-4 h-4 text-blue-400" />
+                </div>
+                <h3 className="text-base font-black text-white uppercase tracking-widest">Lobby Chat</h3>
+            </div>
+            <button onClick={() => setShowChat(false)} className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-white">
+                <XCircle className="w-5 h-5" />
+            </button>
+         </div>
+         <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-hide">
+            {messages.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center p-12 opacity-30">
+                    <MessagesSquare className="w-12 h-12 mb-4" />
+                    <p className="text-sm font-medium">No messages yet. Say hello to the arena!</p>
+                </div>
+            ) : (
+                messages.map((msg) => (
+                    <div key={msg.id} className={`flex flex-col ${msg.sender === user?.username ? 'items-end' : 'items-start'}`}>
+                        <div className="flex items-center gap-2 mb-1 px-1">
+                            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{msg.sender}</span>
+                        </div>
+                        <div className={`px-4 py-2.5 rounded-2xl text-sm max-w-[85%] break-words ${msg.sender === user?.username ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white/5 text-slate-200 border border-white/5 rounded-tl-none'}`}>
+                            {msg.text}
+                        </div>
+                    </div>
+                ))
+            )}
+         </div>
+         <form onSubmit={handleSendChat} className="p-6 border-t border-white/10 bg-white/[0.02]">
+            <div className="relative group">
+                <input 
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type a message..."
+                    className="w-full h-14 pl-6 pr-14 bg-white/[0.03] border border-white/5 rounded-2xl text-sm text-white focus:outline-none focus:border-blue-500/50"
+                />
+                <button type="submit" disabled={!newMessage.trim()} className="absolute right-2 top-2 w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+                    <Send className="w-4 h-4" />
+                </button>
+            </div>
+         </form>
+      </div>
+
+      <Toast show={!!notifications.length} msg={notifications[notifications.length - 1]?.msg || ''} type="success" />
     </div>
   );
 }

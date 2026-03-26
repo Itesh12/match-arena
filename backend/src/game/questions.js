@@ -8,32 +8,39 @@ function getRandomInt(min, max) {
 /**
  * Generates a random math question with options.
  */
-function generateQuestion() {
+function generateQuestion(difficulty = 'medium') {
   const operations = ['+', '-', '*', '/'];
   const op = operations[getRandomInt(0, operations.length - 1)];
   
   let a, b, correctAnswer;
   
+  // Difficulty scaling
+  const config = {
+    easy: { addMax: 20, subMax: 30, multMax: 6, divMax: 6 },
+    medium: { addMax: 50, subMax: 100, multMax: 12, divMax: 12 },
+    hard: { addMax: 200, subMax: 500, multMax: 25, divMax: 20 }
+  }[difficulty] || { addMax: 50, subMax: 100, multMax: 12, divMax: 12 };
+
   switch (op) {
     case '+':
-      a = getRandomInt(1, 50);
-      b = getRandomInt(1, 50);
+      a = getRandomInt(1, config.addMax);
+      b = getRandomInt(1, config.addMax);
       correctAnswer = a + b;
       break;
     case '-':
-      a = getRandomInt(10, 100);
-      b = getRandomInt(1, a); // Avoid negative results for simplicity
+      a = getRandomInt(10, config.subMax);
+      b = getRandomInt(1, a); 
       correctAnswer = a - b;
       break;
     case '*':
-      a = getRandomInt(1, 12);
-      b = getRandomInt(1, 12);
+      a = getRandomInt(1, config.multMax);
+      b = getRandomInt(1, config.multMax);
       correctAnswer = a * b;
       break;
     case '/':
-      b = getRandomInt(1, 12);
-      correctAnswer = getRandomInt(1, 12);
-      a = b * correctAnswer; // Ensure integer division
+      b = getRandomInt(1, config.divMax);
+      correctAnswer = getRandomInt(1, config.divMax);
+      a = b * correctAnswer; 
       break;
   }
 
@@ -43,9 +50,10 @@ function generateQuestion() {
   const options = new Set();
   options.add(correctAnswer);
   
+  const range = difficulty === 'hard' ? 20 : 10;
   while (options.size < 4) {
-    const distractor = correctAnswer + getRandomInt(-10, 10);
-    if (distractor !== correctAnswer && distractor >= 0) {
+    const distractor = correctAnswer + getRandomInt(-range, range);
+    if (distractor !== correctAnswer && (distractor >= 0 || op === '-')) {
       options.add(distractor);
     }
   }

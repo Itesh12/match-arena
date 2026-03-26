@@ -50,7 +50,13 @@ interface GameState {
   ownerSocketId: string;
   finalQuestions: Question[];
   countdown: number | null;
+  roomSettings: {
+    questionsCount: number;
+    timePerQuestion: number;
+    difficulty: 'easy' | 'medium' | 'hard';
+  };
 
+  setRoomSettings: (settings: { questionsCount: number, timePerQuestion: number, difficulty: 'easy' | 'medium' | 'hard' }) => void;
   setPlayers: (players: Player[]) => void;
   setCurrentQuestion: (q: Question | null) => void;
   setGameStatus: (status: 'waiting' | 'playing' | 'finished') => void;
@@ -83,6 +89,11 @@ export const useGameStore = create<GameState>()(
       ownerSocketId: '',
       finalQuestions: [],
       countdown: null,
+      roomSettings: {
+        questionsCount: 10,
+        timePerQuestion: 60,
+        difficulty: 'medium'
+      },
 
       setPlayers: (players) => set({ players }),
       setCurrentQuestion: (q) => set({ currentQuestion: q }),
@@ -96,6 +107,7 @@ export const useGameStore = create<GameState>()(
       setOwnerSocketId: (ownerSocketId) => set({ ownerSocketId }),
       setFinalQuestions: (questions) => set({ finalQuestions: questions }),
       setCountdown: (countdown) => set({ countdown }),
+      setRoomSettings: (roomSettings) => set({ roomSettings }),
       reset: () => set({
         players: [],
         currentQuestion: null,
@@ -107,6 +119,11 @@ export const useGameStore = create<GameState>()(
         ownerSocketId: '',
         finalQuestions: [],
         countdown: null,
+        roomSettings: {
+          questionsCount: 10,
+          timePerQuestion: 60,
+          difficulty: 'medium'
+        },
       }),
       logout: () => {
         localStorage.removeItem('token');

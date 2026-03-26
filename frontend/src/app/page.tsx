@@ -5,7 +5,7 @@ import { useSocket } from '@/context/SocketContext';
 import { useGameStore } from '@/store/useGameStore';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { LogOut, LayoutDashboard, Shield, Coins, Globe, Trophy, CheckCircle2, XCircle } from 'lucide-react';
+import { LogOut, LayoutDashboard, Shield, Coins, Globe, Trophy, CheckCircle2, XCircle, BrainCircuit } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getRankTier } from '@/utils/ranks';
 import Toast from '@/components/Toast';
@@ -356,6 +356,16 @@ export default function Lobby() {
                 </div>
                 <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 skew-x-12"></div>
               </button>
+
+              <button
+                onClick={() => router.push('/practice')}
+                className="group relative w-full h-16 sm:h-20 bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black rounded-3xl flex items-center justify-center gap-4 overflow-hidden transition-all hover:bg-blue-600/20 active:scale-[0.98] shadow-lg"
+              >
+                <BrainCircuit className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
+                <span className="text-base sm:text-xl tracking-tight uppercase">
+                  {t('practice.title')}
+                </span>
+              </button>
               <button
                 onClick={() => setIsJoining(true)}
                 className="w-full glass glass-hover text-white font-bold py-5 sm:py-6 rounded-[24px] transform active:scale-[0.97] transition-all flex items-center justify-center gap-3 text-base sm:text-lg border-white/10"
@@ -417,15 +427,17 @@ export default function Lobby() {
       <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-slate-950/90 backdrop-blur-2xl border-t border-white/10 flex items-center">
         {([
           { key: 'lobby', icon: '🏠', label: 'Lobby' },
+          { key: 'practice', icon: '🧠', label: 'Practice' },
           { key: 'history', icon: '📜', label: 'History' },
           { key: 'social', icon: '👥', label: 'Social' },
-          { key: 'settings', icon: '🌐', label: 'Language' },
+          { key: 'settings', icon: '🌐', label: t('dashboard.language') },
           ...(user.role === 'admin' ? [{ key: 'admin', icon: '🛡️', label: 'Admin' }] : []),
         ] as const).map((tab) => (
           <button
             key={tab.key}
             onClick={() => {
               if (tab.key === 'admin') { router.push('/admin'); return; }
+              if (tab.key === 'practice') { router.push('/practice'); return; }
               setView(view === tab.key ? 'lobby' : tab.key as any);
             }}
             className={`flex-1 flex flex-col items-center justify-center py-3 gap-0.5 transition-colors ${view === tab.key ? 'text-blue-400' : 'text-slate-600'}`}

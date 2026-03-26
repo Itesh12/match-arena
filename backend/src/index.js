@@ -9,6 +9,7 @@ const { authRouter } = require('./routes/auth');
 const adminRouter = require('./routes/admin');
 const matchesRouter = require('./routes/matches');
 const socialRoutes = require('./routes/SocialRoutes');
+const practiceRouter = require('./routes/practice');
 const { onlineUsers } = require('./controllers/SocialController');
 
 dotenv.config();
@@ -64,6 +65,7 @@ app.get('/health', (req, res) => {
 app.use('/auth', authRouter);
 app.use('/matches', matchesRouter);
 app.use('/social', socialRoutes);
+app.use('/practice', practiceRouter);
 app.use('/admin', adminRouter(gameEngine));
 
 io.on('connection', (socket) => {
@@ -90,8 +92,21 @@ io.on('connection', (socket) => {
     gameEngine.startCountdown(socket, roomId);
   });
 
+  socket.on('update_room_settings', ({ roomId, settings }) => {
+    gameEngine.updateRoomSettings(socket.id, roomId, settings);
+  });
+
   socket.on('leave_game', (roomId) => {
     gameEngine.leaveRoom(socket.id, roomId);
+  });
+
+  socket.on('send_message', ({ roomId, message, username }) => {
+    io.to(roomId).emit('message_received', { 
+        id: Date.now(),
+        sender: username, 
+        text: message,
+        timestamp: new Date()
+    });
   });
 
   socket.on('rematch_arena', (roomId) => {

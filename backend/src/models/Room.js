@@ -23,6 +23,11 @@ const RoomSchema = new mongoose.Schema({
     enum: ['waiting', 'playing', 'finished'],
     default: 'waiting',
   },
+  settings: {
+    questionsCount: { type: Number, default: 10 },
+    timePerQuestion: { type: Number, default: 60 },
+    difficulty: { type: String, enum: ['easy', 'medium', 'hard'], default: 'medium' },
+  },
   players: {
     type: Map,
     of: {

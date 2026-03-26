@@ -81,7 +81,10 @@ i18n
             lobby_protocol: "Lobby Protocol v1.4",
             copy_success: "Room code copied to clipboard",
             room_code: "Room Code",
-            active: "Active"
+            active: "Active",
+            questions: "Questions",
+            time_limit: "Time Limit",
+            difficulty: "Difficulty"
           },
           dashboard: {
             welcome: "Welcome back",
@@ -144,6 +147,24 @@ i18n
             you: "YOU",
             ready: "READY",
             question_short: "Q"
+          },
+          practice: {
+            title: "Practice Mode",
+            subtitle: "Sharpen your skills, solo style",
+            start_practice: "Start Session",
+            difficulty_select: "Select Difficulty",
+            difficulty_easy: "Easy",
+            difficulty_medium: "Medium",
+            difficulty_hard: "Hard",
+            questions_select: "Question Count",
+            correct_answers: "Correct Answers",
+            accuracy: "Accuracy",
+            time_spent: "Time Spent",
+            session_complete: "Session Complete",
+            practice_again: "Practice Again",
+            back_to_dashboard: "Back to Dashboard",
+            loading_questions: "Fetching training data...",
+            no_questions: "Failed to load questions. Please try again."
           },
           auth: {
             welcome_back: "Welcome Back",
@@ -352,7 +373,28 @@ i18n
             copy_success: "रूम कोड क्लिपबोर्ड पर कॉपी किया गया",
             room_code: "कमरा कोड",
             active: "सक्रिय",
-            question_short: "प्र"
+            question_short: "प्र",
+            questions: "प्रश्न संख्या",
+            time_limit: "समय सीमा",
+            difficulty: "कठिनाई"
+          },
+          practice: {
+            title: "अभ्यास मोड",
+            subtitle: "अपने कौशल को निखारें, अकेले",
+            start_practice: "सत्र शुरू करें",
+            difficulty_select: "कठिनाई चुनें",
+            difficulty_easy: "आसान",
+            difficulty_medium: "मध्यम",
+            difficulty_hard: "कठिन",
+            questions_select: "प्रश्नों की संख्या",
+            correct_answers: "सही उत्तर",
+            accuracy: "सटीकता",
+            time_spent: "बिताया गया समय",
+            session_complete: "सत्र पूरा हुआ",
+            practice_again: "फिर से अभ्यास करें",
+            back_to_dashboard: "डैशबोर्ड पर वापस",
+            loading_questions: "प्रशिक्षण डेटा लोड हो रहा है...",
+            no_questions: "प्रश्न लोड करने में विफल। पुनः प्रयास करें।"
           },
           dashboard: {
             welcome: "वापसी पर स्वागत है",

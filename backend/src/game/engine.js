@@ -31,6 +31,7 @@ class GameEngine {
           mode: room.mode || 'standard',
           ownerId: room.ownerId,
           ownerSocketId: room.ownerSocketId,
+          settings: room.settings || { questionsCount: 10, timePerQuestion: 60, difficulty: 'medium' },
           countdown: null,
         });
       });
@@ -56,6 +57,7 @@ class GameEngine {
           players: Object.fromEntries(room.players),
           questions: room.questions,
           currentQuestionIndex: room.currentQuestionIndex,
+          settings: room.settings,
         },
         { upsert: true, new: true }
       );
@@ -87,6 +89,7 @@ class GameEngine {
         createdAt: Date.now(),
         ownerId: userId,
         ownerSocketId: socket.id,
+        settings: { questionsCount: 10, timePerQuestion: 60, difficulty: 'medium' },
         countdown: null,
       });
     }
@@ -154,6 +157,24 @@ class GameEngine {
     this.saveRoom(roomId);
   }
 
+  updateRoomSettings(socketId, roomId, settings) {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+
+    if (socketId !== room.ownerSocketId) {
+      this.io.to(socketId).emit('error', { message: 'Only the arena host can update settings.' });
+      return;
+    }
+
+    // Basic validation and updating
+    if (typeof settings.questionsCount === 'number') room.settings.questionsCount = Math.min(Math.max(settings.questionsCount, 5), 20);
+    if (typeof settings.timePerQuestion === 'number') room.settings.timePerQuestion = Math.min(Math.max(settings.timePerQuestion, 15), 60);
+    if (settings.difficulty) room.settings.difficulty = settings.difficulty;
+
+    this.io.to(roomId).emit('settings_updated', room.settings);
+    this.saveRoom(roomId);
+  }
+
   startCountdown(socket, roomId, mode = 'standard') {
     const room = this.rooms.get(roomId);
     if (!room) return;
@@ -200,12 +221,13 @@ class GameEngine {
     if (!room) return;
     
     room.status = 'playing';
-    room.questions = Array.from({ length: 10 }, () => generateQuestion());
+    room.questions = Array.from({ length: room.settings.questionsCount || 10 }, () => generateQuestion(room.settings.difficulty));
     room.currentQuestionIndex = 0;
     
     this.io.to(roomId).emit('game_start', {
       totalQuestions: room.questions.length,
-      mode: room.mode
+      mode: room.mode,
+      settings: room.settings
     });
 
     this.saveRoom(roomId);
@@ -240,11 +262,12 @@ class GameEngine {
 
     this.io.to(roomId).emit('new_question', clientQuestion);
 
-    // Timeout for question (60s)
+    // Timeout for question
     if (room.timer) clearTimeout(room.timer);
+    const ms = (room.settings.timePerQuestion || 60) * 1000;
     room.timer = setTimeout(() => {
       this.handleTimeout(roomId);
-    }, 60000);
+    }, ms);
   }
 
   submitAnswer(socketId, roomId, answer) {
