@@ -232,10 +232,10 @@ export default function Lobby() {
       </header>
 
       {/* Main Scroll Area */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 sm:p-8 pb-24 md:pb-8">
+      <main className="relative z-10 flex-1 flex flex-col items-center py-8 sm:py-12 px-4 sm:px-8 pb-24 md:pb-12 overflow-y-auto">
 
         {/* Main Card */}
-        <div className="w-full max-w-md glass rounded-[32px] sm:rounded-[48px] p-6 sm:p-10 shadow-2xl border-white/5">
+        <div className="w-full max-w-5xl glass rounded-[32px] sm:rounded-[48px] p-6 sm:p-10 shadow-2xl border-white/5 animate-in fade-in zoom-in duration-500">
           <div className="text-center mb-8 sm:mb-12">
             <div className="text-micro text-blue-400 mb-4 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 inline-block">
               {t('dashboard.math_arena_v1')}
@@ -358,11 +358,11 @@ export default function Lobby() {
               </button>
             </div>
           ) : !isJoining ? (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {roomId && (
                 <button
                   onClick={() => router.push(`/arena/${roomId}`)}
-                  className="w-full bg-green-500/10 hover:bg-green-500/20 text-green-400 font-bold py-4 rounded-[24px] border border-green-500/20 transition-all flex items-center justify-center gap-3 mb-2 animate-pulse text-sm sm:text-base"
+                  className="col-span-1 sm:col-span-2 w-full bg-green-500/10 hover:bg-green-500/20 text-green-400 font-bold py-4 rounded-[24px] border border-green-500/20 transition-all flex items-center justify-center gap-3 mb-2 animate-pulse text-sm sm:text-base"
                 >
                   <span>{t('dashboard.return_to_arena')} (#{roomId})</span>
                 </button>
@@ -370,30 +370,34 @@ export default function Lobby() {
               
               <button
                 onClick={() => handleCreate()}
-                className="group relative w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-5 sm:py-6 rounded-[24px] shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] transform active:scale-[0.97] transition-all overflow-hidden text-base sm:text-lg"
+                className="col-span-1 sm:col-span-2 group relative w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-6 sm:py-8 rounded-[32px] sm:rounded-[40px] shadow-[0_0_30px_rgba(37,99,235,0.3)] hover:shadow-[0_0_40px_rgba(37,99,235,0.5)] transform active:scale-[0.97] transition-all overflow-hidden text-lg sm:text-2xl"
               >
-                <div className="relative z-10 flex items-center justify-center gap-3">
+                <div className="relative z-10 flex items-center justify-center gap-4">
+                  <Play className="w-6 h-6 sm:w-8 sm:h-8 fill-current" />
                   {t('dashboard.create_game')}
                 </div>
                 <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 skew-x-12"></div>
               </button>
-
+ 
               <button
                 onClick={() => router.push('/practice')}
-                className="group relative w-full h-14 sm:h-20 bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black rounded-2xl sm:rounded-3xl flex items-center justify-center gap-4 overflow-hidden transition-all hover:bg-blue-600/20 active:scale-[0.98] shadow-lg"
+                className="group relative w-full h-20 sm:h-28 bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black rounded-[32px] flex flex-col items-center justify-center gap-2 overflow-hidden transition-all hover:bg-blue-600/20 active:scale-[0.98] shadow-lg"
               >
-                <BrainCircuit className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
-                <span className="text-sm sm:text-xl tracking-tight uppercase">
+                <BrainCircuit className="w-6 h-6 sm:w-8 sm:h-8 group-hover:scale-110 transition-transform" />
+                <span className="text-xs sm:text-lg tracking-widest uppercase">
                   {t('practice.title')}
                 </span>
               </button>
+
               <button
                 onClick={() => setIsJoining(true)}
-                className="w-full glass glass-hover text-white font-bold py-5 sm:py-6 rounded-[24px] transform active:scale-[0.97] transition-all flex items-center justify-center gap-3 text-base sm:text-lg border-white/10"
+                className="w-full h-20 sm:h-28 glass glass-hover text-white font-bold rounded-[32px] transform active:scale-[0.97] transition-all flex flex-col items-center justify-center gap-2 text-xs sm:text-lg border-white/10"
               >
+                <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
                 {t('dashboard.join_with_code')}
               </button>
             </div>
+>
           ) : (
             <div className="space-y-6 sm:space-y-8 animate-in fade-in zoom-in duration-300">
               <div className="space-y-3">
