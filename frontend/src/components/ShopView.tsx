@@ -33,22 +33,34 @@ export default function ShopView() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState<string | null>(null);
+  const [debugMsg, setDebugMsg] = useState<string>('');
 
   useEffect(() => {
-    fetchItems();
-  }, []);
+    if (token) {
+      fetchItems();
+    } else {
+      setDebugMsg('No JWT token found in Zustand store.');
+      setLoading(false);
+    }
+  }, [token]);
 
   const fetchItems = async () => {
     try {
+      setDebugMsg('Fetching from ' + `${API_URL}/shop`);
       const res = await fetch(`${API_URL}/shop`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
         const data = await res.json();
         setItems(data);
+        setDebugMsg(data.length === 0 ? 'API returned success, but array is empty.' : 'Loaded ' + data.length + ' items.');
+      } else {
+        const errText = await res.text();
+        setDebugMsg(`HTTP Error: ${res.status} - ${errText}`);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to fetch shop items:', err);
+      setDebugMsg('Fetch Exception: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -114,87 +126,100 @@ export default function ShopView() {
       </div>
 
       {/* Items Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
-        {items.map((item) => {
-          const Icon = iconMap[item.icon as keyof typeof iconMap] || Package;
-          const isOwned = user?.inventory?.includes(item.key);
-          const canAfford = user?.coins! >= item.price;
-          const isPurchasing = purchasing === item.key;
+      {items.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+          {items.map((item) => {
+            const Icon = iconMap[item.icon as keyof typeof iconMap] || Package;
+            const isOwned = user?.inventory?.includes(item.key);
+            const canAfford = user?.coins! >= item.price;
+            const isPurchasing = purchasing === item.key;
 
-          return (
-            <div 
-              key={item.key} 
-              className={`glass group relative overflow-hidden rounded-[40px] border transition-all duration-500 ${isOwned ? 'border-green-500/20' : 'border-white/5 hover:border-blue-500/30'}`}
-            >
-              {/* Rarity Glow */}
-              <div className={`absolute -top-24 -right-24 w-48 h-48 rounded-full blur-[80px] opacity-20 pointer-events-none transition-all duration-700 group-hover:opacity-40 
-                ${item.rarity === 'legendary' ? 'bg-orange-500' : 
-                  item.rarity === 'epic' ? 'bg-purple-500' : 
-                  item.rarity === 'rare' ? 'bg-blue-500' : 'bg-slate-500'}`} 
-              />
+            return (
+              <div 
+                key={item.key} 
+                className={`glass group relative overflow-hidden rounded-[40px] border transition-all duration-500 ${isOwned ? 'border-green-500/20' : 'border-white/5 hover:border-blue-500/30'}`}
+              >
+                {/* Rarity Glow */}
+                <div className={`absolute -top-24 -right-24 w-48 h-48 rounded-full blur-[80px] opacity-20 pointer-events-none transition-all duration-700 group-hover:opacity-40 
+                  ${item.rarity === 'legendary' ? 'bg-orange-500' : 
+                    item.rarity === 'epic' ? 'bg-purple-500' : 
+                    item.rarity === 'rare' ? 'bg-blue-500' : 'bg-slate-500'}`} 
+                />
 
-              <div className="p-8 relative z-10">
-                <div className="flex items-start justify-between mb-6">
-                  <div className={`p-4 rounded-3xl border transition-all duration-500 group-hover:scale-110 
-                    ${item.rarity === 'legendary' ? 'bg-orange-500/10 border-orange-500/30 text-orange-400' : 
-                      item.rarity === 'epic' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400' : 
-                      item.rarity === 'rare' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' : 'bg-white/5 border-white/10 text-slate-400'}`}
-                  >
-                    <Icon className="w-8 h-8" />
+                <div className="p-8 relative z-10">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className={`p-4 rounded-3xl border transition-all duration-500 group-hover:scale-110 
+                      ${item.rarity === 'legendary' ? 'bg-orange-500/10 border-orange-500/30 text-orange-400' : 
+                        item.rarity === 'epic' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400' : 
+                        item.rarity === 'rare' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' : 'bg-white/5 border-white/10 text-slate-400'}`}
+                    >
+                      <Icon className="w-8 h-8" />
+                    </div>
+                    {isOwned ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Owned</span>
+                      </div>
+                    ) : (
+                      <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border 
+                        ${item.rarity === 'legendary' ? 'text-orange-400 border-orange-500/30 bg-orange-500/10' : 
+                          item.rarity === 'epic' ? 'text-purple-400 border-purple-500/30 bg-purple-500/10' : 
+                          item.rarity === 'rare' ? 'text-blue-400 border-blue-500/30 bg-blue-500/10' : 'text-slate-500 border-white/5 bg-white/5'}`}
+                      >
+                        {item.rarity}
+                      </div>
+                    )}
                   </div>
-                  {isOwned ? (
-                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">
-                      <CheckCircle2 className="w-3 h-3" />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Owned</span>
-                    </div>
-                  ) : (
-                    <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border 
-                      ${item.rarity === 'legendary' ? 'text-orange-400 border-orange-500/30 bg-orange-500/10' : 
-                        item.rarity === 'epic' ? 'text-purple-400 border-purple-500/30 bg-purple-500/10' : 
-                        item.rarity === 'rare' ? 'text-blue-400 border-blue-500/30 bg-blue-500/10' : 'text-slate-500 border-white/5 bg-white/5'}`}
-                    >
-                      {item.rarity}
-                    </div>
-                  )}
-                </div>
 
-                <div className="mb-8">
-                  <h3 className="text-xl font-black text-white mb-2">{item.name}</h3>
-                  <p className="text-sm text-slate-500 font-medium leading-relaxed">{item.description}</p>
-                </div>
+                  <div className="mb-8">
+                    <h3 className="text-xl font-black text-white mb-2">{item.name}</h3>
+                    <p className="text-sm text-slate-500 font-medium leading-relaxed">{item.description}</p>
+                  </div>
 
-                <div className="flex items-center gap-4">
-                  {!isOwned ? (
-                    <button 
-                      onClick={() => handlePurchase(item.key, item.price)}
-                      disabled={isPurchasing || !canAfford}
-                      className={`flex-1 h-14 rounded-2xl font-black uppercase tracking-wider text-sm flex items-center justify-center gap-3 transition-all active:scale-95 
-                        ${canAfford 
-                          ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-xl shadow-blue-600/20' 
-                          : 'bg-white/5 border border-white/5 text-slate-600 cursor-not-allowed'}`}
-                    >
-                      {isPurchasing ? (
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          <Coins className="w-4 h-4" />
-                          {item.price}
-                        </>
-                      )}
-                    </button>
-                  ) : (
-                    <button 
-                      className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-slate-400 font-black uppercase tracking-wider text-sm flex items-center justify-center gap-3 cursor-default"
-                    >
-                      Equip Now
-                    </button>
-                  )}
+                  <div className="flex items-center gap-4">
+                    {!isOwned ? (
+                      <button 
+                        onClick={() => handlePurchase(item.key, item.price)}
+                        disabled={isPurchasing || !canAfford}
+                        className={`flex-1 h-14 rounded-2xl font-black uppercase tracking-wider text-sm flex items-center justify-center gap-3 transition-all active:scale-95 
+                          ${canAfford 
+                            ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-xl shadow-blue-600/20' 
+                            : 'bg-white/5 border border-white/5 text-slate-600 cursor-not-allowed'}`}
+                      >
+                        {isPurchasing ? (
+                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <Coins className="w-4 h-4" />
+                            {item.price}
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <button 
+                        className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 text-slate-400 font-black uppercase tracking-wider text-sm flex items-center justify-center gap-3 cursor-default"
+                      >
+                        Equip Now
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="bg-red-500/10 border border-red-500/20 p-8 rounded-[40px] flex flex-col items-center justify-center text-center gap-4">
+          <AlertCircle className="w-12 h-12 text-red-400" />
+          <div>
+            <h3 className="text-xl font-black text-white mb-2">Marketplace Unavailable</h3>
+            <p className="text-red-400 font-mono text-sm max-w-xl break-words">{debugMsg || 'No items available'}</p>
+          </div>
+          <button onClick={() => fetchItems()} className="mt-4 px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-2xl transition-all">
+            Retry Connection
+          </button>
+        </div>
+      )}
 
       {/* Info Card */}
       <div className="bg-blue-600/5 border border-blue-500/10 p-8 rounded-[40px] flex items-center gap-6">
