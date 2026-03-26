@@ -57,22 +57,28 @@ export default function Arena() {
     }
   }, [initialized, user, router]);
 
+  // Handle Room Join/Leave
   useEffect(() => {
-    if (!socket || !user) return;
+    if (!socket || !user || !initialized) return;
 
-    const join = () => {
-      socket.emit('join_arena', {
-        username: user.username,
-        userId: user.id || (user as any)._id,
-        roomId: (id as string).toUpperCase()
-      });
+    const roomId = (id as string).toUpperCase();
+    console.log('Joining arena:', roomId);
+    
+    socket.emit('join_arena', {
+      username: user.username,
+      userId: user.id || (user as any)._id,
+      roomId
+    });
+
+    return () => {
+      console.log('Leaving arena:', roomId);
+      socket.emit('leave_game', roomId);
     };
+  }, [socket, id, user?.id, user?._id, initialized]);
 
-    if (socket.connected) {
-      join();
-    }
-
-    socket.on('connect', join);
+  // Handle Socket Listeners
+  useEffect(() => {
+    if (!socket) return;
 
     socket.on('player_joined', (data) => setPlayers(data));
     socket.on('room_update', (data) => {
@@ -120,6 +126,7 @@ export default function Arena() {
       setAnswerResult({ isCorrect: null, correctAnswer: null });
       setIsReviewing(false);
       setSelectedOption(null);
+      setFinalQuestions([]);
     });
 
     socket.on('rematch_failed', (data) => {
@@ -147,13 +154,7 @@ export default function Arena() {
       setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 3000);
     });
 
-    socket.on('rematch_started', () => {
-      setFinalQuestions([]);
-      setIsReviewing(false);
-    });
-
     return () => {
-      socket.off('connect', join);
       socket.off('player_joined');
       socket.off('room_update');
       socket.off('countdown_update');
@@ -168,11 +169,11 @@ export default function Arena() {
       socket.off('rematch_status_update');
       socket.off('rematch_started');
       socket.off('rematch_failed');
-      // On refresh, we don't want to leave if we are just re-mounting with the same session
-      // But the socket ID will change anyway.
-      socket.emit('leave_game', id);
+      socket.off('room_info');
+      socket.off('power_up_granted');
+      socket.off('power_up_used');
     };
-  }, [socket, id, user, initialized, players.length, setPlayers, setGameStatus, setCurrentQuestion, setLeaderboard, setWinner, setOwnerId, setOwnerSocketId, setCountdown, setFinalQuestions]);
+  }, [socket, id, t]);
 
   useEffect(() => {
     if (!rematchRequest || rematchTimeLeft <= 0) return;
