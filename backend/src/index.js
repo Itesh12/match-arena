@@ -14,8 +14,28 @@ const { onlineUsers } = require('./controllers/SocialController');
 dotenv.config();
 
 const app = express();
-app.use(cors());
 app.use(express.json()); // Body parser
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      process.env.CORS_ORIGIN,
+      'https://match-arena-bmdh.vercel.app',
+      'http://localhost:3000',
+      'http://127.0.0.1:3000'
+    ].filter(Boolean);
+    
+    if (!origin || allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+      callback(null, true);
+    } else {
+      console.warn(`Blocked by CORS: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ["GET", "POST"],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 
 // MongoDB Connection
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/math_arena';
@@ -25,10 +45,7 @@ mongoose.connect(MONGO_URI)
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: process.env.CORS_ORIGIN || "*",
-    methods: ["GET", "POST"]
-  }
+  cors: corsOptions
 });
 
 const gameEngine = new GameEngine(io);

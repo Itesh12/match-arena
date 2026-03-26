@@ -282,9 +282,15 @@ export default function Arena() {
             </>
           ) : (
             <>
-              <div className="mb-8">
-                <h1 className="text-4xl font-black mb-3 tracking-tighter">{t('arena.arena_recap')}</h1>
-                <p className="text-slate-400 font-medium">{t('arena.recap_subtitle')}</p>
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${socket?.connected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                    {socket?.connected ? 'Socket Connected' : 'Socket Disconnected'}
+                  </span>
+                </div>
+                <div className="text-xl font-black text-white">{players.length}</div>
+                <div className="text-[10px] uppercase tracking-widest font-bold text-white/40">{t('arena.players')}</div>
               </div>
 
               <div className="space-y-4 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar text-left">
