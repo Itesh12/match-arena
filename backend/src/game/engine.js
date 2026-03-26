@@ -145,6 +145,7 @@ class GameEngine {
       ownerId: room.ownerId,
       ownerSocketId: room.ownerSocketId
     });
+    this.io.to(roomId).emit('player_joined', Array.from(room.players.values()));
 
     this.saveRoom(roomId);
   }
