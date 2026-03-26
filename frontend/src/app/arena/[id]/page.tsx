@@ -423,9 +423,8 @@ export default function Arena() {
       <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-600/10 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '3s' }}></div>
       <div className="absolute top-[30%] left-[40%] w-[20%] h-[20%] bg-indigo-600/5 rounded-full blur-[80px] animate-pulse-slow" style={{ animationDelay: '1.5s' }}></div>
 
-      {/* Sidebar: Players & Progress - ONLY SHOW DURING GAME */}
-      {gameStatus !== 'waiting' && (
-        <div className="relative z-20 w-full lg:w-[320px] bg-slate-950/60 backdrop-blur-3xl border-r border-white/10 flex flex-col h-full lg:min-h-screen shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
+      {/* Sidebar: Players & Progress */}
+      <div className="relative z-20 w-full lg:w-[320px] bg-slate-950/60 backdrop-blur-3xl border-r border-white/10 flex flex-col h-full lg:min-h-screen shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
         {/* Sidebar Header */}
         <div className="p-6 border-b border-white/5">
           <button
@@ -566,14 +565,13 @@ export default function Arena() {
             <div className="text-[6px] font-bold text-white/50 uppercase tracking-tighter mt-1">{t('arena.premium_engine')}</div>
           </div>
         </div>
-        </div>
-      )}
+      </div>
 
       {/* Main Game Area */}
-      <div className={`relative z-10 flex-1 p-6 lg:p-12 flex flex-col h-full lg:min-h-screen ${gameStatus === 'waiting' ? 'items-center justify-center' : ''}`}>
+      <div className="relative z-10 flex-1 p-6 lg:p-12 flex flex-col h-full lg:min-h-screen">
         {gameStatus === 'waiting' ? (
-          <div className="w-full max-w-6xl mx-auto flex flex-col animate-in fade-in zoom-in duration-700">
-            <header className="flex flex-col md:flex-row items-center justify-between mb-16 w-full gap-8">
+          <div className="flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in duration-700">
+            <header className="flex items-center justify-between mb-12 w-full max-w-5xl mx-auto">
               <div className="flex items-center gap-8">
                 <div className="relative group">
                   <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
@@ -581,43 +579,37 @@ export default function Arena() {
                     <Users className="w-8 h-8 text-blue-400 animate-pulse" />
                   </div>
                 </div>
-                <div className="text-center md:text-left">
-                  <h3 className="text-3xl font-black tracking-tight text-white flex items-center justify-center md:justify-start gap-4">
+                <div>
+                  <h3 className="text-2xl font-black tracking-tight text-white flex items-center gap-3">
                     {t('arena.players')}
-                    <span className="px-4 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-black rounded-full shadow-lg shadow-blue-500/5">
+                    <span className="px-2.5 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black rounded-full">
                       {players.length}
                     </span>
                   </h3>
-                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] leading-none mt-2.5 flex items-center justify-center md:justify-start gap-3">
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] leading-none mt-1.5 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
                     {t('arena.waiting_for_players')}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-4 px-6 py-3 bg-white/[0.03] rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl group/lang hover:border-white/20 transition-all">
-                  <Globe className="w-5 h-5 text-blue-400 group-hover:rotate-12 transition-transform" />
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 px-5 py-2.5 bg-white/[0.03] rounded-2xl border border-white/10 shadow-xl backdrop-blur-md">
+                  <Globe className="w-4 h-4 text-blue-400" />
                   <select 
                     value={i18n.language} 
                     onChange={(e) => i18n.changeLanguage(e.target.value)}
-                    className="bg-transparent text-[11px] font-black uppercase tracking-widest text-white/80 focus:outline-none cursor-pointer appearance-none hover:text-white transition-colors"
+                    className="bg-transparent text-[10px] font-black uppercase tracking-widest text-white/80 focus:outline-none cursor-pointer appearance-none hover:text-white transition-colors"
                   >
                     <option value="en" className="bg-[#020617]">English</option>
                     <option value="hi" className="bg-[#020617]">हिंदी</option>
                   </select>
                 </div>
-                <button
-                  onClick={() => setShowExitModal(true)}
-                  className="group w-14 h-14 flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-red-500/10 hover:border-red-500/30 text-slate-400 hover:text-red-500 transition-all duration-300 active:scale-[0.9] shadow-2xl"
-                >
-                  <LogOut className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
-                </button>
               </div>
             </header>
 
-            <div className="flex flex-col lg:flex-row gap-12 items-center lg:items-start justify-center">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start w-full">
               {/* Left Column: Game Status & Modes */}
-              <div className="w-full lg:w-[400px] flex-shrink-0 space-y-6">
+              <div className="xl:col-span-4 space-y-6">
                 <div className="relative group/main">
                   <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-[40px] blur-2xl opacity-50 group-hover/main:opacity-100 transition-opacity duration-1000"></div>
                   <div className="relative glass rounded-[40px] p-10 border border-white/10 shadow-2xl overflow-hidden">
@@ -728,18 +720,19 @@ export default function Arena() {
                 </div>
               </div>
 
-              <div className="flex-1 w-full">
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+              {/* Right Column: Player Grid */}
+              <div className="xl:col-span-8">
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
                   {players.map((p, idx) => (
-                    <div key={p.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: `${idx * 100}ms` }}>
-                      <div className={`relative group/p min-h-[220px] rounded-[48px] border transition-all duration-500 flex flex-col items-center justify-center p-8 gap-6 ${
+                    <div key={p.id} className="animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${idx * 100}ms` }}>
+                      <div className={`relative group/p aspect-square rounded-[32px] border transition-all duration-500 flex flex-col items-center justify-center p-6 gap-4 ${
                         p.username === user?.username 
-                          ? 'bg-blue-600/10 border-blue-500/40 shadow-[0_0_40px_rgba(37,99,235,0.1)]' 
-                          : 'bg-white/[0.03] border-white/10 hover:border-white/20 hover:bg-white/[0.05]'
+                          ? 'bg-blue-600/10 border-blue-500/40 shadow-xl shadow-blue-500/5' 
+                          : 'bg-white/[0.03] border-white/10 hover:border-white/20'
                       }`}>
                         <div className="relative">
-                           <div className={`w-20 h-20 rounded-[32px] flex items-center justify-center text-3xl font-black transition-all duration-700 ${
-                             p.username === user?.username ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/20' : 'bg-slate-800 text-slate-400 group-hover/p:bg-slate-700 group-hover/p:text-slate-200'
+                           <div className={`w-16 h-16 rounded-3xl flex items-center justify-center text-2xl font-black transition-all duration-500 ${
+                             p.username === user?.username ? 'bg-blue-600 text-white rotate-3 group-hover/p:-rotate-3' : 'bg-slate-800 text-slate-400 group-hover/p:bg-slate-700'
                            }`}>
                              {p.username[0].toUpperCase()}
                            </div>
@@ -760,10 +753,10 @@ export default function Arena() {
                   ))}
                   
                   {/* Empty Slots */}
-                  {Array.from({ length: Math.max(0, 6 - players.length) }).map((_, i) => (
-                    <div key={`empty-${i}`} className="min-h-[220px] rounded-[48px] border border-dashed border-white/5 flex flex-col items-center justify-center opacity-20">
-                       <div className="w-16 h-16 rounded-[32px] bg-white/[0.01] border border-white/5 flex items-center justify-center mb-4 transition-colors">
-                          <Users className="w-6 h-6 text-white/10" />
+                  {Array.from({ length: Math.max(0, 8 - players.length) }).map((_, i) => (
+                    <div key={`empty-${i}`} className="aspect-square rounded-[32px] border border-dashed border-white/5 flex flex-col items-center justify-center opacity-30">
+                       <div className="w-12 h-12 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-3">
+                          <Users className="w-5 h-5 text-white/20" />
                        </div>
                     </div>
                   ))}
