@@ -438,37 +438,109 @@ class GameEngine {
 
       // Cleanup room in DB
       await Room.deleteOne({ roomId });
-      // Keep in memory if someone wants to rematch immediately
-      // Actually, we should probably keep it until someone leaves or a new game starts
     } catch (err) {
       console.error(`Failed to archive match ${roomId}:`, err);
     }
   }
 
-  async rematchRoom(socket, roomId) {
+  async requestRematch(socket, roomId) {
     const room = this.rooms.get(roomId);
-    if (!room || room.status !== 'finished') return;
+    if (!room || room.status !== 'finished') {
+      console.log(`Rematch rejected: Room ${roomId} status is ${room?.status}`);
+      return;
+    }
 
-    // Only owner can rematch
+    // Only owner can initiate rematch
     if (socket.id !== room.ownerSocketId) return;
 
-    room.status = 'waiting';
-    room.currentQuestionIndex = 0;
-    room.questions = [];
-    
-    // Reset players
-    room.players.forEach(player => {
-      player.score = 0;
-      player.answers = [];
-      player.consecutiveTimeouts = 0;
-      // hasLeft players should stay left unless they rejoin?
-      // For simplicity, we keep current active players
+    // Initialize rematch state
+    room.rematchData = {
+      accepted: new Set([socket.id]), // Owner automatically accepts
+      rejected: new Set(),
+      totalPlayers: room.players.size,
+      expiresAt: Date.now() + 30000
+    };
+
+    // Broadcast request
+    this.io.to(roomId).emit('rematch_requested', {
+      ownerUsername: room.players.get(socket.id).username,
+      timeout: 30000
     });
 
-    this.io.to(roomId).emit('rematch_started');
-    this.io.to(roomId).emit('player_joined', Array.from(room.players.values()));
+    // Automatic timeout handling
+    room.rematchTimeout = setTimeout(() => {
+      this.finalizeRematch(roomId);
+    }, 30000);
+  }
+
+  handleRematchResponse(socket, roomId, accept) {
+    const room = this.rooms.get(roomId);
+    if (!room || !room.rematchData) return;
+
+    if (accept) {
+      room.rematchData.accepted.add(socket.id);
+      room.rematchData.rejected.delete(socket.id);
+    } else {
+      room.rematchData.rejected.add(socket.id);
+      room.rematchData.accepted.delete(socket.id);
+    }
+
+    // Broadcast status update
+    this.io.to(roomId).emit('rematch_status_update', {
+      acceptedCount: room.rematchData.accepted.size,
+      rejectedCount: room.rematchData.rejected.size,
+      totalPlayers: room.rematchData.totalPlayers
+    });
+
+    // If everyone has responded, finalize early
+    if (room.rematchData.accepted.size + room.rematchData.rejected.size === room.rematchData.totalPlayers) {
+      if (room.rematchTimeout) clearTimeout(room.rematchTimeout);
+      this.finalizeRematch(roomId);
+    }
+  }
+
+  finalizeRematch(roomId) {
+    const room = this.rooms.get(roomId);
+    if (!room || !room.rematchData) return;
+
+    const acceptedPlayers = Array.from(room.rematchData.accepted);
     
-    await this.saveRoom(roomId);
+    // Cleanup: Remove players who didn't accept or rejected
+    for (const [sid, player] of room.players.entries()) {
+      if (!room.rematchData.accepted.has(sid)) {
+        // Force them to leave (or just notify them)
+        this.io.to(sid).emit('rematch_failed', { reason: 'You did not join the rematch' });
+        this.leaveRoom(sid, roomId);
+      }
+    }
+
+    if (acceptedPlayers.length >= 2) {
+      // RESET ROOM STATE (SAME ROOM ID)
+      room.status = 'waiting';
+      room.currentQuestionIndex = 0;
+      room.questions = [];
+      room.rematchData = null;
+      
+      // Reset scores for accepted players
+      room.players.forEach(player => {
+        player.score = 0;
+        player.answers = [];
+        player.consecutiveTimeouts = 0;
+        player.isEliminated = false;
+        player.isFrozen = false;
+      });
+
+      this.io.to(roomId).emit('rematch_started');
+      console.log(`Match ${roomId} restarted with ${acceptedPlayers.length} players`);
+      
+      // Auto-start game if it was a group rematch
+      setTimeout(() => {
+        this.startCountdown(roomId);
+      }, 3000);
+    } else {
+      this.io.to(roomId).emit('rematch_failed', { reason: 'Not enough players accepted the rematch' });
+      room.rematchData = null;
+    }
   }
 
   async usePowerUp(socket, roomId, type) {

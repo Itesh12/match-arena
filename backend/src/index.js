@@ -98,6 +98,14 @@ io.on('connection', (socket) => {
     gameEngine.rematchRoom(socket, roomId);
   });
 
+  socket.on('rematch_request', ({ roomId }) => {
+    gameEngine.requestRematch(socket, roomId);
+  });
+
+  socket.on('rematch_response', ({ roomId, accept }) => {
+    gameEngine.handleRematchResponse(socket, roomId, accept);
+  });
+
   socket.on('use_power_up', ({ roomId, type }) => {
     gameEngine.usePowerUp(socket, roomId, type);
   });

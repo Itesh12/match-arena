@@ -46,6 +46,11 @@ export default function Arena() {
   const [isReviewing, setIsReviewing] = useState(false);
   const [selectedMode, setSelectedMode] = useState<'standard' | 'sudden_death' | 'double_jeopardy' | 'team_battle'>('standard');
   const [notifications, setNotifications] = useState<{ id: string, msg: string }[]>([]);
+  const [rematchRequest, setRematchRequest] = useState<{ ownerUsername: string; timeout: number } | null>(null);
+  const [rematchTimeLeft, setRematchTimeLeft] = useState<number>(30);
+  const [rematchStatus, setRematchStatus] = useState<{ acceptedCount: number; rejectedCount: number; totalPlayers: number } | null>(null);
+  const [hasRespondedToRematch, setHasRespondedToRematch] = useState(false);
+  const [rematchReason, setRematchReason] = useState<string | null>(null);
   useEffect(() => {
     if (initialized && !user) {
       router.push('/login');
@@ -98,6 +103,31 @@ export default function Arena() {
       setIsTerminated(true);
     });
 
+    socket.on('rematch_requested', (data) => {
+      setRematchRequest(data);
+      setRematchTimeLeft(data.timeout / 1000);
+      setHasRespondedToRematch(false);
+      setRematchStatus({ acceptedCount: 1, rejectedCount: 0, totalPlayers: players.length });
+    });
+
+    socket.on('rematch_status_update', (data) => {
+      setRematchStatus(data);
+    });
+
+    socket.on('rematch_started', () => {
+      setRematchRequest(null);
+      setRematchReason(null);
+      setAnswerResult({ isCorrect: null, correctAnswer: null });
+      setIsReviewing(false);
+      setSelectedOption(null);
+    });
+
+    socket.on('rematch_failed', (data) => {
+      setRematchRequest(null);
+      setRematchReason(data.reason);
+      setTimeout(() => setRematchReason(null), 5000);
+    });
+
     socket.on('room_info', (data) => {
       if (data.mode) setSelectedMode(data.mode);
       if (data.players) setPlayers(data.players);
@@ -134,11 +164,23 @@ export default function Arena() {
       socket.off('player_left_game');
       socket.off('arena_terminated');
       socket.off('answer_result');
+      socket.off('rematch_requested');
+      socket.off('rematch_status_update');
+      socket.off('rematch_started');
+      socket.off('rematch_failed');
       // On refresh, we don't want to leave if we are just re-mounting with the same session
       // But the socket ID will change anyway.
       socket.emit('leave_game', id);
     };
-  }, [socket, id, user, initialized]);
+  }, [socket, id, user, initialized, players.length, setPlayers, setGameStatus, setCurrentQuestion, setLeaderboard, setWinner, setOwnerId, setOwnerSocketId, setCountdown, setFinalQuestions]);
+
+  useEffect(() => {
+    if (!rematchRequest || rematchTimeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setRematchTimeLeft(prev => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [rematchRequest, rematchTimeLeft]);
 
   useEffect(() => {
     if (gameStatus === 'playing') {
@@ -164,8 +206,23 @@ export default function Arena() {
   };
 
   const handleRematch = () => {
-    if (!socket || !id) return;
-    socket.emit('rematch_arena', id);
+    if (socket && id) {
+      socket.emit('rematch_request', { roomId: id });
+    }
+  };
+
+  const handleAcceptRematch = () => {
+    if (socket && id) {
+      socket.emit('rematch_response', { roomId: id, accept: true });
+      setHasRespondedToRematch(true);
+    }
+  };
+
+  const handleRejectRematch = () => {
+    if (socket && id) {
+      socket.emit('rematch_response', { roomId: id, accept: false });
+      setHasRespondedToRematch(true);
+    }
   };
 
   const handleUsePowerUp = (type: string) => {
@@ -253,7 +310,7 @@ export default function Arena() {
                 </div>
               </div>
 
-              {socket?.id === ownerSocketId && (
+              {socket?.id === ownerSocketId && !rematchRequest && (
                 <button
                   onClick={handleRematch}
                   className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-black py-5 rounded-[24px] shadow-xl shadow-yellow-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3 animate-pulse mb-4"
@@ -263,6 +320,15 @@ export default function Arena() {
                   </div>
                   {t('arena.play_again')}
                 </button>
+              )}
+
+              {rematchReason && (
+                <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl animate-in fade-in slide-in-from-top-4">
+                  <span className="text-red-400 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                    <XCircle className="w-4 h-4" />
+                    {rematchReason}
+                  </span>
+                </div>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -828,6 +894,81 @@ export default function Arena() {
         type="info" 
         title={t('arena.room_code')}
       />
+
+      {/* Rematch Request Overlay */}
+      {rematchRequest && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#020617]/90 backdrop-blur-xl animate-in fade-in duration-300">
+          <div className="max-w-md w-full glass rounded-[40px] p-10 text-center shadow-[0_0_80px_rgba(59,130,246,0.3)] border-white/10 animate-in zoom-in-95 duration-500">
+            <div className="relative mb-8">
+              <div className="absolute inset-0 bg-blue-500/20 blur-[40px] rounded-full animate-pulse"></div>
+              <Play className="w-16 h-16 text-blue-400 mx-auto relative z-10 animate-bounce" />
+            </div>
+
+            <h2 className="text-3xl font-black mb-2 tracking-tighter">Rematch Requested!</h2>
+            <p className="text-slate-400 font-medium mb-8">
+              <span className="text-white font-black">{rematchRequest.ownerUsername}</span> wants to play again!
+            </p>
+
+            {/* Countdown Circle */}
+            <div className="relative w-24 h-24 mx-auto mb-8">
+              <svg className="w-full h-full rotate-[-90deg]">
+                <circle
+                  cx="48" cy="48" r="44"
+                  className="stroke-white/5 fill-none"
+                  strokeWidth="8"
+                />
+                <circle
+                  cx="48" cy="48" r="44"
+                  className="stroke-blue-500 fill-none transition-all duration-1000"
+                  strokeWidth="8"
+                  strokeDasharray="276"
+                  strokeDashoffset={276 - (276 * rematchTimeLeft) / 30}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center text-3xl font-black italic">
+                {rematchTimeLeft}
+              </div>
+            </div>
+
+            {rematchStatus && (
+              <div className="flex items-center justify-center gap-6 mb-8">
+                <div className="text-center">
+                  <div className="text-2xl font-black text-green-400">{rematchStatus.acceptedCount}</div>
+                  <div className="text-[10px] font-black uppercase text-white/40 tracking-widest">Accepted</div>
+                </div>
+                <div className="w-px h-8 bg-white/10"></div>
+                <div className="text-center">
+                  <div className="text-2xl font-black text-red-400">{rematchStatus.rejectedCount}</div>
+                  <div className="text-[10px] font-black uppercase text-white/40 tracking-widest">Rejected</div>
+                </div>
+              </div>
+            )}
+
+            {!hasRespondedToRematch ? (
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={handleAcceptRematch}
+                  className="bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-3xl shadow-xl shadow-blue-600/20 transition-all active:scale-[0.95]"
+                >
+                  ACCEPT
+                </button>
+                <button
+                  onClick={handleRejectRematch}
+                  className="bg-white/5 hover:bg-white/10 text-white font-black py-5 rounded-3xl border border-white/10 transition-all active:scale-[0.95]"
+                >
+                  REJECT
+                </button>
+              </div>
+            ) : (
+              <div className="py-5 px-8 rounded-3xl bg-blue-500/10 border border-blue-500/20 text-blue-400 font-black flex items-center justify-center gap-3">
+                <div className="w-5 h-5 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>
+                Waiting for others...
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
