@@ -289,7 +289,7 @@ export default function Arena() {
     if (!show) return null;
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-        <div className="glass max-w-md w-full p-10 rounded-[40px] border-white/10 shadow-2xl text-center space-y-8 animate-in zoom-in duration-300">
+        <div className="glass max-w-2xl w-full p-10 rounded-[40px] border-white/10 shadow-2xl text-center space-y-8 animate-in zoom-in duration-300">
           <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto border border-blue-500/20">
             <LogOut className="w-8 h-8 text-blue-400" />
           </div>
@@ -1094,7 +1094,7 @@ export default function Arena() {
       {/* Rematch Request Overlay */}
       {rematchRequest && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#020617]/90 backdrop-blur-xl animate-in fade-in duration-300">
-          <div className="max-w-md w-full glass rounded-[40px] p-10 text-center shadow-[0_0_80px_rgba(59,130,246,0.3)] border-white/10 animate-in zoom-in-95 duration-500">
+          <div className="max-w-lg w-full glass rounded-[40px] p-10 text-center shadow-[0_0_80px_rgba(59,130,246,0.3)] border-white/10 animate-in zoom-in-95 duration-500">
             <div className="relative mb-8">
               <div className="absolute inset-0 bg-blue-500/20 blur-[40px] rounded-full animate-pulse"></div>
               <Play className="w-16 h-16 text-blue-400 mx-auto relative z-10 animate-bounce" />

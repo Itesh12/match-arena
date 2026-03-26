@@ -5,7 +5,7 @@ import { useSocket } from '@/context/SocketContext';
 import { useGameStore } from '@/store/useGameStore';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { LogOut, LayoutDashboard, Shield, Coins, Globe, Trophy, CheckCircle2, XCircle, BrainCircuit, Menu, Users, History, Home, ShoppingBag } from 'lucide-react';
+import { LogOut, LayoutDashboard, Shield, Coins, Globe, Trophy, CheckCircle2, XCircle, BrainCircuit, Menu, Users, History, Home, ShoppingBag, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getRankTier } from '@/utils/ranks';
 import Toast from '@/components/Toast';
@@ -397,7 +397,6 @@ export default function Lobby() {
                 {t('dashboard.join_with_code')}
               </button>
             </div>
->
           ) : (
             <div className="space-y-6 sm:space-y-8 animate-in fade-in zoom-in duration-300">
               <div className="space-y-3">
@@ -497,7 +496,7 @@ export default function Lobby() {
 
       {view === 'settings' && (
         <div className="absolute inset-0 z-10 flex items-center justify-center p-4 bg-[#020617]/80 backdrop-blur-sm">
-          <div className="glass rounded-[40px] p-10 w-full max-w-md shadow-2xl border border-white/10 animate-in fade-in zoom-in-95 duration-300">
+          <div className="glass rounded-[40px] p-10 w-full max-w-lg shadow-2xl border border-white/10 animate-in fade-in zoom-in-95 duration-300">
             <div className="text-center mb-10">
               <Globe className="w-10 h-10 mx-auto text-blue-400 mb-4 opacity-70" />
               <h2 className="text-2xl font-black tracking-tight">{t('dashboard.language')}</h2>
