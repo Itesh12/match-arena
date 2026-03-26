@@ -13,15 +13,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [initialized, setInitialized] = React.useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-
-    if (token && user) {
-      setToken(token);
-      setUser(JSON.parse(user));
-    }
+    // With Zustand persist, we don't need to manually read localStorage.
+    // We just wait for the component to mount (re-hydration happens automatically).
     setInitialized(true);
-  }, [setUser, setToken]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ initialized }}>

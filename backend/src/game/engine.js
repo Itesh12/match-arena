@@ -65,6 +65,8 @@ class GameEngine {
   }
 
   async joinRoom(socket, roomId, username, userId) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     // Force leave any existing connections for this user in ANY room (including this one)
     for (const [existingId, roomState] of this.rooms.entries()) {
       for (const [sid, player] of roomState.players.entries()) {
@@ -146,6 +148,8 @@ class GameEngine {
       ownerSocketId: room.ownerSocketId
     });
     this.io.to(roomId).emit('player_joined', Array.from(room.players.values()));
+
+    console.log(`[ARENA] ${username} (${userId}) joined room ${roomId}. Total: ${room.players.size}`);
 
     this.saveRoom(roomId);
   }
@@ -512,6 +516,8 @@ class GameEngine {
   }
 
   leaveRoom(socketId, roomId) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room) return;
 
@@ -559,6 +565,14 @@ class GameEngine {
       if (room.players.size === 0) {
         if (room.countdown) clearInterval(room.countdown);
         this.rooms.delete(roomId);
+      }
+    }
+  }
+
+  handleDisconnect(socketId) {
+    for (const [roomId, room] of this.rooms.entries()) {
+      if (room.players.has(socketId)) {
+        this.leaveRoom(socketId, roomId);
       }
     }
   }

@@ -1,6 +1,8 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { API_URL } from '@/config';
 
+// ... (interfaces remain the same)
 interface Player {
   id: string;
   userId?: string;
@@ -66,74 +68,87 @@ interface GameState {
   fetchStats: () => Promise<void>;
 }
 
-export const useGameStore = create<GameState>((set) => ({
-  players: [],
-  currentQuestion: null,
-  gameStatus: 'waiting',
-  leaderboard: [],
-  user: null,
-  token: null,
-  roomId: '',
-  winner: null,
-  ownerId: '',
-  ownerSocketId: '',
-  finalQuestions: [],
-  countdown: null,
+export const useGameStore = create<GameState>()(
+  persist(
+    (set) => ({
+      players: [],
+      currentQuestion: null,
+      gameStatus: 'waiting',
+      leaderboard: [],
+      user: null,
+      token: null,
+      roomId: '',
+      winner: null,
+      ownerId: '',
+      ownerSocketId: '',
+      finalQuestions: [],
+      countdown: null,
 
-  setPlayers: (players) => set({ players }),
-  setCurrentQuestion: (q) => set({ currentQuestion: q }),
-  setGameStatus: (status) => set({ gameStatus: status }),
-  setLeaderboard: (leaderboard) => set({ leaderboard }),
-  setUser: (user) => set({ user }),
-  setToken: (token) => set({ token }),
-  setRoomId: (roomId) => set({ roomId }),
-  setWinner: (winner) => set({ winner }),
-  setOwnerId: (ownerId) => set({ ownerId }),
-  setOwnerSocketId: (ownerSocketId) => set({ ownerSocketId }),
-  setFinalQuestions: (questions) => set({ finalQuestions: questions }),
-  setCountdown: (countdown) => set({ countdown }),
-  reset: () => set({
-    players: [],
-    currentQuestion: null,
-    gameStatus: 'waiting',
-    leaderboard: [],
-    winner: null,
-    roomId: '',
-    ownerId: '',
-    ownerSocketId: '',
-    finalQuestions: [],
-    countdown: null,
-  }),
-  logout: () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    set({ user: null, token: null, roomId: '', players: [], currentQuestion: null, gameStatus: 'waiting' });
-  },
-  fetchStats: async () => {
-    const { token, setUser } = useGameStore.getState();
-    if (!token) return;
+      setPlayers: (players) => set({ players }),
+      setCurrentQuestion: (q) => set({ currentQuestion: q }),
+      setGameStatus: (status) => set({ gameStatus: status }),
+      setLeaderboard: (leaderboard) => set({ leaderboard }),
+      setUser: (user) => set({ user }),
+      setToken: (token) => set({ token }),
+      setRoomId: (roomId) => set({ roomId }),
+      setWinner: (winner) => set({ winner }),
+      setOwnerId: (ownerId) => set({ ownerId }),
+      setOwnerSocketId: (ownerSocketId) => set({ ownerSocketId }),
+      setFinalQuestions: (questions) => set({ finalQuestions: questions }),
+      setCountdown: (countdown) => set({ countdown }),
+      reset: () => set({
+        players: [],
+        currentQuestion: null,
+        gameStatus: 'waiting',
+        leaderboard: [],
+        winner: null,
+        roomId: '',
+        ownerId: '',
+        ownerSocketId: '',
+        finalQuestions: [],
+        countdown: null,
+      }),
+      logout: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        set({ user: null, token: null, roomId: '', players: [], currentQuestion: null, gameStatus: 'waiting' });
+      },
+      fetchStats: async () => {
+        const { token, setUser } = useGameStore.getState();
+        if (!token) return;
 
-    try {
-      const res = await fetch(`${API_URL}/auth/me`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+        try {
+          const res = await fetch(`${API_URL}/auth/me`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setUser({
+              id: data._id,
+              username: data.username,
+              role: data.role,
+              score: data.score,
+              totalGames: data.totalGames,
+              wins: data.wins,
+              rankPoints: data.rankPoints,
+              coins: data.coins
+            });
+          }
+        } catch (err) {
+          console.error('Failed to fetch stats:', err);
         }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setUser({
-          id: data._id,
-          username: data.username,
-          role: data.role,
-          score: data.score,
-          totalGames: data.totalGames,
-          wins: data.wins,
-          rankPoints: data.rankPoints,
-          coins: data.coins
-        });
       }
-    } catch (err) {
-      console.error('Failed to fetch stats:', err);
+    }),
+    {
+      name: 'math-arena-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ 
+        user: state.user, 
+        token: state.token,
+        roomId: state.roomId 
+      }),
     }
-  }
-}));
+  )
+);

@@ -90,6 +90,7 @@ io.on('connection', (socket) => {
       onlineUsers.delete(socket.userId);
       console.log(`User ${socket.userId} went offline`);
     }
+    gameEngine.handleDisconnect(socket.id);
   });
 });
 

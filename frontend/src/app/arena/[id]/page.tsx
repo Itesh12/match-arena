@@ -5,12 +5,14 @@ import { useGameStore } from '@/store/useGameStore';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/context/AuthContext';
 import { Trophy, Timer, User, Users, CheckCircle2, XCircle, Play, Shield, LogOut, Skull, ShieldCheck, Zap, Globe, Info } from 'lucide-react';
 import Toast from '@/components/Toast';
 
 export default function Arena() {
   const { id } = useParams();
   const socket = useSocket();
+  const { initialized } = useAuth();
   const { t, i18n } = useTranslation();
   const {
     players,
@@ -45,10 +47,10 @@ export default function Arena() {
   const [selectedMode, setSelectedMode] = useState<'standard' | 'sudden_death' | 'double_jeopardy' | 'team_battle'>('standard');
   const [notifications, setNotifications] = useState<{ id: string, msg: string }[]>([]);
   useEffect(() => {
-    if (!user) {
+    if (initialized && !user) {
       router.push('/login');
     }
-  }, [user, router]);
+  }, [initialized, user, router]);
 
   useEffect(() => {
     if (!socket || !user) return;
@@ -57,7 +59,7 @@ export default function Arena() {
       socket.emit('join_arena', {
         username: user.username,
         userId: user.id || (user as any)._id,
-        roomId: id
+        roomId: (id as string).toUpperCase()
       });
     };
 
@@ -132,9 +134,11 @@ export default function Arena() {
       socket.off('player_left_game');
       socket.off('arena_terminated');
       socket.off('answer_result');
+      // On refresh, we don't want to leave if we are just re-mounting with the same session
+      // But the socket ID will change anyway.
       socket.emit('leave_game', id);
     };
-  }, [socket, id, user]);
+  }, [socket, id, user, initialized]);
 
   useEffect(() => {
     if (gameStatus === 'playing') {
@@ -313,6 +317,14 @@ export default function Arena() {
             </>
           )}
         </div>
+      </div>
+    );
+  }
+
+  if (!initialized || !user) {
+    return (
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin"></div>
       </div>
     );
   }
