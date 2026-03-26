@@ -571,11 +571,11 @@ export default function Arena() {
       </div>
 
       {/* Main Game Area */}
-      <div className="relative z-10 flex-1 p-6 lg:p-12 flex flex-col h-full lg:min-h-screen">
+      <div className="relative z-10 flex-1 flex flex-col h-full lg:min-h-screen">
         {gameStatus === 'waiting' ? (
           <div className="flex-1 flex flex-col h-full overflow-y-auto">
-            {/* 3-Section Premium Top Bar - Centered Content */}
-            <header className="grid grid-cols-3 items-center w-full max-w-7xl mx-auto pt-6 pb-12 px-6">
+            {/* 3-Section Premium Top Bar - perfectly aligned with sidebar's p-6 header */}
+            <header className="grid grid-cols-3 items-center w-full mx-auto p-6">
               {/* Left: Players Info - Compact and matching sidebar style */}
               <div className="flex justify-start">
                 <div className="flex items-center gap-4 px-6 py-4 bg-white/[0.03] rounded-2xl border border-white/10 group hover:border-blue-500/30 transition-all duration-500 h-[76px]">
@@ -630,8 +630,8 @@ export default function Arena() {
               </div>
             </header>
 
-            {/* Vertically Centered Content Area - Changed to Centered Stack */}
-            <div className="flex-1 flex flex-col items-center justify-start p-4 space-y-12 pb-20">
+            {/* Vertically Centered Content Area */}
+            <div className="flex-1 flex flex-col items-center justify-start px-6 pb-6 space-y-12">
               {/* Main Math Arena Card - Perfectly Centered */}
               <div className="w-full max-w-xl mx-auto">
                 <div className="relative group/main">
@@ -774,7 +774,7 @@ export default function Arena() {
             </div>
           </div>
         ) : (
-          <div className="flex-1 max-w-5xl mx-auto w-full flex flex-col animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div className="flex-1 max-w-5xl mx-auto w-full flex flex-col p-6 lg:p-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
             <header className="flex items-center justify-between mb-12">
               <div className="flex items-center gap-8">
                 <div className={`glass px-6 py-3 rounded-2xl flex items-center gap-4 shadow-2xl transition-all duration-300 ${timeLeft < 10 ? 'border-red-500/50 bg-red-500/5 animate-pulse-red' : 'border-white/5'}`}>
