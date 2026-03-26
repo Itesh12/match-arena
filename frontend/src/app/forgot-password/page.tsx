@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, ArrowLeft, KeyRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { API_URL } from '@/config';
 
 export default function ForgotPassword() {
   const [username, setUsername] = useState('');
@@ -24,7 +25,7 @@ export default function ForgotPassword() {
     setMessage('');
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password`, {
+      const res = await fetch(`${API_URL}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, resetKey, newPassword }),

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { API_URL } from '@/config';
 
 interface Player {
   id: string;
@@ -113,7 +114,7 @@ export const useGameStore = create<GameState>((set) => ({
     if (!token) return;
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+      const res = await fetch(`${API_URL}/auth/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

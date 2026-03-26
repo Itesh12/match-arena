@@ -9,6 +9,7 @@ import { LogOut, LayoutDashboard, Shield, Coins, Globe, Trophy, CheckCircle2, XC
 import { useTranslation } from 'react-i18next';
 import { getRankTier } from '@/utils/ranks';
 import Toast from '@/components/Toast';
+import { API_URL } from '@/config';
 
 export default function Lobby() {
   const [room, setRoom] = useState('');
@@ -60,7 +61,7 @@ export default function Lobby() {
   const fetchHistory = async () => {
     setIsLoadingHistory(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/matches/history`, {
+      const res = await fetch(`${API_URL}/matches/history`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -77,7 +78,7 @@ export default function Lobby() {
   const fetchFriends = async () => {
     setIsLoadingFriends(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/social/friends`, {
+      const res = await fetch(`${API_URL}/social/friends`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -94,7 +95,7 @@ export default function Lobby() {
   const handleAddFriend = async () => {
     if (!newFriendUsername) return;
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/social/add-friend`, {
+      const res = await fetch(`${API_URL}/social/add-friend`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

@@ -5,6 +5,7 @@ import { useGameStore } from '@/store/useGameStore';
 import { useRouter } from 'next/navigation';
 import { Activity, Users, PlayCircle, StopCircle, ArrowLeft, ShieldAlert, ShieldCheck, Key, RefreshCw, LayoutDashboard, UserSquare2, LogOut, ChevronRight, X, Copy, CheckCircle2, Clock, Database, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { API_URL } from '@/config';
 
 interface Room {
   id: string;
@@ -79,7 +80,7 @@ export default function AdminDashboard() {
     // 1. Measure Network Ping (Lightweight)
     const pStart = performance.now();
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/ping`, {
+      await fetch(`${API_URL}/admin/ping`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setPingTime(Math.round(performance.now() - pStart));
@@ -96,7 +97,7 @@ export default function AdminDashboard() {
 
   const fetchRooms = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/rooms`, {
+      const res = await fetch(`${API_URL}/admin/rooms`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -110,7 +111,7 @@ export default function AdminDashboard() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users`, {
+      const res = await fetch(`${API_URL}/admin/users`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -124,7 +125,7 @@ export default function AdminDashboard() {
 
   const openResetModal = async (u: UserProfile) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${u._id}/reset-key`, {
+      const res = await fetch(`${API_URL}/admin/users/${u._id}/reset-key`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -157,7 +158,7 @@ export default function AdminDashboard() {
       variant: isBanned ? 'info' : 'warning',
       onConfirm: async () => {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/toggle-ban`, {
+          const res = await fetch(`${API_URL}/admin/users/${userId}/toggle-ban`, {
             method: 'PATCH',
             headers: { 'Authorization': `Bearer ${token}` }
           });
@@ -184,7 +185,7 @@ export default function AdminDashboard() {
       variant: 'danger',
       onConfirm: async () => {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/system/reset`, {
+          const res = await fetch(`${API_URL}/admin/system/reset`, {
             method: 'POST',
             headers: { 
               'Authorization': `Bearer ${token}`,
@@ -213,7 +214,7 @@ export default function AdminDashboard() {
       variant: 'danger',
       onConfirm: async () => {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}`, {
+          const res = await fetch(`${API_URL}/admin/users/${userId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
           });
@@ -230,7 +231,7 @@ export default function AdminDashboard() {
 
   const endRoom = async (roomId: string) => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/rooms/${roomId}/end`, {
+      await fetch(`${API_URL}/admin/rooms/${roomId}/end`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -249,7 +250,7 @@ export default function AdminDashboard() {
       variant: 'danger',
       onConfirm: async () => {
         try {
-          await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/rooms/clear-all`, {
+          await fetch(`${API_URL}/admin/rooms/clear-all`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` }
           });
