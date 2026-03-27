@@ -739,76 +739,76 @@ export default function Arena() {
             </header>
 
             {/* Vertically Centered Content Area */}
-            <div className="flex-1 flex flex-col items-center justify-start px-6 pb-6 space-y-12">
+            <div className="flex-1 flex flex-col items-center justify-start px-4 sm:px-6 pb-6 pt-6 sm:pt-0 space-y-8 sm:space-y-12">
               {/* Main Math Arena Card - Perfectly Centered */}
               <div className="w-full max-w-xl mx-auto">
                 <div className="relative group/main">
                   <div className="absolute -inset-10 bg-blue-600/10 rounded-full blur-[100px] opacity-0 group-hover/main:opacity-100 transition-opacity duration-1000"></div>
-                  <div className="relative glass rounded-[48px] p-12 border border-white/10 shadow-3xl text-center overflow-hidden">
+                  <div className="relative glass rounded-[32px] sm:rounded-[48px] p-6 sm:p-12 border border-white/10 shadow-3xl text-center overflow-hidden">
                     {/* Background ∑ Decoration */}
-                    <div className="absolute top-0 right-0 p-12 opacity-[0.03]">
-                      <div className="text-[200px] italic font-serif leading-none">∑</div>
+                    <div className="absolute top-0 right-0 p-8 sm:p-12 opacity-[0.03]">
+                      <div className="text-[120px] sm:text-[200px] italic font-serif leading-none">∑</div>
                     </div>
 
                     {countdown !== null ? (
-                      <div className="py-10">
-                        <div className="relative w-40 h-40 mx-auto mb-10">
+                      <div className="py-8 sm:py-10">
+                        <div className="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-8 sm:mb-10">
                           <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping opacity-25"></div>
-                          <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full shadow-[0_0_80px_rgba(37,99,235,0.4)] flex items-center justify-center border-4 border-white/10">
-                            <span className="text-8xl font-black italic text-white animate-in zoom-in duration-500">{countdown}</span>
+                          <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full shadow-[0_0_60px_rgba(37,99,235,0.4)] sm:shadow-[0_0_80px_rgba(37,99,235,0.4)] flex items-center justify-center border-4 border-white/10">
+                            <span className="text-7xl sm:text-8xl font-black italic text-white animate-in zoom-in duration-500">{countdown}</span>
                           </div>
                         </div>
-                        <h2 className="text-[10px] font-black tracking-[0.8em] text-blue-400 animate-pulse uppercase translate-x-[0.4em]">
+                        <h2 className="text-[9px] sm:text-[10px] font-black tracking-[0.6em] sm:tracking-[0.8em] text-blue-400 animate-pulse uppercase translate-x-[0.3em] sm:translate-x-[0.4em]">
                           {t('arena.get_ready')}
                         </h2>
                       </div>
                     ) : (
                       <>
-                        <div className="mb-12">
-                          <div className="text-nano text-blue-400 mb-8 px-4 py-1.5 rounded-full bg-blue-600/10 border border-blue-500/20 inline-block">
+                        <div className="mb-8 sm:mb-12">
+                          <div className="text-[9px] sm:text-nano text-blue-400 mb-4 sm:mb-8 px-4 py-1.5 rounded-full bg-blue-600/10 border border-blue-500/20 inline-block font-black tracking-widest uppercase">
                             {t('arena.lobby_protocol')}
                           </div>
-                          <h2 className="text-title mb-6 text-white">
+                          <h2 className="text-4xl sm:text-title font-black mb-4 sm:mb-6 text-white tracking-tighter">
                             {t('arena.math_arena')}
                           </h2>
-                          <p className="max-w-sm mx-auto text-base-content text-slate-400">
+                          <p className="max-w-sm mx-auto text-sm sm:text-base text-slate-400 font-medium">
                             {t('arena.share_code_message')}
                           </p>
                         </div>
 
                         {/* Secret Code Centered Widget */}
-                        <div className="mb-12 relative group/code inline-block mx-auto min-w-[280px]">
+                        <div className="mb-8 sm:mb-12 relative group/code inline-block mx-auto min-w-[240px] sm:min-w-[280px]">
                           <div className="absolute -inset-4 bg-blue-500/10 blur-xl opacity-0 group-hover/code:opacity-100 transition-opacity"></div>
                           <div 
-                            className="relative bg-white/[0.03] border border-white/10 rounded-[28px] sm:rounded-[32px] p-6 sm:p-8 cursor-pointer active:scale-[0.98] transition-all hover:bg-white/[0.05] duration-500 shadow-2xl"
+                            className="relative bg-white/[0.03] border border-white/10 rounded-[24px] sm:rounded-[32px] p-5 sm:p-8 cursor-pointer active:scale-[0.98] transition-all hover:bg-white/[0.05] duration-500 shadow-2xl"
                             onClick={() => {
                               navigator.clipboard.writeText(id as string);
                               setShowCopyMessage(true);
                               setTimeout(() => setShowCopyMessage(false), 2000);
                             }}
                           >
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-nano text-white shadow-lg">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-[8px] sm:text-nano tracking-widest uppercase font-black text-white shadow-lg">
                               {t('arena.room_code')}
                             </div>
-                            <div className="text-title font-mono tracking-[0.3em] text-white flex items-center justify-center py-2 sm:py-4 pl-4">
+                            <div className="text-3xl sm:text-title font-mono tracking-[0.2em] sm:tracking-[0.3em] text-white flex items-center justify-center py-2 sm:py-4 pl-2 sm:pl-4 font-black">
                               {id}
                               <Copy className="ml-3 sm:ml-4 w-4 h-4 sm:w-5 sm:h-5 text-blue-400/40 group-hover/code:text-blue-400 transition-colors" />
                             </div>
-                            <div className="flex items-center justify-center gap-2 text-slate-600 group-hover/code:text-slate-400 transition-colors mt-3 sm:mt-4">
+                            <div className="flex items-center justify-center gap-2 text-slate-600 group-hover/code:text-slate-400 transition-colors mt-2 sm:mt-4">
                               <MousePointer2 className="w-3 h-3" />
-                              <span className="text-nano leading-none">{t('arena.click_to_copy')}</span>
+                              <span className="text-[9px] sm:text-nano font-black uppercase tracking-widest leading-none">{t('arena.click_to_copy')}</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Owner Controls / Room Settings */}
-                        <div className="w-full max-w-sm mx-auto space-y-6">
+                        <div className="w-full max-w-sm mx-auto space-y-4 sm:space-y-6">
                           {(socket?.id === ownerSocketId || 
                             (user?.id && String(user?.id) === String(ownerId)) || 
                             ((user as any)?._id && String((user as any)?._id) === String(ownerId))) ? (
                             <>
                               {/* Host Settings */}
-                              <div className="grid grid-cols-1 gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                              <div className="grid grid-cols-1 gap-2 sm:gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
                                 <div className="glass p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 flex items-center justify-between gap-4">
                                   <div className="flex flex-col text-left">
                                     <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('arena.questions')}</span>
@@ -823,7 +823,7 @@ export default function Arena() {
                                   </select>
                                 </div>
 
-                                <div className="glass p-4 rounded-2xl border border-white/5 flex items-center justify-between gap-4">
+                                <div className="glass p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 flex items-center justify-between gap-4">
                                   <div className="flex flex-col text-left">
                                     <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('arena.time_limit')}</span>
                                     <span className="text-xs font-black text-white">{roomSettings.timePerQuestion}s</span>
@@ -831,13 +831,13 @@ export default function Arena() {
                                   <select 
                                     value={roomSettings.timePerQuestion}
                                     onChange={(e) => socket?.emit('update_room_settings', { roomId: id, settings: { timePerQuestion: parseInt(e.target.value) }})}
-                                    className="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-[10px] font-black text-blue-400 outline-none cursor-pointer"
+                                    className="bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-black text-blue-400 outline-none cursor-pointer"
                                   >
                                     {[15, 30, 45, 60].map(s => <option key={s} value={s} className="bg-slate-900">{s} Seconds</option>)}
                                   </select>
                                 </div>
 
-                                <div className="glass p-4 rounded-2xl border border-white/5 flex items-center justify-between gap-4">
+                                <div className="glass p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 flex items-center justify-between gap-4">
                                   <div className="flex flex-col text-left">
                                     <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('arena.difficulty')}</span>
                                     <span className="text-xs font-black text-white uppercase">{roomSettings.difficulty}</span>
@@ -845,7 +845,7 @@ export default function Arena() {
                                   <select 
                                     value={roomSettings.difficulty}
                                     onChange={(e) => socket?.emit('update_room_settings', { roomId: id, settings: { difficulty: e.target.value }})}
-                                    className="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-[10px] font-black text-blue-400 outline-none cursor-pointer uppercase"
+                                    className="bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-black text-blue-400 outline-none cursor-pointer uppercase"
                                   >
                                     {['easy', 'medium', 'hard'].map(d => <option key={d} value={d} className="bg-slate-900">{d}</option>)}
                                   </select>
@@ -855,19 +855,19 @@ export default function Arena() {
                               <button
                                 disabled={players.length < 2}
                                 onClick={handleStart}
-                                className={`group relative w-full h-16 font-black rounded-[2rem] shadow-2xl transition-all duration-500 flex items-center justify-center gap-4 overflow-hidden
+                                className={`group relative w-full h-12 sm:h-16 font-black rounded-[20px] sm:rounded-[2rem] shadow-2xl transition-all duration-500 flex items-center justify-center gap-3 sm:gap-4 overflow-hidden
                                   ${players.length < 2
                                     ? 'bg-white/5 text-slate-600 cursor-not-allowed border border-white/5'
                                     : 'bg-white text-black hover:scale-[1.02] active:scale-[0.98]'}`}
                               >
-                                <Play className={`w-5 h-5 ${players.length < 2 ? 'opacity-20' : 'fill-current'}`} />
-                                <span className="relative z-10 text-lg tracking-tight uppercase">
+                                <Play className={`w-4 h-4 sm:w-5 sm:h-5 ${players.length < 2 ? 'opacity-20' : 'fill-current'}`} />
+                                <span className="relative z-10 text-sm sm:text-lg tracking-tight uppercase">
                                   {players.length < 2 ? t('arena.need_players') : t('arena.start_game')}
                                 </span>
                               </button>
                             </>
                           ) : (
-                            <div className="h-16 flex items-center justify-center rounded-[2rem] bg-blue-500/5 border border-blue-500/10 text-blue-400 font-extrabold tracking-[0.2em] animate-pulse uppercase text-xs px-10 text-center leading-tight">
+                            <div className="h-12 sm:h-16 flex items-center justify-center rounded-[20px] sm:rounded-[2rem] bg-blue-500/5 border border-blue-500/10 text-blue-400 font-extrabold tracking-[0.2em] animate-pulse uppercase text-[10px] sm:text-xs px-6 sm:px-10 text-center leading-tight">
                               {t('arena.waiting_for_owner')}
                             </div>
                           )}
@@ -879,7 +879,7 @@ export default function Arena() {
               </div>
 
               {/* Player Grid - Now Centered Below Math Arena Card */}
-              <div className="w-full max-w-5xl mx-auto space-y-8 animate-in slide-in-from-bottom-5 duration-700 delay-300">
+              <div className="w-full max-w-5xl mx-auto space-y-6 sm:space-y-8 animate-in slide-in-from-bottom-5 duration-700 delay-300">
                 <div className="flex items-center justify-between border-b border-white/5 pb-4">
                   <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-2">
                     <Users className="w-3 h-3" />
