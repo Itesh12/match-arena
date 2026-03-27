@@ -86,114 +86,122 @@ export default function Arena() {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('player_joined', (data) => setPlayers(data));
-    socket.on('room_update', (data) => {
+    const onPlayerJoined = (data: any) => setPlayers(data);
+    const onRoomUpdate = (data: any) => {
       if (data.ownerId) setOwnerId(data.ownerId);
       if (data.ownerSocketId) setOwnerSocketId(data.ownerSocketId);
-    });
-    socket.on('countdown_update', (count) => setCountdown(count));
-    socket.on('settings_updated', (settings) => setRoomSettings(settings));
-    socket.on('game_start', (data) => {
+    };
+    const onCountdownUpdate = (count: any) => setCountdown(count);
+    const onSettingsUpdated = (settings: any) => setRoomSettings(settings);
+    const onGameStart = (data: any) => {
       setGameStatus('playing');
       setCountdown(null);
       if (data.settings) setRoomSettings(data.settings);
       setTimeLeft(data.settings?.timePerQuestion || 60);
-    });
-    socket.on('new_question', (q) => {
+    };
+    const onNewQuestion = (q: any) => {
       setCurrentQuestion(q);
       setAnswerResult({ isCorrect: null, correctAnswer: null });
-    });
-    socket.on('answer_result', (data) => setAnswerResult(data));
-    socket.on('leaderboard_update', (l) => setLeaderboard(l));
-    socket.on('game_end', (data) => {
+    };
+    const onAnswerResult = (data: any) => setAnswerResult(data);
+    const onLeaderboardUpdate = (l: any) => setLeaderboard(l);
+    const onGameEnd = (data: any) => {
       setWinner(data.winner);
       setLeaderboard(data.leaderboard);
       setFinalQuestions(data.questions || []);
       setGameStatus('finished');
-    });
-    socket.on('player_left_game', ({ username }) => {
+    };
+    const onPlayerLeftGame = ({ username }: { username: string }) => {
       console.log(`${username} left the game`);
-    });
-    socket.on('arena_terminated', () => {
-      setIsTerminated(true);
-    });
-
-    socket.on('rematch_requested', (data) => {
+    };
+    const onArenaTerminated = () => setIsTerminated(true);
+    const onRematchRequested = (data: any) => {
       setRematchRequest(data);
       setRematchTimeLeft(data.timeout / 1000);
       setHasRespondedToRematch(false);
       setRematchStatus({ acceptedCount: 1, rejectedCount: 0, totalPlayers: players.length });
-    });
-
-    socket.on('rematch_status_update', (data) => {
-      setRematchStatus(data);
-    });
-
-    socket.on('rematch_started', () => {
+    };
+    const onRematchStatusUpdate = (data: any) => setRematchStatus(data);
+    const onRematchStarted = () => {
       setRematchRequest(null);
       setRematchReason(null);
       setAnswerResult({ isCorrect: null, correctAnswer: null });
       setIsReviewing(false);
       setSelectedOption(null);
       setFinalQuestions([]);
-    });
-
-    socket.on('rematch_failed', (data) => {
+    };
+    const onRematchFailed = (data: any) => {
       setRematchRequest(null);
       setRematchReason(data.reason);
       setTimeout(() => setRematchReason(null), 5000);
-    });
-
-    socket.on('room_info', (data) => {
+    };
+    const onRoomInfo = (data: any) => {
       if (data.mode) setSelectedMode(data.mode);
       if (data.players) setPlayers(data.players);
       if (data.status) setGameStatus(data.status);
-    });
-
-    socket.on('power_up_granted', ({ type }) => {
+    };
+    const onPowerUpGranted = ({ type }: { type: string }) => {
       const id = Math.random().toString();
       setNotifications(prev => [...prev, { id, msg: `${t('arena.power_up_granted')}: ${type.toUpperCase()}!` }]);
       setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 3000);
-    });
-
-    socket.on('power_up_used', ({ playerId, type }) => {
+    };
+    const onPowerUpUsed = ({ playerId, type }: { playerId: string, type: string }) => {
       const p = players.find(p => p.id === playerId);
       const id = Math.random().toString();
       setNotifications(prev => [...prev, { id, msg: `${p?.username || 'Player'} ${t('arena.used')} ${type.toUpperCase()}!` }]);
       setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 3000);
-    });
-
-    socket.on('error', (err: any) => {
+    };
+    const onError = (err: any) => {
       setNotifications(prev => [...prev, { id: Math.random().toString(), msg: err.message }]);
-    });
+    };
+    const onMessageReceived = (msg: any) => {
+      setMessages(prev => [...prev, msg].slice(-50));
+    };
 
-    socket.on('message_received', (msg) => {
-      setMessages(prev => [...prev, msg].slice(-50)); // Keep last 50
-    });
+    socket.on('player_joined', onPlayerJoined);
+    socket.on('room_update', onRoomUpdate);
+    socket.on('countdown_update', onCountdownUpdate);
+    socket.on('settings_updated', onSettingsUpdated);
+    socket.on('game_start', onGameStart);
+    socket.on('new_question', onNewQuestion);
+    socket.on('answer_result', onAnswerResult);
+    socket.on('leaderboard_update', onLeaderboardUpdate);
+    socket.on('game_end', onGameEnd);
+    socket.on('player_left_game', onPlayerLeftGame);
+    socket.on('arena_terminated', onArenaTerminated);
+    socket.on('rematch_requested', onRematchRequested);
+    socket.on('rematch_status_update', onRematchStatusUpdate);
+    socket.on('rematch_started', onRematchStarted);
+    socket.on('rematch_failed', onRematchFailed);
+    socket.on('room_info', onRoomInfo);
+    socket.on('power_up_granted', onPowerUpGranted);
+    socket.on('power_up_used', onPowerUpUsed);
+    socket.on('error', onError);
+    socket.on('message_received', onMessageReceived);
 
     return () => {
-      socket.off('player_joined');
-      socket.off('room_update');
-      socket.off('countdown_update');
-      socket.off('settings_updated');
-      socket.off('game_start');
-      socket.off('new_question');
-      socket.off('answer_result');
-      socket.off('leaderboard_update');
-      socket.off('game_end');
-      socket.off('error');
-      socket.off('player_left_game');
-      socket.off('arena_terminated');
-      socket.off('rematch_requested');
-      socket.off('rematch_status_update');
-      socket.off('rematch_started');
-      socket.off('rematch_failed');
-      socket.off('room_info');
-      socket.off('power_up_granted');
-      socket.off('power_up_used');
-      socket.off('message_received');
+      socket.off('player_joined', onPlayerJoined);
+      socket.off('room_update', onRoomUpdate);
+      socket.off('countdown_update', onCountdownUpdate);
+      socket.off('settings_updated', onSettingsUpdated);
+      socket.off('game_start', onGameStart);
+      socket.off('new_question', onNewQuestion);
+      socket.off('answer_result', onAnswerResult);
+      socket.off('leaderboard_update', onLeaderboardUpdate);
+      socket.off('game_end', onGameEnd);
+      socket.off('player_left_game', onPlayerLeftGame);
+      socket.off('arena_terminated', onArenaTerminated);
+      socket.off('rematch_requested', onRematchRequested);
+      socket.off('rematch_status_update', onRematchStatusUpdate);
+      socket.off('rematch_started', onRematchStarted);
+      socket.off('rematch_failed', onRematchFailed);
+      socket.off('room_info', onRoomInfo);
+      socket.off('power_up_granted', onPowerUpGranted);
+      socket.off('power_up_used', onPowerUpUsed);
+      socket.off('error', onError);
+      socket.off('message_received', onMessageReceived);
     };
-  }, [socket, id, user?.id, user?._id, players, t, setPlayers, setOwnerId, setOwnerSocketId, setCountdown, setGameStatus, setCurrentQuestion, setAnswerResult, setLeaderboard, setWinner, setFinalQuestions, setRoomSettings, setRematchRequest, setRematchStatus]);
+  }, [socket, id, players, t, setPlayers, setOwnerId, setOwnerSocketId, setCountdown, setGameStatus, setCurrentQuestion, setAnswerResult, setLeaderboard, setWinner, setFinalQuestions, setRoomSettings, setRematchRequest, setRematchStatus]);
 
   useEffect(() => {
     if (!rematchRequest || rematchTimeLeft <= 0) return;
