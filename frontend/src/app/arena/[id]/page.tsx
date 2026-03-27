@@ -76,10 +76,8 @@ export default function Arena() {
       roomId
     });
 
-    return () => {
-      console.log('Leaving arena:', roomId);
-      socket.emit('leave_game', roomId);
-    };
+    // Note: We don't emit leave_game on cleanup because Socket.IO handles disconnects 
+    // and double-mounting in dev can cause race conditions that drop the player.
   }, [socket, id, user?.id, user?._id, initialized]);
 
   // Handle Socket Listeners
@@ -739,12 +737,12 @@ export default function Arena() {
             </header>
 
             {/* Vertically Centered Content Area */}
-            <div className="flex-1 flex flex-col items-center justify-start px-4 sm:px-6 pb-6 pt-6 sm:pt-0 space-y-8 sm:space-y-12">
+            <div className="flex-1 flex flex-col items-center justify-start px-4 sm:px-6 pb-6 pt-4 sm:pt-0 space-y-6 sm:space-y-12">
               {/* Main Math Arena Card - Perfectly Centered */}
               <div className="w-full max-w-xl mx-auto">
                 <div className="relative group/main">
-                  <div className="absolute -inset-10 bg-blue-600/10 rounded-full blur-[100px] opacity-0 group-hover/main:opacity-100 transition-opacity duration-1000"></div>
-                  <div className="relative glass rounded-[32px] sm:rounded-[48px] p-6 sm:p-12 border border-white/10 shadow-3xl text-center overflow-hidden">
+                  <div className="absolute -inset-10 bg-blue-600/10 rounded-full blur-[100px] opacity-0 group/main:opacity-100 transition-opacity duration-1000"></div>
+                  <div className="relative glass rounded-[32px] sm:rounded-[48px] p-5 sm:p-12 border border-white/10 shadow-3xl text-center overflow-hidden">
                     {/* Background ∑ Decoration */}
                     <div className="absolute top-0 right-0 p-8 sm:p-12 opacity-[0.03]">
                       <div className="text-[120px] sm:text-[200px] italic font-serif leading-none">∑</div>
@@ -764,14 +762,14 @@ export default function Arena() {
                       </div>
                     ) : (
                       <>
-                        <div className="mb-8 sm:mb-12">
-                          <div className="text-[9px] sm:text-nano text-blue-400 mb-4 sm:mb-8 px-4 py-1.5 rounded-full bg-blue-600/10 border border-blue-500/20 inline-block font-black tracking-widest uppercase">
+                        <div className="mb-6 sm:mb-12">
+                          <div className="text-[9px] sm:text-nano text-blue-400 mb-3 sm:mb-8 px-4 py-1.5 rounded-full bg-blue-600/10 border border-blue-500/20 inline-block font-black tracking-widest uppercase">
                             {t('arena.lobby_protocol')}
                           </div>
-                          <h2 className="text-4xl sm:text-title font-black mb-4 sm:mb-6 text-white tracking-tighter">
+                          <h2 className="text-3xl sm:text-title font-black mb-3 sm:mb-6 text-white tracking-tighter">
                             {t('arena.math_arena')}
                           </h2>
-                          <p className="max-w-sm mx-auto text-sm sm:text-base text-slate-400 font-medium">
+                          <p className="max-w-sm mx-auto text-xs sm:text-base text-slate-400 font-medium">
                             {t('arena.share_code_message')}
                           </p>
                         </div>
