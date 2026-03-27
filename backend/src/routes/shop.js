@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const { authMiddleware: auth } = require('./auth');
 const ShopService = require('../services/ShopService');
 
 // @route   GET api/shop
