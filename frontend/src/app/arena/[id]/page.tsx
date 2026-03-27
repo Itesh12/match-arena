@@ -776,8 +776,7 @@ export default function Arena() {
                           </p>
                         </div>
 
-                        {/* Secret Code Centered Widget */}
-                        <div className="mb-8 sm:mb-12 relative group/code inline-block mx-auto min-w-[240px] sm:min-w-[280px]">
+                        <div className="mb-6 sm:mb-12 relative group/code inline-block mx-auto min-w-[240px] sm:min-w-[280px]">
                           <div className="absolute -inset-4 bg-blue-500/10 blur-xl opacity-0 group-hover/code:opacity-100 transition-opacity"></div>
                           <div 
                             className="relative bg-white/[0.03] border border-white/10 rounded-[24px] sm:rounded-[32px] p-5 sm:p-8 cursor-pointer active:scale-[0.98] transition-all hover:bg-white/[0.05] duration-500 shadow-2xl"
@@ -802,7 +801,7 @@ export default function Arena() {
                         </div>
 
                         {/* Owner Controls / Room Settings */}
-                        <div className="w-full max-w-sm mx-auto space-y-4 sm:space-y-6">
+                        <div className="w-full max-w-sm mx-auto space-y-3 sm:space-y-6">
                           {(socket?.id === ownerSocketId || 
                             (user?.id && String(user?.id) === String(ownerId)) || 
                             ((user as any)?._id && String((user as any)?._id) === String(ownerId))) ? (
