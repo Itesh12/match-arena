@@ -43,6 +43,8 @@ class GameEngine {
   }
 
   async saveRoom(roomId) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room) return;
 
@@ -159,6 +161,8 @@ class GameEngine {
   }
 
   updateRoomSettings(socketId, roomId, settings) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room) return;
 
@@ -177,6 +181,8 @@ class GameEngine {
   }
 
   startCountdown(socket, roomId, mode = 'standard') {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room) return;
 
@@ -272,6 +278,8 @@ class GameEngine {
   }
 
   submitAnswer(socketId, roomId, answer) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room || room.status !== 'playing') return;
 
@@ -347,6 +355,8 @@ class GameEngine {
   }
 
   handleTimeout(roomId) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room) return;
 
@@ -373,6 +383,8 @@ class GameEngine {
   }
 
   progressRoom(roomId) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room) return;
 
@@ -382,6 +394,8 @@ class GameEngine {
   }
 
   async endGame(roomId) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room) return;
 
@@ -484,6 +498,8 @@ class GameEngine {
   }
 
   async requestRematch(socket, roomId) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room || room.status !== 'finished') {
       console.log(`Rematch rejected: Room ${roomId} status is ${room?.status}`);
@@ -514,6 +530,8 @@ class GameEngine {
   }
 
   handleRematchResponse(socket, roomId, accept) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room || !room.rematchData) return;
 
@@ -540,6 +558,8 @@ class GameEngine {
   }
 
   finalizeRematch(roomId) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room || !room.rematchData) return;
 
@@ -584,6 +604,8 @@ class GameEngine {
   }
 
   async usePowerUp(socket, roomId, type) {
+    if (!roomId) return;
+    roomId = roomId.toUpperCase();
     const room = this.rooms.get(roomId);
     if (!room || room.status !== 'playing') return;
 

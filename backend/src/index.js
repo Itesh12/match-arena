@@ -113,9 +113,6 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('rematch_arena', (roomId) => {
-    gameEngine.rematchRoom(socket, roomId);
-  });
 
   socket.on('rematch_request', ({ roomId }) => {
     gameEngine.requestRematch(socket, roomId);

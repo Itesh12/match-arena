@@ -62,6 +62,8 @@ interface GameState {
     type: 'success' | 'error' | 'info' | 'achievement';
     title?: string;
   } | null;
+  isHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 
   setRoomSettings: (settings: { questionsCount: number, timePerQuestion: number, difficulty: 'easy' | 'medium' | 'hard' }) => void;
   setPlayers: (players: Player[]) => void;
@@ -104,6 +106,8 @@ export const useGameStore = create<GameState>()(
         difficulty: 'medium'
       },
       toast: null,
+      isHydrated: false,
+      setHasHydrated: (state) => set({ isHydrated: state }),
 
       setPlayers: (players) => set({ players }),
       setCurrentQuestion: (q) => set({ currentQuestion: q }),
@@ -188,6 +192,11 @@ export const useGameStore = create<GameState>()(
         token: state.token,
         roomId: state.roomId 
       }),
+      onRehydrateStorage: (state) => {
+        return () => {
+          state.setHasHydrated(true);
+        };
+      },
     }
   )
 );

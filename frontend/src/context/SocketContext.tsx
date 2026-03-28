@@ -10,7 +10,7 @@ const SocketContext = createContext<Socket | null>(null);
 export const useSocket = () => useContext(SocketContext);
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-  const socketRef = useRef<Socket | null>(null);
+  const [socket, setSocket] = React.useState<Socket | null>(null);
   const { 
     setPlayers, 
     setCurrentQuestion, 
@@ -23,65 +23,65 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!token) {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
       }
       return;
     }
 
-    // Use centralized configuration
-    const socket = io(SOCKET_URL, {
-      transports: ['websocket', 'polling'], // Fallback for some environments
+    const newSocket = io(SOCKET_URL, {
+      transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 5
     });
-    socketRef.current = socket;
     
-    socket.on('connect_error', (err) => {
+    setSocket(newSocket);
+    
+    newSocket.on('connect_error', (err) => {
       console.error('Socket.io connection error:', err.message);
     });
 
-    socket.on('connect', () => {
+    newSocket.on('connect', () => {
       console.log('Connected to socket server');
     });
 
-    socket.on('player_joined', (players) => {
+    newSocket.on('player_joined', (players) => {
       setPlayers(players);
     });
 
-    socket.on('game_start', () => {
+    newSocket.on('game_start', () => {
       setGameStatus('playing');
     });
 
-    socket.on('new_question', (question) => {
+    newSocket.on('new_question', (question) => {
       setCurrentQuestion(question);
     });
 
-    socket.on('leaderboard_update', (leaderboard) => {
+    newSocket.on('leaderboard_update', (leaderboard) => {
       setLeaderboard(leaderboard);
     });
 
-    socket.on('game_end', (data) => {
+    newSocket.on('game_end', (data) => {
       setGameStatus('finished');
       setWinner(data.winner);
       setLeaderboard(data.leaderboard);
     });
 
-    socket.on('achievement_unlocked', (unlocked) => {
+    newSocket.on('achievement_unlocked', (unlocked) => {
       unlocked.forEach((a: any) => {
         showToast(a.name, 'achievement', 'New Achievement Unlocked!');
       });
     });
 
     return () => {
-      socket.disconnect();
-      socketRef.current = null;
+      newSocket.disconnect();
+      setSocket(null);
     };
   }, [setPlayers, setCurrentQuestion, setGameStatus, setLeaderboard, setWinner, token]);
 
   return (
-    <SocketContext.Provider value={socketRef.current}>
+    <SocketContext.Provider value={socket}>
       {children}
     </SocketContext.Provider>
   );

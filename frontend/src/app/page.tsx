@@ -30,18 +30,21 @@ export default function Lobby() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   const socket = useSocket();
-  const { user, roomId, setRoomId, logout, fetchStats, token, toast: globalToast, hideToast } = useGameStore();
+  const { 
+    user, roomId, setRoomId, logout, fetchStats, token, 
+    toast: globalToast, hideToast, isHydrated 
+  } = useGameStore();
   const { initialized } = useAuth();
   const { t, i18n } = useTranslation();
   const router = useRouter();
 
   useEffect(() => {
-    if (initialized && !user) {
+    if (initialized && isHydrated && !user) {
       router.push('/login');
     } else if (user) {
       fetchStats();
     }
-  }, [initialized, user, router]);
+  }, [initialized, isHydrated, user, router]);
 
   useEffect(() => {
     const userId = user?.id || user?._id;
