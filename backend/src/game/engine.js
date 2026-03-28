@@ -175,6 +175,7 @@ class GameEngine {
     if (typeof settings.questionsCount === 'number') room.settings.questionsCount = Math.min(Math.max(settings.questionsCount, 5), 20);
     if (typeof settings.timePerQuestion === 'number') room.settings.timePerQuestion = Math.min(Math.max(settings.timePerQuestion, 15), 60);
     if (settings.difficulty) room.settings.difficulty = settings.difficulty;
+    if (settings.theme) room.settings.theme = settings.theme;
 
     this.io.to(roomId).emit('settings_updated', room.settings);
     this.saveRoom(roomId);
