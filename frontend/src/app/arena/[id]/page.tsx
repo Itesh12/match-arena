@@ -648,10 +648,13 @@ export default function Arena() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowMobileSidebar(true)}
-              className="flex items-center gap-1.5 glass px-2.5 py-1.5 rounded-lg border border-white/10 active:scale-95 transition-all"
+              className="flex items-center gap-2 glass px-3 py-1.5 rounded-lg border border-white/10 active:scale-95 transition-all shadow-lg text-left"
             >
               <Users className={`w-3.5 h-3.5 ${currentTheme.accent}`} />
-              <span className="text-[10px] font-black text-white/70">{players.length}</span>
+              <div className="flex flex-col items-start leading-none justify-center">
+                <span className="text-[7px] font-black text-white/40 uppercase tracking-tighter">{gameStatus === 'waiting' ? t('arena.players') : 'RANKINGS'}</span>
+                <span className="text-[10px] font-black text-white">{players.length}</span>
+              </div>
             </button>
             <button
               onClick={() => setShowChat(!showChat)}
@@ -725,12 +728,14 @@ export default function Arena() {
                       <span className="absolute top-3 right-3 w-3 h-3 bg-red-500 rounded-full border-2 border-[#020617] animate-pulse"></span>
                     )}
                   </button>
-                  <div className="flex items-center gap-6 px-10 glass rounded-full border border-white/5 shadow-xl h-[76px]">
-                    <div className="flex flex-col text-right">
-                      <span className="text-micro text-slate-500 mb-1.5">{t('arena.room_id')}</span>
-                      <span className="text-subtitle text-white tracking-widest uppercase">{(id as string).toUpperCase()}</span>
+                  {gameStatus !== 'waiting' && (
+                    <div className="flex items-center gap-6 px-10 glass rounded-full border border-white/5 shadow-xl h-[76px]">
+                      <div className="flex flex-col text-right">
+                        <span className="text-micro text-slate-500 mb-1.5">{t('arena.room_id')}</span>
+                        <span className="text-subtitle text-white tracking-widest uppercase">{(id as string).toUpperCase()}</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </header>
@@ -749,19 +754,19 @@ export default function Arena() {
                     {countdown !== null ? (
                       <div className="py-8 sm:py-10">
                         <div className="relative w-24 h-24 sm:w-36 sm:h-36 mx-auto mb-4 sm:mb-10">
-                          <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping opacity-25"></div>
-                          <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full shadow-[0_0_60px_rgba(37,99,235,0.4)] sm:shadow-[0_0_80px_rgba(37,99,235,0.4)] flex items-center justify-center border-4 border-white/10">
+                          <div className={`absolute inset-0 ${currentTheme.glow} rounded-full animate-ping opacity-25`}></div>
+                          <div className={`absolute inset-0 ${currentTheme.btn} rounded-full shadow-[0_0_80px_rgba(0,0,0,0.4)] flex items-center justify-center border-4 border-white/10`}>
                             <span className="text-7xl sm:text-8xl font-black italic text-white animate-in zoom-in duration-500">{countdown}</span>
                           </div>
                         </div>
-                        <h2 className="text-[9px] sm:text-[10px] font-black tracking-[0.6em] sm:tracking-[0.8em] text-blue-400 animate-pulse uppercase translate-x-[0.3em] sm:translate-x-[0.4em]">
+                        <h2 className={`text-[9px] sm:text-[10px] font-black tracking-[0.6em] sm:tracking-[0.8em] ${currentTheme.text} animate-pulse uppercase translate-x-[0.3em] sm:translate-x-[0.4em]`}>
                           {t('arena.get_ready')}
                         </h2>
                       </div>
                     ) : (
                       <>
                         <div className="mb-6 sm:mb-6">
-                          <div className="text-[9px] sm:text-nano text-blue-400 mb-3 sm:mb-4 px-4 py-1.5 rounded-full bg-blue-600/10 border border-blue-500/20 inline-block font-black tracking-widest uppercase">
+                          <div className={`text-[9px] sm:text-nano ${currentTheme.text} mb-3 sm:mb-4 px-4 py-1.5 rounded-full ${currentTheme.glow} border ${currentTheme.border} inline-block font-black tracking-widest uppercase`}>
                             {t('arena.lobby_protocol')}
                           </div>
                           <h2 className="text-2xl sm:text-title font-black mb-2 sm:mb-6 text-white tracking-tighter">
@@ -772,21 +777,22 @@ export default function Arena() {
                           </p>
                         </div>
 
-                        <div className="mb-4 sm:mb-10 relative group/code inline-block mx-auto w-full max-w-[260px] sm:max-w-[320px]">                          <div className="absolute -inset-4 bg-blue-500/10 blur-xl opacity-0 group-hover/code:opacity-100 transition-opacity"></div>
+                        <div className="mb-4 sm:mb-10 relative group/code inline-block mx-auto w-full max-w-[260px] sm:max-w-[320px]">
+                          <div className={`absolute -inset-4 ${currentTheme.glow} blur-xl opacity-0 group-hover/code:opacity-100 transition-opacity`}></div>
                           <div
-                            className="relative bg-white/[0.03] border border-white/10 rounded-[24px] sm:rounded-[32px] p-5 sm:p-8 cursor-pointer active:scale-[0.98] transition-all hover:bg-white/[0.05] duration-500 shadow-2xl"
+                            className={`relative bg-white/[0.03] border border-white/10 rounded-[24px] sm:rounded-[32px] p-5 sm:p-8 cursor-pointer active:scale-[0.98] transition-all hover:bg-white/[0.05] duration-500 shadow-2xl group-hover/code:${currentTheme.border}`}
                             onClick={() => {
                               navigator.clipboard.writeText(id as string);
                               setShowCopyMessage(true);
                               setTimeout(() => setShowCopyMessage(false), 2000);
                             }}
                           >
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-[8px] sm:text-nano tracking-widest uppercase font-black text-white shadow-lg">
+                            <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 ${currentTheme.btn} rounded-full text-[8px] sm:text-nano tracking-widest uppercase font-black text-white shadow-lg`}>
                               {t('arena.room_code')}
                             </div>
                             <div className="text-2xl sm:text-title font-mono tracking-[0.15em] sm:tracking-[0.3em] text-white flex items-center justify-center py-2 sm:py-4 pl-2 sm:pl-4 font-black">
                               {id}
-                              <Copy className="ml-3 sm:ml-4 w-4 h-4 sm:w-5 sm:h-5 text-blue-400/40 group-hover/code:text-blue-400 transition-colors" />
+                              <Copy className={`ml-3 sm:ml-4 w-4 h-4 sm:w-5 sm:h-5 ${currentTheme.text}/40 group-hover/code:${currentTheme.text} transition-colors`} />
                             </div>
                             <div className="flex items-center justify-center gap-2 text-slate-600 group-hover/code:text-slate-400 transition-colors mt-2 sm:mt-4">
                               <MousePointer2 className="w-3 h-3" />
@@ -811,12 +817,12 @@ export default function Arena() {
                                   <select
                                     value={roomSettings.questionsCount}
                                     onChange={(e) => socket?.emit('update_room_settings', { roomId: id, settings: { questionsCount: parseInt(e.target.value) } })}
-                                    className="bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-black text-blue-400 outline-none cursor-pointer"
+                                    className={`bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-black ${currentTheme.accent} outline-none cursor-pointer`}
                                   >
                                     {[5, 10, 15, 20].map(n => <option key={n} value={n} className="bg-slate-900">{n} Questions</option>)}
                                   </select>
                                 </div>
-
+ 
                                 <div className="glass p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 flex items-center justify-between gap-4">
                                   <div className="flex flex-col text-left">
                                     <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('arena.time_limit')}</span>
@@ -825,7 +831,7 @@ export default function Arena() {
                                   <select
                                     value={roomSettings.timePerQuestion}
                                     onChange={(e) => socket?.emit('update_room_settings', { roomId: id, settings: { timePerQuestion: parseInt(e.target.value) } })}
-                                    className="bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-black text-blue-400 outline-none cursor-pointer"
+                                    className={`bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-black ${currentTheme.accent} outline-none cursor-pointer`}
                                   >
                                     {[15, 30, 45, 60].map(s => <option key={s} value={s} className="bg-slate-900">{s} Seconds</option>)}
                                   </select>
@@ -879,7 +885,7 @@ export default function Arena() {
                               </button>
                             </>
                           ) : (
-                            <div className="h-10 sm:h-14 flex items-center justify-center px-4 text-center rounded-[20px] sm:rounded-[2rem] bg-blue-500/5 border border-blue-500/10 text-blue-400 font-extrabold tracking-[0.2em] animate-pulse uppercase text-[10px] sm:text-xs px-6 sm:px-10 text-center leading-tight">
+                            <div className="h-10 sm:h-14 flex items-center justify-center px-4 text-center rounded-[20px] sm:rounded-[2rem] ${currentTheme.glow} border ${currentTheme.border} ${currentTheme.text} font-extrabold tracking-[0.2em] animate-pulse uppercase text-[10px] sm:text-xs px-6 sm:px-10 text-center leading-tight">
                               {t('arena.waiting_for_owner')}
                             </div>
                           )}
@@ -908,14 +914,14 @@ export default function Arena() {
                     return (
                       <div key={i} className={`aspect-square rounded-[1.2rem] sm:rounded-[2rem] p-2 sm:p-4 gap-2 border transition-all duration-500 flex flex-col items-center justify-center p-4 gap-3 ${p
                         ? p.username === user?.username
-                          ? 'glass border-blue-500/40 shadow-xl shadow-blue-500/10'
+                          ? 'glass ${currentTheme.border} shadow-xl shadow-black/20'
                           : 'bg-white/[0.03] border-white/10 hover:border-white/20'
                         : 'bg-white/[0.01] border-white/5 opacity-20'
                         }`}>
                         {p ? (
                           <>
                             <div className="relative">
-                              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black transition-all duration-500 ${p.username === user?.username ? 'bg-blue-600 text-white' : 'bg-slate-900 border border-white/5 text-slate-500'
+                              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black transition-all duration-500 ${p.username === user?.username ? '${currentTheme.btn} text-white' : 'bg-slate-900 border border-white/5 text-slate-500'
                                 }`}>
                                 {p.username[0].toUpperCase()}
                               </div>
