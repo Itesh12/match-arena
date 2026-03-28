@@ -48,6 +48,15 @@ export default function Arena() {
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [answerResult, setAnswerResult] = useState<{ isCorrect: boolean | null, correctAnswer: number | null }>({ isCorrect: null, correctAnswer: null });
   const [isReviewing, setIsReviewing] = useState(false);
+
+  const THEMES: Record<string, { bg: string, accent: string, glow: string, border: string, text: string, btn: string, indicator: string }> = {
+    standard: { bg: 'bg-[#020617]', accent: 'text-blue-400', glow: 'bg-blue-600/20', border: 'border-blue-500/30', text: 'text-blue-400', btn: 'bg-blue-600', indicator: 'bg-blue-500' },
+    midnight: { bg: 'bg-[#0a0515]', accent: 'text-purple-400', glow: 'bg-purple-600/20', border: 'border-purple-500/30', text: 'text-purple-400', btn: 'bg-purple-600', indicator: 'bg-purple-500' },
+    matrix: { bg: 'bg-[#000d00]', accent: 'text-green-500', glow: 'bg-green-600/20', border: 'border-green-500/30', text: 'text-green-500', btn: 'bg-green-600', indicator: 'bg-green-500' },
+    sunset: { bg: 'bg-[#150505]', accent: 'text-orange-500', glow: 'bg-red-600/20', border: 'border-red-500/30', text: 'text-orange-500', btn: 'bg-red-600', indicator: 'bg-red-500' },
+  };
+
+  const currentTheme = THEMES[roomSettings?.theme || 'standard'] || THEMES.standard;
   const [selectedMode, setSelectedMode] = useState<'standard' | 'sudden_death' | 'double_jeopardy' | 'team_battle'>('standard');
   const [notifications, setNotifications] = useState<{ id: string, msg: string }[]>([]);
   const [rematchRequest, setRematchRequest] = useState<{ ownerUsername: string; timeout: number } | null>(null);
@@ -322,10 +331,10 @@ export default function Arena() {
 
   if (gameStatus === 'finished') {
     return (
-      <div className="relative flex flex-col items-center justify-center min-h-[100dvh] bg-[#020617] text-white p-6 overflow-hidden">
+      <div className={`relative flex flex-col items-center justify-center min-h-[100dvh] ${currentTheme.bg} text-white p-6 overflow-hidden`}>
         {/* Background Decorative Elements */}
-        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full animate-pulse-glow" style={{ animationDelay: '0s' }}></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-indigo-600/10 rounded-full animate-pulse-glow" style={{ animationDelay: '3s' }}></div>
+        <div className={`absolute top-[-20%] left-[-10%] w-[60%] h-[60%] ${currentTheme.glow} rounded-full animate-pulse-glow`} style={{ animationDelay: '0s' }}></div>
+        <div className={`absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] ${currentTheme.glow} rounded-full animate-pulse-glow`} style={{ animationDelay: '3s' }}></div>
 
         <div className="relative z-10 max-w-2xl w-full glass rounded-[32px] p-10 text-center shadow-[0_0_50px_rgba(0,0,0,0.5)] border-white/5 animate-float">
           <div className="relative mb-4">
@@ -388,7 +397,7 @@ export default function Arena() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button
                   onClick={() => setIsReviewing(true)}
-                  className="group relative w-full bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black py-4 rounded-[20px] transition-all hover:bg-blue-600/20 active:scale-[0.98]"
+                  className={`group relative w-full ${currentTheme.glow} border ${currentTheme.border} ${currentTheme.text} font-black py-4 rounded-[20px] transition-all hover:bg-white/10 active:scale-[0.98]`}
                 >
                   {t('arena.review_questions')}
                 </button>
@@ -417,7 +426,7 @@ export default function Arena() {
                 {finalQuestions.map((q, idx) => (
                   <div key={idx} className="glass p-6 rounded-2xl border-white/5 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{t('arena.question')} {idx + 1}</span>
+                      <span className={`text-[10px] font-black ${currentTheme.text} uppercase tracking-widest`}>{t('arena.question')} {idx + 1}</span>
                       <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-lg">
                         <span className="text-[10px] font-black text-green-400 uppercase">{t('arena.answer')}: {q.correctAnswer}</span>
                       </div>
@@ -448,8 +457,8 @@ export default function Arena() {
         <div className={`fixed top-0 right-0 w-full sm:w-[400px] h-full bg-[#020617]/95 backdrop-blur-3xl z-[100] border-l border-white/10 transition-transform duration-500 shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col ${showChat ? 'translate-x-0' : 'translate-x-full'}`}>
           <div className="p-6 border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center border border-blue-500/20">
-                <MessagesSquare className="w-4 h-4 text-blue-400" />
+              <div className={`w-8 h-8 rounded-lg ${currentTheme.glow} flex items-center justify-center border ${currentTheme.border}`}>
+                <MessagesSquare className={`w-4 h-4 ${currentTheme.text}`} />
               </div>
               <h3 className="text-base font-black text-white uppercase tracking-widest">Lobby Chat</h3>
             </div>
@@ -461,7 +470,7 @@ export default function Arena() {
             {messages.map((msg) => (
               <div key={msg.id} className={`flex flex-col ${msg.sender === user?.username ? 'items-end' : 'items-start'}`}>
                 <span className="text-[8px] font-black text-slate-500 uppercase mb-1">{msg.sender}</span>
-                <div className={`px-4 py-2.5 rounded-2xl text-sm max-w-[85%] ${msg.sender === user?.username ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white/5 text-slate-200 rounded-tl-none'}`}>
+                <div className={`px-4 py-2.5 rounded-2xl text-sm max-w-[85%] ${msg.sender === user?.username ? `${currentTheme.btn} text-white rounded-tr-none` : 'bg-white/5 text-slate-200 rounded-tl-none'}`}>
                   {msg.text}
                 </div>
               </div>
@@ -469,8 +478,8 @@ export default function Arena() {
           </div>
           <form onSubmit={handleSendChat} className="p-6 border-t border-white/10">
             <div className="relative group">
-              <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type a message..." className="w-full h-14 pl-6 pr-14 bg-white/[0.03] border border-white/5 rounded-2xl text-white focus:outline-none focus:border-blue-500/50" />
-              <button type="submit" disabled={!newMessage.trim()} className="absolute right-2 top-2 w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white"><Send className="w-4 h-4" /></button>
+              <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type a message..." className={`w-full h-14 pl-6 pr-14 bg-white/[0.03] border border-white/5 rounded-2xl text-white focus:outline-none focus:border-${currentTheme.text.split('-')[1]}-500/50`} />
+              <button type="submit" disabled={!newMessage.trim()} className={`absolute right-2 top-2 w-10 h-10 ${currentTheme.btn} rounded-xl flex items-center justify-center text-white`}><Send className="w-4 h-4" /></button>
             </div>
           </form>
         </div>
@@ -481,14 +490,14 @@ export default function Arena() {
 
   if (!initialized || !user) {
     return (
-      <div className="min-h-[100dvh] bg-[#020617] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin"></div>
+      <div className={`min-h-[100dvh] ${currentTheme.bg} flex items-center justify-center`}>
+        <div className={`w-12 h-12 border-4 ${currentTheme.glow.replace('bg-', 'border-').split('/')[0]}-600/20 ${currentTheme.border.replace('border-', 'border-t-')} rounded-full animate-spin`}></div>
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-[100dvh] bg-[#020617] text-white overflow-hidden flex flex-col lg:flex-row">
+    <div className={`relative min-h-[100dvh] ${currentTheme.bg} text-white overflow-hidden flex flex-col lg:flex-row`}>
       {/* Sidebar: Players & Progress */}
       <div className={`z-20 bg-slate-950/60 backdrop-blur-3xl border-r border-white/10 flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.5)]
         /* Mobile: fixed drawer overlay, Desktop: static sidebar */
@@ -518,24 +527,24 @@ export default function Arena() {
             <section>
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                    <Users className="w-3 h-3 text-blue-400" />
+                  <div className={`w-6 h-6 rounded-lg ${currentTheme.glow} border ${currentTheme.border} flex items-center justify-center`}>
+                    <Users className={`w-3 h-3 ${currentTheme.text}`} />
                   </div>
                   <h3 className="text-micro text-white/40">{t('arena.participants')}</h3>
                 </div>
-                <div className="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-micro rounded-full border border-blue-500/20 shadow-lg shadow-blue-500/5">
+                <div className={`px-2.5 py-1 ${currentTheme.glow} ${currentTheme.text} text-micro rounded-full border ${currentTheme.border} shadow-lg`}>
                   {players.length}
                 </div>
               </div>
               <div className="space-y-3">
-                {players.map((p) => (
+                 {players.map((p) => (
                   <div key={p.id} className={`group relative transition-all duration-300 ${p.hasLeft ? 'opacity-30' : 'hover:scale-[1.02]'}`}>
-                    <div className={`absolute -inset-[1px] bg-gradient-to-r ${p.username === user?.username ? 'from-blue-600/20 to-indigo-600/20' : 'from-white/5 to-white/0'} rounded-[17px] opacity-0 group-hover:opacity-100 transition-opacity blur-[2px]`}></div>
-                    <div className={`relative flex items-center justify-between p-4 rounded-2xl border transition-all duration-500 ${p.username === user?.username ? 'bg-blue-600/10 border-blue-500/30 shadow-lg shadow-blue-500/10' : 'bg-white/[0.03] border-white/5 hover:border-white/10'}`}>
+                    <div className={`absolute -inset-[1px] bg-gradient-to-r ${p.username === user?.username ? `${currentTheme.btn}/20 to-indigo-600/20` : 'from-white/5 to-white/0'} rounded-[17px] opacity-0 group-hover:opacity-100 transition-opacity blur-[2px]`}></div>
+                    <div className={`relative flex items-center justify-between p-4 rounded-2xl border transition-all duration-500 ${p.username === user?.username ? `${currentTheme.glow} ${currentTheme.border} shadow-lg shadow-black/20` : 'bg-white/[0.03] border-white/5 hover:border-white/10'}`}>
                       <div className="flex items-center gap-3">
                         <div className="relative">
-                          <div className={`w-2 h-2 rounded-full ${p.isEliminated ? 'bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]' : p.hasLeft ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : p.username === user?.username ? 'bg-blue-400 animate-pulse shadow-[0_0_8px_rgba(96,165,250,0.5)]' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]'}`}></div>
-                          {!p.hasLeft && !p.isEliminated && <div className={`absolute -inset-1 rounded-full animate-ping opacity-20 ${p.username === user?.username ? 'bg-blue-400' : 'bg-green-400'}`}></div>}
+                          <div className={`w-2 h-2 rounded-full ${p.isEliminated ? 'bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]' : p.hasLeft ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : p.username === user?.username ? `${currentTheme.indicator} animate-pulse shadow-[0_0_8px_rgba(96,165,250,0.5)]` : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]'}`}></div>
+                          {!p.hasLeft && !p.isEliminated && <div className={`absolute -inset-1 rounded-full animate-ping opacity-20 ${p.username === user?.username ? currentTheme.indicator : 'bg-green-400'}`}></div>}
                         </div>
                         <div className="flex flex-col">
                           <span className={`text-caption transition-colors ${p.username === user?.username ? 'text-white' : 'text-white/60 group-hover:text-white/90'}`}>
@@ -635,20 +644,20 @@ export default function Arena() {
       {/* Main Game Area - Forced Absolute on mobile to prevent flex displacement */}
       <div className="absolute inset-0 lg:relative lg:inset-auto z-10 flex-1 flex flex-col lg:min-h-[100dvh]">
         {/* Mobile top bar - Simplified and Minimalist */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-2 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl sticky top-0 z-20 h-12">
+        <div className={`lg:hidden flex items-center justify-between px-4 py-2 border-b border-white/5 ${currentTheme.bg}/80 backdrop-blur-xl sticky top-0 z-20 h-12`}>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowMobileSidebar(true)}
               className="flex items-center gap-1.5 glass px-2.5 py-1.5 rounded-lg border border-white/10 active:scale-95 transition-all"
             >
-              <Users className="w-3.5 h-3.5 text-blue-400" />
+              <Users className={`w-3.5 h-3.5 ${currentTheme.accent}`} />
               <span className="text-[10px] font-black text-white/70">{players.length}</span>
             </button>
             <button
               onClick={() => setShowChat(!showChat)}
-              className={`p-1.5 rounded-lg border transition-all relative ${showChat ? 'bg-blue-600 border-blue-400' : 'glass border-white/10'}`}
+              className={`p-1.5 rounded-lg border transition-all relative ${showChat ? `${currentTheme.btn} border-white/40` : 'glass border-white/10'}`}
             >
-              <MessagesSquare className={`w-3.5 h-3.5 ${showChat ? 'text-white' : 'text-blue-400'}`} />
+              <MessagesSquare className={`w-3.5 h-3.5 ${showChat ? 'text-white' : currentTheme.text}`} />
               {messages.length > 0 && !showChat && (
                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-[#020617]"></span>
               )}
@@ -670,10 +679,10 @@ export default function Arena() {
             {/* 3-Section Premium Top Bar - perfectly aligned with sidebar's p-6 header - desktop only */}
             <header className="hidden lg:grid grid-cols-3 items-center w-full mx-auto p-6">
               {/* Left: Players Info - Compact and matching sidebar style */}
-              <div className="flex justify-start">
-                <div className="flex items-center gap-4 px-6 py-4 bg-white/[0.03] rounded-2xl border border-white/10 group hover:border-blue-500/30 transition-all duration-500 h-[76px]">
+               <div className="flex justify-start">
+                <div className={`flex items-center gap-4 px-6 py-4 bg-white/[0.03] rounded-2xl border border-white/10 group hover:${currentTheme.border} transition-all duration-500 h-[76px]`}>
                   <div className="relative">
-                    <Users className="w-5 h-5 text-blue-400 opacity-60 group-hover:opacity-100 transition-opacity" />
+                    <Users className={`w-5 h-5 ${currentTheme.text} opacity-60 group-hover:opacity-100 transition-opacity`} />
                   </div>
                   <div>
                     <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] leading-none flex items-center gap-2">
@@ -689,16 +698,16 @@ export default function Arena() {
               </div>
 
               {/* Center: Branding Logo - Refined */}
-              <div className="flex justify-center">
+               <div className="flex justify-center">
                 <div className="relative group cursor-default">
-                  <div className="absolute -inset-4 bg-blue-600/10 rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000"></div>
+                  <div className={`absolute -inset-4 ${currentTheme.glow} rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition duration-1000`}></div>
                   <div className="relative flex items-center gap-6 px-10 glass rounded-full border border-white/5 shadow-2xl overflow-hidden group-hover:border-white/10 transition-all duration-700 h-[76px]">
                     <div className="w-8 h-8 bg-slate-950 rounded-lg flex items-center justify-center border border-white/5 transform rotate-3 group-hover:rotate-12 transition-transform">
-                      <Zap className="w-4 h-4 text-blue-400" />
+                      <Zap className={`w-4 h-4 ${currentTheme.text}`} />
                     </div>
                     <div className="flex flex-col">
                       <span className="text-subtitle text-white leading-none">{t('arena.math_arena')}</span>
-                      <span className="text-nano text-blue-400/40 mt-1.5 text-center">{t('arena.premium_engine')}</span>
+                      <span className={`text-nano ${currentTheme.text}/40 mt-1.5 text-center`}>{t('arena.premium_engine')}</span>
                     </div>
                   </div>
                 </div>
@@ -707,11 +716,11 @@ export default function Arena() {
               {/* Right: Room ID - Bold & Modern */}
               <div className="flex justify-end pr-6">
                 <div className="flex items-center gap-4">
-                  <button
+                   <button
                     onClick={() => setShowChat(!showChat)}
-                    className={`p-4 rounded-full border transition-all duration-300 relative group h-[76px] w-[76px] flex items-center justify-center ${showChat ? 'bg-blue-600 border-blue-400 shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'glass border-white/5 hover:border-white/20'}`}
+                    className={`p-4 rounded-full border transition-all duration-300 relative group h-[76px] w-[76px] flex items-center justify-center ${showChat ? `${currentTheme.btn} border-white/40 shadow-[0_0_20px_rgba(37,99,235,0.4)]` : 'glass border-white/5 hover:border-white/20'}`}
                   >
-                    <MessagesSquare className={`w-6 h-6 ${showChat ? 'text-white' : 'text-blue-400/60 group-hover:text-blue-400'}`} />
+                    <MessagesSquare className={`w-6 h-6 ${showChat ? 'text-white' : `${currentTheme.text}/60 group-hover:${currentTheme.text}`}`} />
                     {messages.length > 0 && !showChat && (
                       <span className="absolute top-3 right-3 w-3 h-3 bg-red-500 rounded-full border-2 border-[#020617] animate-pulse"></span>
                     )}
@@ -726,11 +735,11 @@ export default function Arena() {
               </div>
             </header>
 
-            {/* Content Area - Top weighted and tight for balance */}
+             {/* Content Area - Top weighted and tight for balance */}
             <div className="w-full flex flex-col items-center justify-start px-4 sm:px-6 pt-4 pb-6 sm:py-8 space-y-4 sm:space-y-10">              {/* Main Math Arena Card - Perfectly Centered */}
               <div className="w-full max-w-xl mx-auto">
                 <div className="relative group/main">
-                  <div className="absolute -inset-10 bg-blue-600/10 rounded-full blur-[100px] opacity-0 group/main:opacity-100 transition-opacity duration-1000"></div>
+                  <div className={`absolute -inset-10 ${currentTheme.glow} rounded-full blur-[100px] opacity-0 group/main:opacity-100 transition-opacity duration-1000`}></div>
                   <div className="relative glass rounded-[24px] sm:rounded-[48px] p-4 sm:p-10 border border-white/10 shadow-3xl text-center overflow-hidden">
                     {/* Background ∑ Decoration */}
                     <div className="absolute top-0 right-0 p-8 sm:p-12 opacity-[0.03]">
@@ -830,9 +839,27 @@ export default function Arena() {
                                   <select
                                     value={roomSettings.difficulty}
                                     onChange={(e) => socket?.emit('update_room_settings', { roomId: id, settings: { difficulty: e.target.value } })}
-                                    className="bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-black text-blue-400 outline-none cursor-pointer uppercase"
+                                    className={`bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-black ${currentTheme.accent} outline-none cursor-pointer uppercase`}
                                   >
                                     {['easy', 'medium', 'hard'].map(d => <option key={d} value={d} className="bg-slate-900">{d}</option>)}
+                                  </select>
+                                </div>
+
+                                <div className="glass p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 flex items-center justify-between gap-4">
+                                  <div className="flex flex-col text-left">
+                                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t('arena.theme')}</span>
+                                    <span className="text-xs font-black text-white uppercase">{roomSettings.theme}</span>
+                                  </div>
+                                  <select
+                                    value={roomSettings.theme}
+                                    onChange={(e) => socket?.emit('update_room_settings', { roomId: id, settings: { theme: e.target.value } })}
+                                    className={`bg-white/5 border border-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] font-black ${currentTheme.accent} outline-none cursor-pointer uppercase`}
+                                  >
+                                    {Object.keys(THEMES).map(t => (
+                                      <option key={t} value={t} className="bg-slate-900">
+                                        {t.charAt(0).toUpperCase() + t.slice(1)}
+                                      </option>
+                                    ))}
                                   </select>
                                 </div>
                               </div>
@@ -915,24 +942,24 @@ export default function Arena() {
             <header className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-8">
                 <div className={`glass px-6 py-3 rounded-2xl flex items-center gap-4 shadow-2xl transition-all duration-300 ${timeLeft < 10 ? 'border-red-500/50 bg-red-500/5 animate-pulse-red' : 'border-white/5'}`}>
-                  <div className={`absolute bottom-0 left-0 h-1 transition-all duration-1000 ${timeLeft < 10 ? 'bg-red-500' : 'bg-blue-500'}`} style={{ width: `${(timeLeft / (roomSettings.timePerQuestion || 60)) * 100}%` }}></div>
-                  <Timer className={`w-6 h-6 transition-colors ${timeLeft < 10 ? 'text-red-500 animate-shake' : 'text-blue-400'}`} />
+                  <div className={`absolute bottom-0 left-0 h-1 transition-all duration-1000 ${timeLeft < 10 ? 'bg-red-500' : `${currentTheme.indicator}`}`} style={{ width: `${(timeLeft / (roomSettings.timePerQuestion || 60)) * 100}%` }}></div>
+                   <Timer className={`w-6 h-6 transition-colors ${timeLeft < 10 ? 'text-red-500 animate-shake' : `${currentTheme.accent}`}`} />
                   <span className={`font-mono text-3xl font-black tracking-tighter tabular-nums transition-colors ${timeLeft < 10 ? 'text-red-500' : 'text-white'}`}>{timeLeft}<span className={`text-lg ml-1 ${timeLeft < 10 ? 'text-red-500/50' : 'text-slate-400'}`}>s</span></span>
                 </div>
                 <div>
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">{t('arena.total_progress')}</div>
                   <div className="flex gap-1.5">
                     {Array.from({ length: roomSettings.questionsCount || 10 }).map((_, i) => (
-                      <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === (currentQuestion?.index ?? 0) ? 'w-6 bg-blue-500' : i < (currentQuestion?.index ?? 0) ? 'w-2 bg-blue-500/40' : 'w-2 bg-white/5'}`}></div>
+                      <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === (currentQuestion?.index ?? 0) ? `w-6 ${currentTheme.indicator}` : i < (currentQuestion?.index ?? 0) ? `w-2 ${currentTheme.indicator}/40` : 'w-2 bg-white/5'}`}></div>
                     ))}
                   </div>
                 </div>
               </div>
-              <div className="text-right">
+               <div className="text-right">
                 <div className="text-3xl font-black tracking-tighter text-white">
-                  <span className="text-blue-500">{t('arena.question_short')}</span>{(currentQuestion?.index ?? 0) + 1} <span className="text-slate-400 text-lg">/ {roomSettings.questionsCount || 10}</span>
+                  <span className={`${currentTheme.accent}`}>{t('arena.question_short')}</span>{(currentQuestion?.index ?? 0) + 1} <span className="text-slate-400 text-lg">/ {roomSettings.questionsCount || 10}</span>
                 </div>
-                <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none">{t('arena.current_question')}</div>
+                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none">{t('arena.current_question')}</div>
               </div>
             </header>
 
@@ -940,7 +967,7 @@ export default function Arena() {
               {/* Notifications */}
               <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] space-y-2 pointer-events-none">
                 {notifications.map(n => (
-                  <div key={n.id} className="glass px-6 py-3 rounded-2xl border-blue-500/30 text-blue-400 font-black text-xs uppercase tracking-widest shadow-2xl animate-in slide-in-from-top-4 duration-300">
+                  <div key={n.id} className={`glass px-6 py-3 rounded-2xl ${currentTheme.border} ${currentTheme.text} font-black text-xs uppercase tracking-widest shadow-2xl animate-in slide-in-from-top-4 duration-300`}>
                     {n.msg}
                   </div>
                 ))}
@@ -959,7 +986,7 @@ export default function Arena() {
               ) : (
                 <>
                   <div className={`glass rounded-[32px] p-10 mb-4 text-center shadow-[0_0_80px_rgba(0,0,0,0.5)] border-white/5 relative overflow-hidden group transition-all duration-300 ${timeLeft < 10 ? 'animate-shake animate-pulse-red border-red-500/40' : ''} ${players.find(p => p.id === socket?.id)?.hasShield ? 'border-yellow-400/40 shadow-[0_0_40px_rgba(250,204,21,0.2)]' : ''}`}>
-                    <div className={`absolute top-0 left-0 w-full h-1 transition-colors duration-500 ${timeLeft < 10 ? 'bg-red-500' : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600'}`}></div>
+                    <div className={`absolute top-0 left-0 w-full h-1 transition-all duration-500 ${timeLeft < 10 ? 'bg-red-500' : `bg-gradient-to-r ${currentTheme.btn} via-indigo-600 to-purple-600`}`}></div>
 
                     {players.find(p => p.id === socket?.id)?.isFrozen && (
                       <div className="absolute inset-0 bg-blue-500/20 backdrop-blur-md z-50 flex flex-col items-center justify-center animate-in fade-in duration-500">
@@ -981,7 +1008,7 @@ export default function Arena() {
                     <h2 className={`text-6xl md:text-7xl font-black tracking-tighter mb-2 select-none transition-colors ${timeLeft < 10 && !selectedOption ? 'text-red-500' : 'text-white'}`}>
                       {currentQuestion?.question}
                     </h2>
-                    <div className={`font-black text-[9px] uppercase tracking-[0.8em] translate-x-[0.4em] leading-none transition-colors ${timeLeft < 10 ? 'text-red-500/40' : 'text-blue-400/60'}`}>
+                    <div className={`font-black text-[9px] uppercase tracking-[0.8em] translate-x-[0.4em] leading-none transition-colors ${timeLeft < 10 ? 'text-red-500/40' : `${currentTheme.text}/60`}`}>
                       {timeLeft < 10 ? t('arena.low_time') : t('arena.realtime')}
                     </div>
                   </div>
@@ -996,7 +1023,7 @@ export default function Arena() {
                       if (isSelected) {
                         if (answerResult.isCorrect === true) buttonStyle = 'bg-green-600 border-green-400 shadow-[0_0_30px_rgba(34,197,94,0.4)] scale-[1.05] z-10';
                         else if (answerResult.isCorrect === false) buttonStyle = 'bg-red-600 border-red-400 shadow-[0_0_30px_rgba(239,68,68,0.4)] animate-shake z-10';
-                        else buttonStyle = 'bg-blue-600 border-blue-400 shadow-[0_0_20px_rgba(37,99,235,0.4)]';
+                        else buttonStyle = `${currentTheme.btn} ${currentTheme.border} shadow-[0_0_20px_rgba(37,99,235,0.4)]`;
                       } else if (answerResult.correctAnswer !== null) {
                         if (isCorrectAnswer) buttonStyle = 'bg-green-600/20 border-green-500/40 text-green-400 scale-[1.02]';
                         else buttonStyle = 'glass border-white/5 opacity-20 grayscale scale-95';
@@ -1073,11 +1100,11 @@ export default function Arena() {
 
       {/* Rematch Request Overlay */}
       {rematchRequest && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#020617]/90 backdrop-blur-xl animate-in fade-in duration-300">
-          <div className="max-w-lg w-full glass rounded-[40px] p-10 text-center shadow-[0_0_80px_rgba(59,130,246,0.3)] border-white/10 animate-in zoom-in-95 duration-500">
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center p-6 ${currentTheme.bg}/90 backdrop-blur-xl animate-in fade-in duration-300`}>
+          <div className={`max-w-lg w-full glass rounded-[40px] p-10 text-center shadow-[0_0_80px_rgba(0,0,0,0.5)] ${currentTheme.border} animate-in zoom-in-95 duration-500`}>
             <div className="relative mb-4">
-              <div className="absolute inset-0 bg-blue-500/20 blur-[40px] rounded-full animate-pulse"></div>
-              <Play className="w-16 h-16 text-blue-400 mx-auto relative z-10 animate-bounce" />
+              <div className={`absolute inset-0 ${currentTheme.glow} blur-[40px] rounded-full animate-pulse`}></div>
+              <Play className={`w-16 h-16 ${currentTheme.text} mx-auto relative z-10 animate-bounce`} />
             </div>
 
             <h2 className="text-3xl font-black mb-2 tracking-tighter">{t('arena.rematch_requested')}</h2>
@@ -1125,7 +1152,7 @@ export default function Arena() {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   onClick={handleAcceptRematch}
-                  className="bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-3xl shadow-xl shadow-blue-600/20 transition-all active:scale-[0.95]"
+                  className={`${currentTheme.btn} hover:scale-[1.02] text-white font-black py-5 rounded-3xl shadow-xl transition-all active:scale-[0.95]`}
                 >
                   {t('arena.accept')}
                 </button>

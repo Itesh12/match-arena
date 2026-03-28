@@ -55,6 +55,7 @@ interface GameState {
     questionsCount: number;
     timePerQuestion: number;
     difficulty: 'easy' | 'medium' | 'hard';
+    theme: string;
   };
   toast: {
     show: boolean;
@@ -103,7 +104,8 @@ export const useGameStore = create<GameState>()(
       roomSettings: {
         questionsCount: 10,
         timePerQuestion: 60,
-        difficulty: 'medium'
+        difficulty: 'medium',
+        theme: 'standard'
       },
       toast: null,
       isHydrated: false,
@@ -145,7 +147,8 @@ export const useGameStore = create<GameState>()(
         roomSettings: {
           questionsCount: 10,
           timePerQuestion: 60,
-          difficulty: 'medium'
+          difficulty: 'medium',
+          theme: 'standard'
         },
         toast: null,
       }),

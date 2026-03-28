@@ -84,7 +84,8 @@ i18n
             active: "Active",
             questions: "Questions",
             time_limit: "Time Limit",
-            difficulty: "Difficulty"
+            difficulty: "Difficulty",
+            theme: "Arena Theme"
           },
           dashboard: {
             welcome: "Welcome back",
@@ -385,7 +386,8 @@ i18n
             question_short: "प्र",
             questions: "प्रश्न संख्या",
             time_limit: "समय सीमा",
-            difficulty: "कठिनाई"
+            difficulty: "कठिनाई",
+            theme: "अखाड़ा थीम"
           },
           practice: {
             title: "अभ्यास मोड",
